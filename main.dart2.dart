@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -81,28 +80,6 @@ class _HomePageState extends State<HomePage> {
 
   int get favoriteCount =>
       words.where((w) => w.isFavorite).length;
-
-@override
-void initState() {
-  super.initState();
-  loadFavoritesHome();
-}
-
-Future<void> loadFavoritesHome() async {
-  final prefs = await SharedPreferences.getInstance();
-
-  final favorites =
-      prefs.getStringList('favorites') ?? [];
-
-  for (var word in words) {
-    word.isFavorite =
-        favorites.contains(word.kanji);
-  }
-
-  setState(() {});
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -205,33 +182,6 @@ class FlashcardPage extends StatefulWidget {
 
 class _FlashcardPageState extends State<FlashcardPage> {
 
-@override
-void initState() {
-  super.initState();
-  //oadFavorites();
-}
-
-Future<void> saveFavorites() async {
-  final prefs = await SharedPreferences.getInstance();
-
-  final favorites =
-      words
-          .where((w) => w.isFavorite)
-          .map((w) => w.kanji)
-          .toList();
-
-  await prefs.setStringList(
-    'favorites',
-    favorites,
-  );
-
-  final check =
-      prefs.getStringList('favorites');
-
-  print("Immediately Read Back: $check");
-}
-
-
   final FlutterTts flutterTts = FlutterTts();
 
   int currentIndex = 0;
@@ -313,18 +263,11 @@ Future<void> saveFavorites() async {
         : Icons.star_border,
     color: Colors.amber,
   ),
-onPressed: () async {
-  setState(() {
-    word.isFavorite = !word.isFavorite;
-  });
-
-  await saveFavorites();
-
-  print(
-    "Saved Favorites: "
-    "${words.where((w) => w.isFavorite).map((w) => w.kanji).toList()}"
-  );
-},
+  onPressed: () {
+    setState(() {
+      word.isFavorite = !word.isFavorite;
+    });
+  },
 ),
 
             
@@ -496,28 +439,9 @@ class FavoritesPage extends StatelessWidget {
         title: const Text("Favorites"),
       ),
 
-   body: Column(
-  children: [
-    Padding(
-      padding: const EdgeInsets.all(12),
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  FavoriteListeningPage(),
-            ),
-          );
-        },
-        child: const Text(
-          "▶ Play Favorites",
-        ),
-      ),
-    ),
-    Expanded(
-      child: ListView.builder(
+      body: ListView.builder(
         itemCount: favoriteWords.length,
+
         itemBuilder: (context, index) {
 
           final word = favoriteWords[index];
@@ -535,142 +459,6 @@ class FavoritesPage extends StatelessWidget {
             ),
           );
         },
-      ),
-    ),
- ],
-    ),
-  );
-}
-}
-class FavoriteListeningPage extends StatefulWidget {
-  FavoriteListeningPage({super.key});
-
-  @override
-  State<FavoriteListeningPage> createState() =>
-      _FavoriteListeningPageState();
-}
-
-class _FavoriteListeningPageState
-    extends State<FavoriteListeningPage> {
-
-  final FlutterTts flutterTts = FlutterTts();
-
-  bool isPlaying = false;
-
-  String currentWord = "Ready";
-
-  List<Vocabulary> get favoriteWords =>
-      words
-          .where((w) => w.isFavorite)
-          .toList();
-
-  Future<void> startPlaying() async {
-
-    setState(() {
-      isPlaying = true;
-    });
-
-    for (var word in favoriteWords) {
-
-      if (!isPlaying) {
-        break;
-      }
-
-      setState(() {
-        currentWord = word.kanji;
-      });
-
-      await flutterTts.setLanguage("ja-JP");
-
-      await flutterTts.speak(
-        word.hiragana,
-      );
-
-      await Future.delayed(
-        const Duration(seconds: 3),
-      );
-
-      await flutterTts.setLanguage("zh-TW");
-
-      await flutterTts.speak(
-        word.meaning,
-      );
-
-      await Future.delayed(
-        const Duration(seconds: 3),
-      );
-    }
-
-    setState(() {
-      isPlaying = false;
-      currentWord = "Finished";
-    });
-  }
-
-  Future<void> stopPlaying() async {
-
-    await flutterTts.stop();
-
-    setState(() {
-      isPlaying = false;
-      currentWord = "Stopped";
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        title:
-            const Text("Favorite Listening"),
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.stretch,
-
-          children: [
-
-            Text(
-              currentWord,
-              textAlign: TextAlign.center,
-
-              style: const TextStyle(
-                fontSize: 42,
-                color: Colors.blue,
-                fontWeight:
-                    FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            ElevatedButton(
-              onPressed:
-                  isPlaying
-                      ? null
-                      : startPlaying,
-
-              child: const Text(
-                "Start",
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            ElevatedButton(
-              onPressed: stopPlaying,
-
-              child: const Text(
-                "Stop",
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
