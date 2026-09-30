@@ -35,7 +35,9 @@ class _FavoriteFlashcardPageState
     Vocabulary get currentWord =>
     favoriteWords[currentIndex];
 
-void nextFavorite() {
+Future<void> nextFavorite() async {
+
+  await flutterTts.stop();
 
   int nextIndex;
 
