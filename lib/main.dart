@@ -6,6 +6,45 @@ import 'vocabulary_data.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
+Future<void> loadJsonFile(
+  String path,
+) async {
+
+  final jsonString =
+      await rootBundle.loadString(path);
+
+  final List<dynamic> jsonData =
+      json.decode(jsonString);
+
+  words.addAll(
+
+    jsonData.map(
+      (item) =>
+          Vocabulary.fromJson(item),
+    ),
+  );
+}
+
+Future<void> loadWords() async {
+  words.clear();
+  await loadJsonFile(
+    'assets/n5_verbs.json',
+  );
+  await loadJsonFile(
+    'assets/n5_nouns.json',
+  );
+  await loadJsonFile(
+    'assets/n5_adjectives.json',
+  );
+  print(
+    'Total words loaded: ${words.length}',
+  );
+}
+
+
+
+
+
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,41 +118,8 @@ void initState() {
   loadFavoritesHome();
 }
 
-Future<void> loadJsonFile(
-  String path,
-) async {
 
-  final jsonString =
-      await rootBundle.loadString(path);
 
-  final List<dynamic> jsonData =
-      json.decode(jsonString);
-
-  words.addAll(
-
-    jsonData.map(
-      (item) =>
-          Vocabulary.fromJson(item),
-    ),
-
-  );
-}
-
-Future<void> loadWords() async {
-  words.clear();
-  await loadJsonFile(
-    'assets/n5_verbs.json',
-  );
-  await loadJsonFile(
-    'assets/n5_nouns.json',
-  );
-  await loadJsonFile(
-    'assets/n5_adjectives.json',
-  );
-  print(
-    'Total words loaded: ${words.length}',
-  );
-}
 
 Future<void> loadFavoritesHome() async {
   final prefs = await SharedPreferences.getInstance();
