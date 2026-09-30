@@ -6,6 +6,7 @@ import 'favorite_listening_page.dart';
 import 'vocabulary_data.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'favorite_flashcard_page.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -177,42 +178,68 @@ Text(
 Text(
   'Favorites: $favoriteCount',
 ),
-
-const SizedBox(height: 30),
+//
+//const SizedBox(height: 30),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {},
               child: const Text('Start Today\'s Study'),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const FlashcardPage(),
-      ),
-    ).then((_) {
-      setState(() {});
-    });
-  },
-  child: const Text('Flashcards'),
-),
+            //
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ListeningPage(),
-                ),
-              );
-            },
-            child: const Text('Listening Mode'),
-              ),
+              context,
+              MaterialPageRoute(
+              builder: (context) =>
+              const FlashcardPage(),
+                                ),
+                            ).then((_) {
+                          setState(() {});
+                                      });
+                            },
+              child: const Text(
+                                'Flashcards',
+                                ),
+                            ),
+            //
             const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+              Navigator.push(
+              context,
+                MaterialPageRoute(
+              builder: (context) =>
+            const FavoriteFlashcardPage(),
+                                  ),
+                            );
+                            },
+              child: const Text(
+              '⭐ Favorite Flashcards',
+                              ),
+                          ),
+//
+const SizedBox(height: 10),
 
-           ElevatedButton(
+            ElevatedButton(
+              onPressed: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+              const ListeningPage(),
+                                ),
+                            );
+                            },
+                child: const Text(
+                  'Listening Mode',
+                                  ),
+                              ),
+
+const SizedBox(height: 10),
+
+ElevatedButton(
   onPressed: () {
     Navigator.push(
       context,
