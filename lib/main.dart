@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -377,10 +378,6 @@ onPressed: () async {
   );
 },
 ),
-
-            
-            
-            
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
@@ -390,21 +387,38 @@ onPressed: () async {
               },
               child: const Text('Show Answer'),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  currentIndex =
-                      (currentIndex + 1) % words.length;
-                  showAnswer = false;
-                });
-              },
-              child: const Text('Next Word'),
-            ),
-          ],
-        ),
-      ),
+           const SizedBox(height: 10),
+
+ElevatedButton(
+  onPressed: () {
+    final random = Random();
+
+    int nextIndex;
+
+    do {
+      nextIndex =
+          random.nextInt(words.length);
+    } while (
+      nextIndex == currentIndex &&
+      words.length > 1
     );
+
+    setState(() {
+      currentIndex = nextIndex;
+      showAnswer = false;
+    });
+  },
+
+  child: const Text(
+    'Next Word',
+  ),
+),
+
+],
+),
+),
+);
+
   }
 }
 class ListeningPage extends StatefulWidget {
