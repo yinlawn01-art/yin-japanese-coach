@@ -3,9 +3,18 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'favorite_listening_page.dart';
 import 'vocabulary_data.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await loadWords();
+
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -24,7 +33,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class Vocabulary {
   final String kanji;
   final String hiragana;
@@ -40,6 +48,17 @@ class Vocabulary {
     required this.meaning,
     this.isFavorite = false,
   });
+
+  factory Vocabulary.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return Vocabulary(
+      kanji: json['kanji'],
+      hiragana: json['hiragana'],
+      romaji: json['romaji'],
+      meaning: json['meaning'],
+    );
+  }
 }
 
 
@@ -58,6 +77,42 @@ class _HomePageState extends State<HomePage> {
 void initState() {
   super.initState();
   loadFavoritesHome();
+}
+
+Future<void> loadJsonFile(
+  String path,
+) async {
+
+  final jsonString =
+      await rootBundle.loadString(path);
+
+  final List<dynamic> jsonData =
+      json.decode(jsonString);
+
+  words.addAll(
+
+    jsonData.map(
+      (item) =>
+          Vocabulary.fromJson(item),
+    ),
+
+  );
+}
+
+Future<void> loadWords() async {
+  words.clear();
+  await loadJsonFile(
+    'assets/n5_verbs.json',
+  );
+  await loadJsonFile(
+    'assets/n5_nouns.json',
+  );
+  await loadJsonFile(
+    'assets/n5_adjectives.json',
+  );
+  print(
+    'Total words loaded: ${words.length}',
+  );
 }
 
 Future<void> loadFavoritesHome() async {
