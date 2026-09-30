@@ -1,0 +1,33 @@
+[
+    {
+      "kanji": "食べる",
+      "hiragana": "たべる",
+      "romaji": "taberu",
+      "meaning": "吃"
+    },
+    {
+      "kanji": "飲む",
+      "hiragana": "のむ",
+      "romaji": "nomu",
+      "meaning": "喝"
+    },
+    {
+      "kanji": "行く",
+      "hiragana": "いく",
+      "romaji": "iku",
+      "meaning": "去"
+    },
+    {
+      "kanji": "見る",
+      "hiragana": "みる",
+      "romaji": "miru",
+      "meaning": "看"
+    },
+    {
+      "kanji": "聞く",
+      "hiragana": "きく",
+      "romaji": "kiku",
+      "meaning": "聽"
+    }
+  ]
+  

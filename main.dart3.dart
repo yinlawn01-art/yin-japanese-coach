@@ -42,9 +42,7 @@ class Vocabulary {
   });
 }
 
-
 class HomePage extends StatefulWidget {
-  
   const HomePage({super.key});
   @override
   State<HomePage> createState() => _HomePageState();
@@ -96,27 +94,9 @@ Future<void> loadFavoritesHome() async {
             ),
             const SizedBox(height: 10),
             const Text(
-  '0 / 10 Words',
-  style: TextStyle(fontSize: 20),
-),
-
-Text(
-  'N5 Vocabulary',
-  style: const TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-  ),
-),
-
-Text(
-  'Words Loaded: ${words.length}',
-),
-
-Text(
-  'Favorites: $favoriteCount',
-),
-
-const SizedBox(height: 30),
+              '0 / 10 Words',
+              style: TextStyle(fontSize: 20),
+            ),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {},
