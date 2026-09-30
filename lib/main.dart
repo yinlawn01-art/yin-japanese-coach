@@ -767,22 +767,3 @@ class _FavoriteListeningPageState
     );
   }
 }
-class FavoriteFlashcardPage extends StatelessWidget {
-  const FavoriteFlashcardPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Favorite Flashcards',
-        ),
-      ),
-      body: const Center(
-        child: Text(
-          'Favorite Flashcards',
-        ),
-      ),
-    );
-  }
-}
