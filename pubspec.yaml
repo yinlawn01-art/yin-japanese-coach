@@ -46,11 +46,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-assets:
-  - assets/n5_verbs.json
-  - assets/n5_nouns.json
-  - assets/n5_adjectives.json
-  - assets/n5_words.json
+  assets:
+    - assets/n5_verbs.json
+    - assets/n5_nouns.json
+    - assets/n5_adjectives.json
+    - assets/n5_words.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
