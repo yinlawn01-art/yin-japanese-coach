@@ -30,13 +30,13 @@ Future<void> loadJsonFile(
 Future<void> loadWords() async {
   words.clear();
   await loadJsonFile(
-    'Assets/n5_verbs.json',
+    'assets/n5_verbs.json',
   );
   await loadJsonFile(
-    'Assets/n5_nouns.json',
+    'assets/n5_nouns.json',
   );
   await loadJsonFile(
-    'Assets/n5_adjectives.json',
+    'assets/n5_adjectives.json',
   );
   print(
     'Total words loaded: ${words.length}',
