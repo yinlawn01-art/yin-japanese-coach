@@ -10,6 +10,7 @@ import 'favorite_flashcard_page.dart';
 
 Future<void> loadJsonFile(
   String path,
+  String wordType,
 ) async {
 
   final jsonString =
@@ -21,30 +22,39 @@ Future<void> loadJsonFile(
   words.addAll(
 
     jsonData.map(
-      (item) =>
-          Vocabulary.fromJson(item),
+
+      (item) => Vocabulary.fromJson(
+        item,
+        wordType,
+      ),
+
     ),
+
   );
 }
 
 Future<void> loadWords() async {
   words.clear();
 
-  await loadJsonFile(
-    'assets/n5_verbs.json',
-  );
+await loadJsonFile(
+  'assets/n5_verbs.json',
+  '🟢 動詞',
+);
 
-  await loadJsonFile(
-    'assets/n5_nouns.json',
-  );
+await loadJsonFile(
+  'assets/n5_nouns.json',
+  '🔵 名詞',
+);
 
-  await loadJsonFile(
-    'assets/n5_adjectives.json',
-  );
+await loadJsonFile(
+  'assets/n5_adjectives.json',
+  '🟣 形容詞',
+);
 
-  await loadJsonFile(
-    'assets/n5_words.json',
-  );
+await loadJsonFile(
+  'assets/n5_words.json',
+  '📚 單字',
+);
 }
 
 
@@ -83,25 +93,29 @@ class Vocabulary {
   final String hiragana;
   final String romaji;
   final String meaning;
+  final String wordType;
 
   bool isFavorite;
 
-  Vocabulary({
-    required this.kanji,
-    required this.hiragana,
-    required this.romaji,
-    required this.meaning,
-    this.isFavorite = false,
-  });
+Vocabulary({
+  required this.kanji,
+  required this.hiragana,
+  required this.romaji,
+  required this.meaning,
+  required this.wordType,
+  this.isFavorite = false,
+});
 
   factory Vocabulary.fromJson(
     Map<String, dynamic> json,
+    String wordType,
   ) {
     return Vocabulary(
       kanji: json['kanji'],
       hiragana: json['hiragana'],
       romaji: json['romaji'],
       meaning: json['meaning'],
+      wordType: wordType,
     );
   }
 }

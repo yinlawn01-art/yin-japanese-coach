@@ -124,6 +124,17 @@ if (showAnswer)
         ),
       ),
 
+const SizedBox(height: 8),
+
+Text(
+  currentWord.wordType,
+  style: const TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.bold,
+    color: Colors.purple,
+  ),
+),
+
       const SizedBox(height: 10),
 
       Text(
