@@ -6,14 +6,13 @@ const double speechVolumeNotch = 0.1;
 
 final Map<String, Map<String, String>?> _chosenVoices = {};
 
-/// Speaks at a natural pace. Japanese is one notch louder than the shared
-/// level, and Chinese is one notch quieter. A male voice is used when the
-/// device has one.
+/// Speaks at a natural pace. Japanese is one notch louder and 20% slower.
+/// Chinese is one notch quieter. A male voice is used when the device has one.
 Future<void> applyNaturalVoice(FlutterTts tts, String language) async {
   await tts.setLanguage(language);
   await tts.setVolume(volumeForLanguage(language));
   await tts.setPitch(1.0);
-  await tts.setSpeechRate(kIsWeb ? 1.0 : 0.5);
+  await tts.setSpeechRate(rateForLanguage(language));
 
   final voice = await _maleVoice(tts, language);
   if (voice != null) {
@@ -32,6 +31,13 @@ double volumeForLanguage(String language) {
       ? base - speechVolumeNotch
       : base + speechVolumeNotch;
   return stepped.clamp(0.0, 1.0);
+}
+
+/// Japanese is 20% slower than the platform's normal speaking rate.
+double rateForLanguage(String language, {bool? web}) {
+  final normal = (web ?? kIsWeb) ? 1.0 : 0.5;
+  if (language.toLowerCase().startsWith('ja')) return normal * 0.8;
+  return normal;
 }
 
 Future<Map<String, String>?> _maleVoice(

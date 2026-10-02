@@ -2,6 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yin_japanese_coach/soft_speech.dart';
 
 void main() {
+  test('Japanese is 20% slower than a normal pace', () {
+    expect(rateForLanguage('ja-JP', web: true), 0.8);
+    expect(rateForLanguage('ja-JP', web: false), 0.4);
+    expect(rateForLanguage('zh-TW', web: true), 1.0);
+    expect(rateForLanguage('zh-TW', web: false), 0.5);
+  });
+
   test('Chinese is one notch quieter and Japanese is at the loudest step', () {
     expect(volumeForLanguage('zh-TW'), 0.9);
     expect(volumeForLanguage('ja-JP'), 1.0);
