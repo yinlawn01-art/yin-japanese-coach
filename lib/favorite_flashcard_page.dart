@@ -39,7 +39,7 @@ class _FavoriteFlashcardPageState
 
     static const Size _actionButtonSize = Size(168, 48);
 
-    static const double _answerSlotHeight = 156;
+    static const double _answerSlotHeight = 196;
 
 Future<void> _saveFavorites() async {
   final prefs = await SharedPreferences.getInstance();
