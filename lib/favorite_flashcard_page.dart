@@ -102,7 +102,7 @@ children: [
 
   const SizedBox(height: 30),
 
-if (showAnswer)
+if (showAnswer) ...[
   Column(
     children: [
 
@@ -124,16 +124,16 @@ if (showAnswer)
         ),
       ),
 
-const SizedBox(height: 8),
+      const SizedBox(height: 8),
 
-Text(
-  currentWord.wordType,
-  style: const TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.bold,
-    color: Colors.purple,
-  ),
-),
+      Text(
+        currentWord.wordType,
+        style: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.purple,
+        ),
+      ),
 
       const SizedBox(height: 10),
 
@@ -150,62 +150,33 @@ Text(
 
   const SizedBox(height: 30),
 
-ElevatedButton(
-  onPressed: () async {
-
-    setState(() {
-      showAnswer = true;
-    });
-
-    await flutterTts.setLanguage(
-      'ja-JP',
-    );
-
-    await flutterTts.setSpeechRate(
-      0.4,
-    );
-
-    await flutterTts.speak(
-      currentWord.hiragana,
-    );
-  },
-  child: const Text(
-    'Show Answer',
+  ElevatedButton(
+    onPressed: nextFavorite,
+    child: const Text('Next'),
   ),
-),
+] else
+  ElevatedButton(
+    onPressed: () async {
+      setState(() {
+        showAnswer = true;
+      });
 
-const SizedBox(height: 10),
+      await flutterTts.setLanguage(
+        'ja-JP',
+      );
 
-//ElevatedButton(
-  //onPressed: () async {
+      await flutterTts.setSpeechRate(
+        0.4,
+      );
 
-   // await flutterTts.setLanguage(
-   //   'ja-JP',
-   // );
-
-  //  await flutterTts.setSpeechRate(
-  //    0.4,
-  //  );
-
-  //  await flutterTts.speak(
-  //    currentWord.kanji,
-  //  );
-
- // },
- // child: const Text(
- //   '🔊 Replay',
- // ),
-//),
-
-const SizedBox(height: 10),
-
-ElevatedButton(
-  onPressed: nextFavorite,
-
-  child: const Text(
-    'Next Favorite',
+      await flutterTts.speak(
+        currentWord.hiragana,
+      );
+    },
+    child: const Text(
+      'Show Answer',
+    ),
   ),
-),
 
 
 ],
