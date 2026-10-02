@@ -167,21 +167,14 @@ Future<void> loadFavoritesHome() async {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFD6ECFA),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isPhone = constraints.maxWidth < 700;
-
-          return SizedBox.expand(
+      backgroundColor: Colors.transparent,
+      body: SizedBox.expand(
         child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: const Color(0xFFD6ECFA),
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: const AssetImage('assets/homepage_shinkai.jpg'),
-            fit: isPhone ? BoxFit.contain : BoxFit.cover,
-            alignment: isPhone
-                ? Alignment.center
-                : const Alignment(0.25, 0.05),
+            image: AssetImage('assets/homepage_shinkai.jpg'),
+            fit: BoxFit.cover,
+            alignment: Alignment(0.25, 0.05),
           ),
         ),
         child: DecoratedBox(
@@ -277,8 +270,6 @@ Future<void> loadFavoritesHome() async {
           ),
         ),
         ),
-      );
-        },
       ),
     );
   }
