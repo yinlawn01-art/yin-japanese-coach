@@ -225,7 +225,9 @@ Text(
               builder: (context) =>
             const FavoriteFlashcardPage(),
                                   ),
-                            );
+                            ).then((_) {
+                          setState(() {});
+                                      });
                             },
               child: const Text(
               '⭐ Favorite Flashcards',
