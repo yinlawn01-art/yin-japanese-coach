@@ -6,6 +6,7 @@ import 'vocabulary_data.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'favorite_flashcard_page.dart';
+import 'soft_speech.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -282,8 +283,7 @@ Future<void> saveFavorites() async {
 
   Future<void> speakJapanese(String text) async {
     await flutterTts.stop();
-    await flutterTts.setLanguage("ja-JP");
-    await flutterTts.setSpeechRate(0.4);
+    await applySoftVoice(flutterTts, 'ja-JP');
     await flutterTts.speak(text);
   }
 
@@ -485,9 +485,6 @@ void dispose() {
       isPlaying = true;
     });
 
-    await flutterTts.setLanguage("ja-JP");
-    await flutterTts.setSpeechRate(0.4);
-
     for (var word in words) {
       if (!isPlaying) break;
 
@@ -495,21 +492,19 @@ void dispose() {
         currentWord = word.kanji;
       });
 
+      await applySoftVoice(flutterTts, 'ja-JP');
       await flutterTts.speak(word.hiragana);
 
       await Future.delayed(
         const Duration(seconds: 3),
       );
 
-      await flutterTts.setLanguage("zh-TW");
-
+      await applySoftVoice(flutterTts, 'zh-TW');
       await flutterTts.speak(word.meaning);
 
       await Future.delayed(
         const Duration(seconds: 3),
       );
-
-      await flutterTts.setLanguage("ja-JP");
     }
 
     setState(() {
@@ -685,8 +680,7 @@ class _FavoriteListeningPageState
         currentWord = word.kanji;
       });
 
-      await flutterTts.setLanguage("ja-JP");
-
+      await applySoftVoice(flutterTts, 'ja-JP');
       await flutterTts.speak(
         word.hiragana,
       );
@@ -695,8 +689,7 @@ class _FavoriteListeningPageState
         const Duration(seconds: 3),
       );
 
-      await flutterTts.setLanguage("zh-TW");
-
+      await applySoftVoice(flutterTts, 'zh-TW');
       await flutterTts.speak(
         word.meaning,
       );

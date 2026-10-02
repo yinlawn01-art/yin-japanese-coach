@@ -12,6 +12,8 @@ import 'vocabulary_data.dart';
 
 import 'package:flutter_tts/flutter_tts.dart';
 
+import 'soft_speech.dart';
+
 class FavoriteFlashcardPage extends StatefulWidget {
   const FavoriteFlashcardPage({super.key});
 
@@ -66,8 +68,7 @@ Future<void> _saveFavorites() async {
 
 Future<void> speakJapanese(String text) async {
   await flutterTts.stop();
-  await flutterTts.setLanguage('ja-JP');
-  await flutterTts.setSpeechRate(0.4);
+  await applySoftVoice(flutterTts, 'ja-JP');
   await flutterTts.speak(text);
 }
 
@@ -150,8 +151,7 @@ Future<void> _speakLine(
   flutterTts.setErrorHandler((_) => finish());
   flutterTts.setCancelHandler(finish);
 
-  await flutterTts.setLanguage(language);
-  await flutterTts.setSpeechRate(0.4);
+  await applySoftVoice(flutterTts, language);
 
   if (!_isCurrentPlay(generation)) {
     finish();
