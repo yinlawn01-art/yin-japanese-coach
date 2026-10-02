@@ -52,14 +52,40 @@ Future<void> _saveFavorites() async {
   await prefs.setStringList('favorites', favorites);
 }
 
+Future<void> speakJapanese(String text) async {
+  await flutterTts.stop();
+  await flutterTts.setLanguage('ja-JP');
+  await flutterTts.setSpeechRate(0.4);
+  await flutterTts.speak(text);
+}
+
 Future<void> showCurrentAnswer() async {
+  final japanese = currentWord.hiragana;
+
   setState(() {
     showAnswer = true;
   });
 
-  await flutterTts.setLanguage('ja-JP');
-  await flutterTts.setSpeechRate(0.4);
-  await flutterTts.speak(currentWord.hiragana);
+  await speakJapanese(japanese);
+}
+
+Widget speakableText({
+  required String text,
+  required TextStyle style,
+  required String japanese,
+}) {
+  return MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => speakJapanese(japanese),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: style,
+      ),
+    ),
+  );
 }
 
 Future<void> removeCurrentFavorite() async {
@@ -138,13 +164,22 @@ return Scaffold(
     
 children: [
 
-  Text(
-    currentWord.kanji,
-    style: const TextStyle(
-      fontSize: 48,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
+  showAnswer
+      ? speakableText(
+          text: currentWord.kanji,
+          japanese: currentWord.hiragana,
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+          ),
+        )
+      : Text(
+          currentWord.kanji,
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
 
   IconButton(
     iconSize: 40,
@@ -162,9 +197,9 @@ children: [
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                currentWord.hiragana,
-                textAlign: TextAlign.center,
+              speakableText(
+                text: currentWord.hiragana,
+                japanese: currentWord.hiragana,
                 style: const TextStyle(
                   fontSize: 28,
                   color: Colors.green,
@@ -190,9 +225,9 @@ children: [
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
-                currentWord.meaning,
-                textAlign: TextAlign.center,
+              speakableText(
+                text: currentWord.meaning,
+                japanese: currentWord.hiragana,
                 style: const TextStyle(
                   fontSize: 28,
                   color: Colors.blue,
