@@ -230,7 +230,18 @@ Future<void> playAllFavorites() async {
       showPlayingJapanese = false;
     });
 
+    final chineseShownAt = DateTime.now();
     await _speakLine(word.meaning, 'zh-TW', generation);
+    if (!_isCurrentPlay(generation)) break;
+
+    final chineseVisibleFor = DateTime.now().difference(chineseShownAt);
+    const minimumChineseTime = Duration(seconds: 2);
+    if (chineseVisibleFor < minimumChineseTime) {
+      await _pause(
+        minimumChineseTime - chineseVisibleFor,
+        generation,
+      );
+    }
     if (!_isCurrentPlay(generation)) break;
 
     index = _nextPlayIndex(list.length, index);
@@ -327,7 +338,10 @@ return Scaffold(
                   child: _favoriteCard(),
                 ),
                 Positioned(
-                  top: constraints.maxHeight * 0.10,
+                  top: (MediaQuery.sizeOf(context).height * 0.10 -
+                          (MediaQuery.sizeOf(context).height -
+                              constraints.maxHeight))
+                      .clamp(0.0, constraints.maxHeight),
                   left: 16,
                   right: 16,
                   child: Center(
