@@ -163,121 +163,88 @@ Future<void> loadFavoritesHome() async {
       appBar: AppBar(
         title: const Text('Yin Japanese Coach'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Today\'s Progress',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final screenHeight = MediaQuery.sizeOf(context).height;
+          final titleTop = (screenHeight * 0.20 -
+                  (screenHeight - constraints.maxHeight))
+              .clamp(0.0, constraints.maxHeight);
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: titleTop),
+                const Text(
+                  '龍吟的日本課程',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'LXGW WenKai',
+                    fontSize: 42,
+                    color: Color(0xFF0A2F6B),
+                    letterSpacing: 4,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                const Text(
+                  'Today\'s Progress',
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  '0 / 10 Words',
+                  style: TextStyle(fontSize: 20),
+                ),
+                const Text(
+                  'N5 Vocabulary',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Words Loaded: ${words.length}',
+                ),
+                Text(
+                  'Favorites: $favoriteCount',
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FlashcardPage(),
+                      ),
+                    ).then((_) {
+                      setState(() {});
+                    });
+                  },
+                  child: const Text('Flashcards'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FavoriteFlashcardPage(),
+                      ),
+                    ).then((_) {
+                      setState(() {});
+                    });
+                  },
+                  child: Text('Favorite Words ($favoriteCount)'),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            const Text(
-  '0 / 10 Words',
-  style: TextStyle(fontSize: 20),
-),
-
-Text(
-  'N5 Vocabulary',
-  style: const TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-  ),
-),
-
-Text(
-  'Words Loaded: ${words.length}',
-),
-
-Text(
-  'Favorites: $favoriteCount',
-),
-//
-//const SizedBox(height: 30),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-              Navigator.push(
-              context,
-              MaterialPageRoute(
-              builder: (context) =>
-              const FlashcardPage(),
-                                ),
-                            ).then((_) {
-                          setState(() {});
-                                      });
-                            },
-              child: const Text(
-                                'Flashcards',
-                                ),
-                            ),
-            //
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-              Navigator.push(
-              context,
-                MaterialPageRoute(
-              builder: (context) =>
-            const FavoriteFlashcardPage(),
-                                  ),
-                            ).then((_) {
-                          setState(() {});
-                                      });
-                            },
-              child: const Text(
-              '⭐ Favorite Flashcards',
-                              ),
-                          ),
-//
-const SizedBox(height: 10),
-
-            ElevatedButton(
-              onPressed: () {
-              Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-              const ListeningPage(),
-                                ),
-                            );
-                            },
-                child: const Text(
-                  'Listening Mode',
-                                  ),
-                              ),
-
-const SizedBox(height: 10),
-
-ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            const FavoritesPage(),
-      ),
-    ).then((_) {
-      setState(() {});
-    });
-  },
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      const Icon(Icons.star),
-      const SizedBox(width: 8),
-      Text(
-        'Favorites ($favoriteCount)',
-      ),
-    ],
-  ),
-),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

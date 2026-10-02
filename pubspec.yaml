@@ -52,6 +52,11 @@ flutter:
     - assets/n5_adjectives.json
     - assets/n5_words.json
 
+  fonts:
+    - family: LXGW WenKai
+      fonts:
+        - asset: fonts/LXGWWenKai-Regular.ttf
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
