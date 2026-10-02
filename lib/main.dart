@@ -160,77 +160,124 @@ Future<void> loadFavoritesHome() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Yin Japanese Coach'),
+        backgroundColor: const Color(0xD9FFFFFF),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final screenHeight = MediaQuery.sizeOf(context).height;
-          final titleTop = (screenHeight * 0.20 -
-                  (screenHeight - constraints.maxHeight))
-              .clamp(0.0, constraints.maxHeight);
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: titleTop),
-                const Text(
-                  '龍吟的日本課程',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'LXGW WenKai',
-                    fontSize: 42,
-                    color: Color(0xFF0A2F6B),
-                    letterSpacing: 4,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 36),
-                Text(
-                  'Words Loaded: ${words.length}',
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(80),
-                    textStyle: const TextStyle(fontSize: 28),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FlashcardPage(),
-                      ),
-                    ).then((_) {
-                      setState(() {});
-                    });
-                  },
-                  child: const Text('Flashcards'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(60),
-                    textStyle: const TextStyle(fontSize: 21),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FavoriteFlashcardPage(),
-                      ),
-                    ).then((_) {
-                      setState(() {});
-                    });
-                  },
-                  child: Text('Favorite Words ($favoriteCount)'),
-                ),
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/homepage_fuji.jpg'),
+            fit: BoxFit.cover,
+            alignment: Alignment(0.15, -0.35),
+          ),
+        ),
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0x33FFFFFF),
+                Color(0x55FFF8F2),
+                Color(0x66FFFFFF),
               ],
+              stops: [0.0, 0.42, 1.0],
             ),
-          );
-        },
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final screenHeight = MediaQuery.sizeOf(context).height;
+              final titleTop = (screenHeight * 0.20 -
+                      (screenHeight - constraints.maxHeight))
+                  .clamp(0.0, constraints.maxHeight);
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: titleTop),
+                    const Text(
+                      '龍吟的日本課程',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'LXGW WenKai',
+                        fontSize: 42,
+                        color: Color(0xFF0A2F6B),
+                        letterSpacing: 4,
+                        height: 1.3,
+                        shadows: [
+                          Shadow(
+                            color: Color(0xE6FFFFFF),
+                            blurRadius: 16,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 36),
+                    Text(
+                      'Words Loaded: ${words.length}',
+                      style: const TextStyle(
+                        color: Color(0xFF16325C),
+                        shadows: [
+                          Shadow(
+                            color: Color(0xE6FFFFFF),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(80),
+                        textStyle: const TextStyle(fontSize: 28),
+                        backgroundColor: const Color(0xF2FFFFFF),
+                        foregroundColor: const Color(0xFF1A4A8A),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FlashcardPage(),
+                          ),
+                        ).then((_) {
+                          setState(() {});
+                        });
+                      },
+                      child: const Text('Flashcards'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(90),
+                        textStyle: const TextStyle(fontSize: 32),
+                        backgroundColor: const Color(0xF2FFFFFF),
+                        foregroundColor: const Color(0xFF1A4A8A),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FavoriteFlashcardPage(),
+                          ),
+                        ).then((_) {
+                          setState(() {});
+                        });
+                      },
+                      child: Text('Favorite Words ($favoriteCount)'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -283,7 +330,7 @@ Future<void> saveFavorites() async {
 
   Future<void> speakJapanese(String text) async {
     await flutterTts.stop();
-    await applySoftVoice(flutterTts, 'ja-JP');
+    await applyNaturalVoice(flutterTts, 'ja-JP');
     await flutterTts.speak(text);
   }
 
@@ -492,14 +539,14 @@ void dispose() {
         currentWord = word.kanji;
       });
 
-      await applySoftVoice(flutterTts, 'ja-JP');
+      await applyNaturalVoice(flutterTts, 'ja-JP');
       await flutterTts.speak(word.hiragana);
 
       await Future.delayed(
         const Duration(seconds: 3),
       );
 
-      await applySoftVoice(flutterTts, 'zh-TW');
+      await applyNaturalVoice(flutterTts, 'zh-TW');
       await flutterTts.speak(word.meaning);
 
       await Future.delayed(
@@ -680,7 +727,7 @@ class _FavoriteListeningPageState
         currentWord = word.kanji;
       });
 
-      await applySoftVoice(flutterTts, 'ja-JP');
+      await applyNaturalVoice(flutterTts, 'ja-JP');
       await flutterTts.speak(
         word.hiragana,
       );
@@ -689,7 +736,7 @@ class _FavoriteListeningPageState
         const Duration(seconds: 3),
       );
 
-      await applySoftVoice(flutterTts, 'zh-TW');
+      await applyNaturalVoice(flutterTts, 'zh-TW');
       await flutterTts.speak(
         word.meaning,
       );

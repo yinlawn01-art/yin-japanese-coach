@@ -68,7 +68,7 @@ Future<void> _saveFavorites() async {
 
 Future<void> speakJapanese(String text) async {
   await flutterTts.stop();
-  await applySoftVoice(flutterTts, 'ja-JP');
+  await applyNaturalVoice(flutterTts, 'ja-JP');
   await flutterTts.speak(text);
 }
 
@@ -151,7 +151,7 @@ Future<void> _speakLine(
   flutterTts.setErrorHandler((_) => finish());
   flutterTts.setCancelHandler(finish);
 
-  await applySoftVoice(flutterTts, language);
+  await applyNaturalVoice(flutterTts, language);
 
   if (!_isCurrentPlay(generation)) {
     finish();
