@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -187,34 +186,16 @@ Future<void> loadFavoritesHome() async {
                     height: 1.3,
                   ),
                 ),
-                const SizedBox(height: 28),
-                const Text(
-                  'Today\'s Progress',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  '0 / 10 Words',
-                  style: TextStyle(fontSize: 20),
-                ),
-                const Text(
-                  'N5 Vocabulary',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                const SizedBox(height: 36),
                 Text(
                   'Words Loaded: ${words.length}',
                 ),
-                Text(
-                  'Favorites: $favoriteCount',
-                ),
                 const SizedBox(height: 30),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(80),
+                    textStyle: const TextStyle(fontSize: 28),
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -229,6 +210,10 @@ Future<void> loadFavoritesHome() async {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(60),
+                    textStyle: const TextStyle(fontSize: 21),
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -292,16 +277,53 @@ Future<void> saveFavorites() async {
   int currentIndex = 0;
   bool showAnswer = false;
 
+  static const Size _actionButtonSize = Size(168, 48);
+  static const double _answerSlotHeight = 210;
+
   Future<void> speakJapanese(String text) async {
+    await flutterTts.stop();
+    await flutterTts.setLanguage("ja-JP");
+    await flutterTts.setSpeechRate(0.4);
+    await flutterTts.speak(text);
+  }
 
-  await flutterTts.stop();
+  Future<void> showCurrentAnswer() async {
+    final japanese = words[currentIndex].hiragana;
 
-  await flutterTts.setLanguage("ja-JP");
+    setState(() {
+      showAnswer = true;
+    });
 
-  await flutterTts.setSpeechRate(0.4);
+    await speakJapanese(japanese);
+  }
 
-  await flutterTts.speak(text);
-}
+  void nextWord() {
+    flutterTts.stop();
+    setState(() {
+      if (words.isEmpty) return;
+      currentIndex = (currentIndex + 1) % words.length;
+      showAnswer = false;
+    });
+  }
+
+  Widget speakableText({
+    required String text,
+    required TextStyle style,
+    required String japanese,
+  }) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => speakJapanese(japanese),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: style,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -334,22 +356,23 @@ Future<void> saveFavorites() async {
                         ),
                       ),
                       const SizedBox(height: 40),
-                      Text(
-                        word.kanji,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      IconButton(
-                        iconSize: 60,
-                        icon: const Icon(Icons.volume_up),
-                        onPressed: () {
-                          speakJapanese(word.hiragana);
-                        },
-                      ),
+                      showAnswer
+                          ? speakableText(
+                              text: word.kanji,
+                              japanese: word.hiragana,
+                              style: const TextStyle(
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          : Text(
+                              word.kanji,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                       IconButton(
                         iconSize: 40,
                         icon: Icon(
@@ -371,72 +394,61 @@ Future<void> saveFavorites() async {
                           );
                         },
                       ),
-                      if (showAnswer) ...[
-                        const SizedBox(height: 24),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              word.hiragana,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 24),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              word.romaji,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 24),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              '詞性：${word.wordType}',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              word.meaning,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 28,
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      const SizedBox(height: 40),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            showAnswer = true;
-                          });
-                        },
-                        child: const Text('Show Answer'),
+                      SizedBox(
+                        height: _answerSlotHeight,
+                        child: showAnswer
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  speakableText(
+                                    text: word.hiragana,
+                                    japanese: word.hiragana,
+                                    style: const TextStyle(fontSize: 24),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  speakableText(
+                                    text: word.romaji,
+                                    japanese: word.hiragana,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    '詞性：${word.wordType}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  speakableText(
+                                    text: word.meaning,
+                                    japanese: word.hiragana,
+                                    style: const TextStyle(
+                                      fontSize: 28,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
                       ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          final random = Random();
-
-                          int nextIndex;
-
-                          do {
-                            nextIndex = random.nextInt(words.length);
-                          } while (nextIndex == currentIndex &&
-                              words.length > 1);
-
-                          setState(() {
-                            currentIndex = nextIndex;
-                            showAnswer = false;
-                          });
-                        },
-                        child: const Text('Next Word'),
+                      SizedBox.fromSize(
+                        size: _actionButtonSize,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: _actionButtonSize,
+                            minimumSize: _actionButtonSize,
+                            maximumSize: _actionButtonSize,
+                            padding: EdgeInsets.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: showAnswer ? nextWord : showCurrentAnswer,
+                          child: Text(showAnswer ? 'Next' : 'Show Answer'),
+                        ),
                       ),
                     ],
                   ),
@@ -447,7 +459,6 @@ Future<void> saveFavorites() async {
         },
       ),
     );
-
   }
 }
 class ListeningPage extends StatefulWidget {
