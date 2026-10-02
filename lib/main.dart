@@ -200,12 +200,6 @@ Text(
 //const SizedBox(height: 30),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {},
-              child: const Text('Start Today\'s Study'),
-            ),
-            //
-            const SizedBox(height: 10),
-            ElevatedButton(
               onPressed: () {
               Navigator.push(
               context,
@@ -280,11 +274,6 @@ ElevatedButton(
     ],
   ),
 ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Settings'),
-            ),
           ],
         ),
       ),
