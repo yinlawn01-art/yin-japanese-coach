@@ -342,116 +342,142 @@ Future<void> saveFavorites() async {
       appBar: AppBar(
         title: const Text('Flashcards'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Text(
-              'Word ${currentIndex + 1} / ${words.length}',
-              style: const TextStyle(
-                fontSize: 20,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
               ),
-            ),
-            const SizedBox(height: 40),
-            Text(
-              word.kanji,
-              style: const TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          const SizedBox(height: 20),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Word ${currentIndex + 1} / ${words.length}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      Text(
+                        word.kanji,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 48,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      IconButton(
+                        iconSize: 60,
+                        icon: const Icon(Icons.volume_up),
+                        onPressed: () {
+                          speakJapanese(word.hiragana);
+                        },
+                      ),
+                      IconButton(
+                        iconSize: 40,
+                        icon: Icon(
+                          word.isFavorite
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: Colors.amber,
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            word.isFavorite = !word.isFavorite;
+                          });
 
-        IconButton(
-          iconSize: 60,
-          icon: const Icon(Icons.volume_up),
-          onPressed: () {
-            speakJapanese(word.hiragana);
-          },
-        ),
+                          await saveFavorites();
 
-            const SizedBox(height: 30),
-            if (showAnswer) ...[
-              Text(
-                word.hiragana,
-                style: const TextStyle(fontSize: 24),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                word.romaji,
-                style: const TextStyle(fontSize: 24),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                word.meaning,
-                style: const TextStyle(
-                  fontSize: 28,
-                  color: Colors.blue,
+                          print(
+                            "Saved Favorites: "
+                            "${words.where((w) => w.isFavorite).map((w) => w.kanji).toList()}"
+                          );
+                        },
+                      ),
+                      if (showAnswer) ...[
+                        const SizedBox(height: 24),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              word.hiragana,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 24),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              word.romaji,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 24),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              '詞性：${word.wordType}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              word.meaning,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                      const SizedBox(height: 40),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            showAnswer = true;
+                          });
+                        },
+                        child: const Text('Show Answer'),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          final random = Random();
+
+                          int nextIndex;
+
+                          do {
+                            nextIndex = random.nextInt(words.length);
+                          } while (nextIndex == currentIndex &&
+                              words.length > 1);
+
+                          setState(() {
+                            currentIndex = nextIndex;
+                            showAnswer = false;
+                          });
+                        },
+                        child: const Text('Next Word'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-            
-           IconButton(
-  iconSize: 40,
-  icon: Icon(
-    word.isFavorite
-        ? Icons.star
-        : Icons.star_border,
-    color: Colors.amber,
-  ),
-onPressed: () async {
-  setState(() {
-    word.isFavorite = !word.isFavorite;
-  });
-
-  await saveFavorites();
-
-  print(
-    "Saved Favorites: "
-    "${words.where((w) => w.isFavorite).map((w) => w.kanji).toList()}"
-  );
-},
-),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  showAnswer = true;
-                });
-              },
-              child: const Text('Show Answer'),
             ),
-           const SizedBox(height: 10),
-
-ElevatedButton(
-  onPressed: () {
-    final random = Random();
-
-    int nextIndex;
-
-    do {
-      nextIndex =
-          random.nextInt(words.length);
-    } while (
-      nextIndex == currentIndex &&
-      words.length > 1
+          );
+        },
+      ),
     );
-
-    setState(() {
-      currentIndex = nextIndex;
-      showAnswer = false;
-    });
-  },
-
-  child: const Text(
-    'Next Word',
-  ),
-),
-
-],
-),
-),
-);
 
   }
 }
