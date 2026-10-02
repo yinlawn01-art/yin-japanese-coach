@@ -168,12 +168,13 @@ Future<void> loadFavoritesHome() async {
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
-      body: DecoratedBox(
+      body: SizedBox.expand(
+        child: DecoratedBox(
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/homepage_fuji.jpg'),
             fit: BoxFit.cover,
-            alignment: Alignment(0.15, -0.35),
+            alignment: Alignment(0.25, 0.05),
           ),
         ),
         child: DecoratedBox(
@@ -182,11 +183,11 @@ Future<void> loadFavoritesHome() async {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0x33FFFFFF),
-                Color(0x55FFF8F2),
-                Color(0x66FFFFFF),
+                Color(0x22FFFFFF),
+                Color(0x33FFF8F2),
+                Color(0x44FFFFFF),
               ],
-              stops: [0.0, 0.42, 1.0],
+              stops: [0.0, 0.45, 1.0],
             ),
           ),
           child: LayoutBuilder(
@@ -277,6 +278,7 @@ Future<void> loadFavoritesHome() async {
               );
             },
           ),
+        ),
         ),
       ),
     );
