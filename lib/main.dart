@@ -159,20 +159,20 @@ Future<void> loadFavoritesHome() async {
 
   @override
   Widget build(BuildContext context) {
+    final homeButtonStyle = ElevatedButton.styleFrom(
+      minimumSize: const Size.fromHeight(90),
+      textStyle: const TextStyle(fontSize: 32),
+      backgroundColor: const Color(0xF2FFFFFF),
+      foregroundColor: const Color(0xFF1A4A8A),
+    );
+
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        title: const Text('Yin Japanese Coach'),
-        backgroundColor: const Color(0xD9FFFFFF),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
       body: SizedBox.expand(
         child: DecoratedBox(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/homepage_fuji.jpg'),
+            image: AssetImage('assets/homepage_shinkai.jpg'),
             fit: BoxFit.cover,
             alignment: Alignment(0.25, 0.05),
           ),
@@ -235,12 +235,7 @@ Future<void> loadFavoritesHome() async {
                     ),
                     const SizedBox(height: 30),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(80),
-                        textStyle: const TextStyle(fontSize: 28),
-                        backgroundColor: const Color(0xF2FFFFFF),
-                        foregroundColor: const Color(0xFF1A4A8A),
-                      ),
+                      style: homeButtonStyle,
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -255,12 +250,7 @@ Future<void> loadFavoritesHome() async {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(90),
-                        textStyle: const TextStyle(fontSize: 32),
-                        backgroundColor: const Color(0xF2FFFFFF),
-                        foregroundColor: const Color(0xFF1A4A8A),
-                      ),
+                      style: homeButtonStyle,
                       onPressed: () {
                         Navigator.push(
                           context,
