@@ -162,6 +162,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('收藏五十音 (1)'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('收藏五十音 (1)'));
     await tester.tap(find.text('收藏五十音 (1)'));
     await tester.pumpAndSettle();
     expect(find.text('あ'), findsOneWidget);
