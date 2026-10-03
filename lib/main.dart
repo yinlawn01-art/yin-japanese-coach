@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'favorite_flashcard_page.dart';
 import 'soft_speech.dart';
 import 'example_sentence.dart';
+import 'romaji_speech.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -390,20 +391,20 @@ Future<void> saveFavorites() async {
   static const Size _actionButtonSize = Size(168, 48);
   static const double _answerSlotHeight = 210;
 
-  Future<void> speakJapanese(String text) async {
+  Future<void> speakJapanese(String romaji) async {
     await flutterTts.stop();
     await applyNaturalVoice(flutterTts, 'ja-JP');
-    await flutterTts.speak(text);
+    await flutterTts.speak(pronunciationForRomaji(romaji));
   }
 
   Future<void> showCurrentAnswer() async {
-    final japanese = widget.deck[currentIndex].hiragana;
+    final romaji = widget.deck[currentIndex].romaji;
 
     setState(() {
       showAnswer = true;
     });
 
-    await speakJapanese(japanese);
+    await speakJapanese(romaji);
   }
 
   void nextWord() {
@@ -421,7 +422,7 @@ Future<void> saveFavorites() async {
     setState(() {
       showExample = true;
     });
-    await speakJapanese(sentence.hiragana);
+    await speakJapanese(sentence.romaji);
   }
 
   void closeExample() {
@@ -604,7 +605,7 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: const TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,
@@ -628,13 +629,13 @@ Future<void> saveFavorites() async {
         ),
         speakableText(
           text: word.hiragana,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: const TextStyle(fontSize: 24, height: 1.1),
         ),
         const SizedBox(height: 4),
         speakableText(
           text: word.romaji,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
@@ -654,7 +655,7 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: const TextStyle(
             fontSize: 28,
             height: 1.1,
@@ -679,7 +680,7 @@ Future<void> saveFavorites() async {
                   children: [
                     speakableText(
                       text: sentence.japanese,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -689,13 +690,13 @@ Future<void> saveFavorites() async {
                     const SizedBox(height: 16),
                     speakableText(
                       text: sentence.hiragana,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: const TextStyle(fontSize: 24),
                     ),
                     const SizedBox(height: 10),
                     speakableText(
                       text: sentence.romaji,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: const TextStyle(
                         fontSize: 24,
                         color: Colors.orange,
@@ -868,7 +869,7 @@ void dispose() {
       });
 
       await applyNaturalVoice(flutterTts, 'ja-JP');
-      await flutterTts.speak(word.hiragana);
+      await flutterTts.speak(pronunciationForRomaji(word.romaji));
 
       await Future.delayed(
         const Duration(seconds: 3),
@@ -1057,7 +1058,7 @@ class _FavoriteListeningPageState
 
       await applyNaturalVoice(flutterTts, 'ja-JP');
       await flutterTts.speak(
-        word.hiragana,
+        pronunciationForRomaji(word.romaji),
       );
 
       await Future.delayed(
