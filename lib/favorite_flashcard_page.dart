@@ -584,7 +584,7 @@ return Scaffold(
                     right: 0,
                     child: Center(
                       child: _matchingButton(
-                        showAnswer ? 'Next' : 'Show Answer',
+                        showAnswer ? '繼續' : 'Show Answer',
                         showAnswer
                             ? nextFavorite
                             : () {
