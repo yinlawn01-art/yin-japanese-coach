@@ -763,7 +763,7 @@ Future<void> saveFavorites() async {
             actionLabel = '繼續';
             action = nextWord;
           } else {
-            actionLabel = 'Show Answer';
+            actionLabel = '答案';
             action = () {
               showCurrentAnswer();
             };
