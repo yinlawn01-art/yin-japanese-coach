@@ -230,13 +230,13 @@ Future<void> loadFavoritesHome() async {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final screenHeight = MediaQuery.sizeOf(context).height;
-              final titleTop = (screenHeight * 0.20 -
+              final titleTop = (screenHeight * 0.15 -
                       (screenHeight - constraints.maxHeight))
                   .clamp(0.0, constraints.maxHeight);
 
               final phone = constraints.maxWidth <= 480;
               const title = Text(
-                '龍吟の日本語コース',
+                '龍吟的學日文APP',
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 softWrap: false,
@@ -257,10 +257,7 @@ Future<void> loadFavoritesHome() async {
               final column = Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (phone)
-                    const Spacer(flex: 3)
-                  else
-                    SizedBox(height: titleTop),
+                  SizedBox(height: titleTop),
                   if (phone)
                     const FittedBox(fit: BoxFit.scaleDown, child: title)
                   else
@@ -310,8 +307,9 @@ Future<void> loadFavoritesHome() async {
 
               if (phone) {
                 return SafeArea(
+                  top: false,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 4),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
                     child: column,
                   ),
                 );
