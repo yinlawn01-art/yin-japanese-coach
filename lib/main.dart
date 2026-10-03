@@ -289,6 +289,7 @@ Future<void> loadFavoritesHome() async {
                     ),
                   ),
                   SizedBox(height: phone ? 16 : 30),
+                  SizedBox(height: buttonHeight),
                   homeButton('學習', const LearningPage()),
                   const SizedBox(height: 10),
                   homeButton('五十音', const KanaMenuPage()),

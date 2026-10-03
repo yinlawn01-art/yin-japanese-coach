@@ -276,6 +276,11 @@ void main() {
       const Color(0x99FFFFFF),
     );
     expect(tester.widget<Text>(find.text('學習')).style?.fontSize, 28.8);
+    expect(
+      tester.getTopLeft(find.widgetWithText(ElevatedButton, '學習')).dy -
+          tester.getBottomLeft(find.textContaining('Words Loaded')).dy,
+      closeTo(30 + 56.7, 2),
+    );
   });
 
   testWidgets('homepage fits an iPhone screen', (tester) async {
