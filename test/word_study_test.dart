@@ -84,6 +84,29 @@ void main() {
     expect(wordStudy.sessionSnapshot, [3]);
   });
 
+  test('重新整理 sends the next words back to flashcard 1', () async {
+    wordStudy.addBatch(words.length);
+    wordStudy.beginSession();
+    expect(wordStudy.nextIndex, 10);
+    expect(wordStudy.indexes, hasLength(10));
+
+    wordStudy.restartFromBeginning();
+    expect(wordStudy.indexes, isEmpty);
+    expect(wordStudy.nextIndex, 0);
+    expect(wordStudy.sessionSnapshot, List.generate(10, (index) => index));
+
+    await wordStudy.save();
+    wordStudy.reset();
+    await wordStudy.load();
+    expect(wordStudy.indexes, isEmpty);
+    expect(wordStudy.nextIndex, 0);
+    expect(wordStudy.sessionSnapshot, List.generate(10, (index) => index));
+
+    expect(wordStudy.addBatch(words.length), 10);
+    expect(wordStudy.indexes, List.generate(10, (index) => index));
+    expect(wordStudy.nextIndex, 10);
+  });
+
   test('the queue is saved', () async {
     wordStudy.addBatch(words.length);
     wordStudy.beginSession();
@@ -182,6 +205,42 @@ void main() {
     await tester.pageBack();
     await tester.pumpAndSettle();
     expect(find.text('單字學習(9)'), findsOneWidget);
+  });
+
+  testWidgets('重新整理 is at the top and the next batch starts at word 1', (
+    tester,
+  ) async {
+    wordStudy.indexes = [3, 4, 5];
+    wordStudy.nextIndex = 6;
+    await wordStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+
+    final reset = find.text('重新整理');
+    final add = find.text('加10 個單字');
+    expect(reset, findsOneWidget);
+    expect(tester.getTopLeft(reset).dy, lessThan(tester.getTopLeft(add).dy));
+    expect(
+      tester.getSize(find.widgetWithText(ElevatedButton, '重新整理')),
+      addWordsButtonSize,
+    );
+
+    await tester.tap(reset);
+    await tester.pumpAndSettle();
+    expect(find.text('單字學習(0)'), findsOneWidget);
+    expect(wordStudy.nextIndex, 0);
+    expect(wordStudy.indexes, isEmpty);
+
+    await tester.tap(add);
+    await tester.pumpAndSettle();
+    expect(find.text('單字學習(10)'), findsOneWidget);
+    expect(wordStudy.indexes.first, 0);
+
+    await tester.tap(find.text('單字學習(10)'));
+    await tester.pumpAndSettle();
+    expect(find.text('(1 of 10)'), findsOneWidget);
+    expect(find.text('語0'), findsWidgets);
   });
 
   testWidgets('homepage lists 學習 first and a larger Japanese title', (

@@ -55,6 +55,13 @@ class WordStudy {
     return added;
   }
 
+  /// Sends the next 加10 個單字 back to flashcard 1.
+  /// The current 單字學習 list is cleared so those early cards are not skipped.
+  void restartFromBeginning() {
+    indexes = [];
+    nextIndex = 0;
+  }
+
   void beginSession() {
     sessionSnapshot = List<int>.of(indexes);
   }

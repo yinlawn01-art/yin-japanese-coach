@@ -50,6 +50,12 @@ class _LearningPageState extends State<LearningPage> {
     await wordStudy.save();
   }
 
+  Future<void> _restartFromBeginning() async {
+    wordStudy.restartFromBeginning();
+    if (mounted) setState(() {});
+    await wordStudy.save();
+  }
+
   Future<void> _openStudy() async {
     if (wordStudy.indexes.isEmpty) return;
     wordStudy.beginSession();
@@ -69,54 +75,81 @@ class _LearningPageState extends State<LearningPage> {
       borderRadius: BorderRadius.circular(8),
     );
 
+    final resetButton = SizedBox.fromSize(
+      size: addWordsButtonSize,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          fixedSize: addWordsButtonSize,
+          minimumSize: addWordsButtonSize,
+          maximumSize: addWordsButtonSize,
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          textStyle: const TextStyle(fontSize: 16.5, height: 1.1),
+        ),
+        onPressed: _ready ? _restartFromBeginning : null,
+        child: const Text(
+          '重新整理',
+          style: TextStyle(fontSize: 16.5, height: 1.1),
+        ),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(title: const Text('學習')),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox.fromSize(
-              size: addWordsButtonSize,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: addWordsButtonSize,
-                  minimumSize: addWordsButtonSize,
-                  maximumSize: addWordsButtonSize,
-                  padding: EdgeInsets.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  textStyle: const TextStyle(fontSize: 16.5, height: 1.1),
-                ),
-                onPressed: _ready ? _addTen : null,
-                child: const Text(
-                  '加10 個單字',
-                  style: TextStyle(fontSize: 16.5, height: 1.1),
-                ),
-              ),
-            ),
-            const SizedBox(height: 28),
-            SizedBox.fromSize(
-              size: studyQueueButtonSize,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: studyQueueButtonSize,
-                  minimumSize: studyQueueButtonSize,
-                  maximumSize: studyQueueButtonSize,
-                  padding: const EdgeInsets.all(20),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: squareShape,
-                ),
-                onPressed: count == 0 ? null : _openStudy,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    '單字學習($count)',
-                    style: const TextStyle(fontSize: 52, height: 1.1),
+      body: Column(
+        children: [
+          const SizedBox(height: 16),
+          resetButton,
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox.fromSize(
+                    size: addWordsButtonSize,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: addWordsButtonSize,
+                        minimumSize: addWordsButtonSize,
+                        maximumSize: addWordsButtonSize,
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        textStyle: const TextStyle(fontSize: 16.5, height: 1.1),
+                      ),
+                      onPressed: _ready ? _addTen : null,
+                      child: const Text(
+                        '加10 個單字',
+                        style: TextStyle(fontSize: 16.5, height: 1.1),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 28),
+                  SizedBox.fromSize(
+                    size: studyQueueButtonSize,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: studyQueueButtonSize,
+                        minimumSize: studyQueueButtonSize,
+                        maximumSize: studyQueueButtonSize,
+                        padding: const EdgeInsets.all(20),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        shape: squareShape,
+                      ),
+                      onPressed: count == 0 ? null : _openStudy,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          '單字學習($count)',
+                          style: const TextStyle(fontSize: 52, height: 1.1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
