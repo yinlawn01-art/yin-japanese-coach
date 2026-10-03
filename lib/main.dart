@@ -760,7 +760,7 @@ Future<void> saveFavorites() async {
             actionLabel = 'Go back';
             action = closeExample;
           } else if (showAnswer) {
-            actionLabel = 'Next';
+            actionLabel = '繼續';
             action = nextWord;
           } else {
             actionLabel = 'Show Answer';
