@@ -59,6 +59,8 @@ class _FavoriteFlashcardPageState
 
     static const Size _actionButtonSize = Size(168, 48);
 
+    static const Size _studyShowAnswerSize = Size(336, 64);
+
     static const double _answerSlotHeight = 196;
 
 Future<void> _saveFavorites() async {
@@ -101,6 +103,60 @@ void closeExample() {
   setState(() {
     showExample = false;
   });
+}
+
+double _studyShowAnswerTop({
+  required double bodyHeight,
+  required double bodyWidth,
+  required String kanji,
+  required TextStyle countStyle,
+  required TextStyle kanjiStyle,
+  required TextScaler textScaler,
+}) {
+  double line(String text, TextStyle style) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: textScaler,
+      textAlign: TextAlign.center,
+    )..layout(maxWidth: bodyWidth - 48);
+    return painter.height;
+  }
+
+  const iconHeight = 56.0;
+  const gap = 40.0;
+  const answerSlot = 210.0;
+  final contentHeight = line('Word 1 / 1', countStyle) +
+      gap +
+      line(kanji, kanjiStyle) +
+      iconHeight +
+      answerSlot +
+      _studyShowAnswerSize.height;
+  final paddedHeight = contentHeight + 48;
+  final columnTop = (bodyHeight - paddedHeight) / 2;
+  return columnTop + 24 + contentHeight - _studyShowAnswerSize.height;
+}
+
+Widget _studyShowAnswerButton(double fontSize) {
+  return SizedBox.fromSize(
+    size: _studyShowAnswerSize,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        fixedSize: _studyShowAnswerSize,
+        minimumSize: _studyShowAnswerSize,
+        maximumSize: _studyShowAnswerSize,
+        padding: EdgeInsets.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      onPressed: showCurrentAnswer,
+      child: Text(
+        'Show Answer',
+        maxLines: 1,
+        softWrap: false,
+        style: TextStyle(fontSize: fontSize, height: 1.1),
+      ),
+    ),
+  );
 }
 
 Widget fixedButton(
@@ -460,6 +516,17 @@ return Scaffold(
                 (screenHeight * 0.40).clamp(0.0, goBackRoom);
             final largeLabelSize =
                 (Theme.of(context).textTheme.labelLarge?.fontSize ?? 14) * 2;
+            final baseStyle = DefaultTextStyle.of(context).style;
+            final showAnswerTop = _studyShowAnswerTop(
+              bodyHeight: constraints.maxHeight,
+              bodyWidth: constraints.maxWidth,
+              kanji: currentWord.kanji,
+              countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
+              kanjiStyle: baseStyle.merge(
+                const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+              ),
+              textScaler: MediaQuery.textScalerOf(context),
+            );
             final sentence = exampleSentenceFor(currentWord.kanji);
 
             return Stack(
@@ -539,6 +606,15 @@ return Scaffold(
                         },
                         fontSize: largeLabelSize,
                       ),
+                    ),
+                  ),
+                if (!showAnswer && !showExample)
+                  Positioned(
+                    top: showAnswerTop,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: _studyShowAnswerButton(largeLabelSize),
                     ),
                   ),
               ],
@@ -676,20 +752,21 @@ children: [
         : const SizedBox.shrink(),
   ),
 
-  SizedBox.fromSize(
-    size: _actionButtonSize,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        fixedSize: _actionButtonSize,
-        minimumSize: _actionButtonSize,
-        maximumSize: _actionButtonSize,
-        padding: EdgeInsets.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  if (showAnswer)
+    SizedBox.fromSize(
+      size: _actionButtonSize,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          fixedSize: _actionButtonSize,
+          minimumSize: _actionButtonSize,
+          maximumSize: _actionButtonSize,
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        onPressed: nextFavorite,
+        child: const Text('Next'),
       ),
-      onPressed: showAnswer ? nextFavorite : showCurrentAnswer,
-      child: Text(showAnswer ? 'Next' : 'Show Answer'),
     ),
-  ),
     ],
   );
 }
