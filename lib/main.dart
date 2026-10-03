@@ -599,9 +599,9 @@ Future<void> saveFavorites() async {
         Text(
           'Word ${currentIndex + 1} / ${widget.deck.length}',
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20),
+          style: const TextStyle(fontSize: 20, height: 1.1),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
           japanese: word.hiragana,
@@ -610,36 +610,54 @@ Future<void> saveFavorites() async {
             fontWeight: FontWeight.bold,
           ),
         ),
-        _favoriteStar(word),
+        IconButton(
+          iconSize: 32,
+          padding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact,
+          constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+          icon: Icon(
+            word.isFavorite ? Icons.star : Icons.star_border,
+            color: Colors.amber,
+          ),
+          onPressed: () async {
+            setState(() {
+              word.isFavorite = !word.isFavorite;
+            });
+            await saveFavorites();
+          },
+        ),
         speakableText(
           text: word.hiragana,
           japanese: word.hiragana,
-          style: const TextStyle(fontSize: 24),
+          style: const TextStyle(fontSize: 24, height: 1.1),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         speakableText(
           text: word.romaji,
           japanese: word.hiragana,
           style: const TextStyle(
             fontSize: 24,
+            height: 1.1,
             color: Colors.orange,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           '詞性：${word.wordType}',
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 24,
+            height: 1.1,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
           japanese: word.hiragana,
           style: const TextStyle(
             fontSize: 28,
+            height: 1.1,
             color: Colors.blue,
           ),
         ),
@@ -761,7 +779,7 @@ Future<void> saveFavorites() async {
                 ),
               if (showAnswer && !showExample)
                 Positioned(
-                  top: exampleTop + 64 + 20,
+                  top: exampleTop + 64 + 12,
                   left: 0,
                   right: 0,
                   bottom: contentBottom,
@@ -777,14 +795,16 @@ Future<void> saveFavorites() async {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IgnorePointer(
-                        ignoring: showAnswer || showExample,
-                        excludingFromSemantics: showAnswer || showExample,
-                        child: Opacity(
-                          opacity: (showAnswer || showExample) ? 0 : 1,
-                          child: _frontWord(word),
-                        ),
-                      ),
+                      showAnswer || showExample
+                          ? ExcludeSemantics(
+                              child: IgnorePointer(
+                                child: Opacity(
+                                  opacity: 0,
+                                  child: _frontWord(word),
+                                ),
+                              ),
+                            )
+                          : _frontWord(word),
                       studyActionButton(
                         label: actionLabel,
                         onPressed: action,
