@@ -243,7 +243,7 @@ void main() {
     expect(find.text('語0'), findsWidgets);
   });
 
-  testWidgets('homepage lists 學習 first and a larger Japanese title', (
+  testWidgets('homepage lists 學習 first and the Japanese title', (
     tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
@@ -253,7 +253,8 @@ void main() {
     final learning = find.text('學習');
     final kana = find.text('五十音');
     expect(title, findsOneWidget);
-    expect(tester.widget<Text>(title).style?.fontSize, 84);
+    expect(tester.widget<Text>(title).style?.fontSize, 42);
+    expect(tester.widget<Text>(title).style?.letterSpacing, 4);
     expect(learning, findsOneWidget);
     expect(
       tester.getTopLeft(learning).dy,

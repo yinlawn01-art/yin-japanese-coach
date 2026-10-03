@@ -215,9 +215,9 @@ Future<void> loadFavoritesHome() async {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'LXGW WenKai',
-                        fontSize: 84,
+                        fontSize: 42,
                         color: Color(0xFF0A2F6B),
-                        letterSpacing: 8,
+                        letterSpacing: 4,
                         height: 1.3,
                         shadows: [
                           Shadow(
