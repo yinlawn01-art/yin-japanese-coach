@@ -11,7 +11,7 @@ import 'soft_speech.dart';
 import 'vocabulary_data.dart';
 import 'word_study.dart';
 
-const Size addWordsButtonSize = Size(240, 36);
+const Size addWordsButtonSize = Size(288, 36);
 const Size studyQueueButtonSize = Size(288, 288);
 
 const Size _studyButtonSize = Size(336, 64);
