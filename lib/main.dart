@@ -479,6 +479,174 @@ Future<void> saveFavorites() async {
     );
   }
 
+  static const Size _nextButtonSize = Size(168, 64);
+
+  Widget studyActionButton({
+    required String label,
+    required VoidCallback onPressed,
+    required double fontSize,
+  }) {
+    return SizedBox.fromSize(
+      size: _nextButtonSize,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          fixedSize: _nextButtonSize,
+          minimumSize: _nextButtonSize,
+          maximumSize: _nextButtonSize,
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        onPressed: onPressed,
+        child: Text(
+          label,
+          maxLines: 1,
+          softWrap: false,
+          style: TextStyle(fontSize: fontSize, height: 1.1),
+        ),
+      ),
+    );
+  }
+
+  double _textHeight(
+    String text,
+    TextStyle style,
+    double maxWidth,
+    TextScaler textScaler,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: textScaler,
+      textAlign: TextAlign.center,
+    )..layout(maxWidth: maxWidth);
+    return painter.height;
+  }
+
+  /// Top of the action button inside the body, matching Show Answer's place
+  /// after the button grows to Next's height around the same center.
+  double _actionButtonTop({
+    required double bodyHeight,
+    required double bodyWidth,
+    required String countText,
+    required String kanji,
+    required TextStyle countStyle,
+    required TextStyle kanjiStyle,
+    required TextScaler textScaler,
+  }) {
+    const iconHeight = 56.0;
+    const gap = 40.0;
+    final contentHeight = _textHeight(countText, countStyle, bodyWidth - 48, textScaler) +
+        gap +
+        _textHeight(kanji, kanjiStyle, bodyWidth - 48, textScaler) +
+        iconHeight +
+        _answerSlotHeight +
+        _nextButtonSize.height;
+    final paddedHeight = contentHeight + 48;
+    final columnTop = (bodyHeight - paddedHeight) / 2;
+    return columnTop + 24 + contentHeight - _nextButtonSize.height;
+  }
+
+  Widget _favoriteStar(Vocabulary word) {
+    return IconButton(
+      iconSize: 40,
+      icon: Icon(
+        word.isFavorite ? Icons.star : Icons.star_border,
+        color: Colors.amber,
+      ),
+      onPressed: () async {
+        setState(() {
+          word.isFavorite = !word.isFavorite;
+        });
+
+        await saveFavorites();
+
+        print(
+          "Saved Favorites: "
+          "${words.where((w) => w.isFavorite).map((w) => w.kanji).toList()}"
+        );
+      },
+    );
+  }
+
+  Widget _frontWord(Vocabulary word) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Word ${currentIndex + 1} / ${widget.deck.length}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20),
+        ),
+        const SizedBox(height: 40),
+        Text(
+          word.kanji,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        _favoriteStar(word),
+        const SizedBox(height: _answerSlotHeight),
+      ],
+    );
+  }
+
+  Widget _answeredWord(Vocabulary word) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Word ${currentIndex + 1} / ${widget.deck.length}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20),
+        ),
+        const SizedBox(height: 16),
+        speakableText(
+          text: word.kanji,
+          japanese: word.hiragana,
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        _favoriteStar(word),
+        speakableText(
+          text: word.hiragana,
+          japanese: word.hiragana,
+          style: const TextStyle(fontSize: 24),
+        ),
+        const SizedBox(height: 6),
+        speakableText(
+          text: word.romaji,
+          japanese: word.hiragana,
+          style: const TextStyle(
+            fontSize: 24,
+            color: Colors.orange,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          '詞性：${word.wordType}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 6),
+        speakableText(
+          text: word.meaning,
+          japanese: word.hiragana,
+          style: const TextStyle(
+            fontSize: 28,
+            color: Colors.blue,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget exampleBody(ExampleSentence sentence) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -552,183 +720,80 @@ Future<void> saveFavorites() async {
           final exampleTop = (screenHeight * 0.30 -
                   (screenHeight - constraints.maxHeight))
               .clamp(0.0, constraints.maxHeight);
-          final goBackRoom =
-              (constraints.maxHeight - _actionButtonSize.height)
-                  .clamp(0.0, constraints.maxHeight);
-          final goBackBottom =
-              (screenHeight * 0.40).clamp(0.0, goBackRoom);
+          final baseStyle = DefaultTextStyle.of(context).style;
+          final buttonTop = _actionButtonTop(
+            bodyHeight: constraints.maxHeight,
+            bodyWidth: constraints.maxWidth,
+            countText: 'Word ${currentIndex + 1} / ${widget.deck.length}',
+            kanji: word.kanji,
+            countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
+            kanjiStyle: baseStyle.merge(
+              const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            ),
+            textScaler: MediaQuery.textScalerOf(context),
+          );
+          final contentBottom = (constraints.maxHeight - buttonTop + 8)
+              .clamp(0.0, constraints.maxHeight);
+          final String actionLabel;
+          final VoidCallback action;
+          if (showExample) {
+            actionLabel = 'Go back';
+            action = closeExample;
+          } else if (showAnswer) {
+            actionLabel = 'Next';
+            action = nextWord;
+          } else {
+            actionLabel = 'Show Answer';
+            action = () {
+              showCurrentAnswer();
+            };
+          }
+
           return Stack(
             children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: showExample
-                        ? Padding(
-                            padding: EdgeInsets.only(
-                              bottom: goBackBottom + _actionButtonSize.height,
-                            ),
-                            child: exampleBody(sentence),
-                          )
-                        : LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-              ),
-              child: Align(
-                alignment:
-                    showAnswer ? Alignment.topCenter : Alignment.center,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    24,
-                    showAnswer ? exampleTop + 64 + 20 : 24,
-                    24,
-                    24,
+              if (showExample)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: contentBottom,
+                  child: exampleBody(sentence),
+                ),
+              if (showAnswer && !showExample)
+                Positioned(
+                  top: exampleTop + 64 + 20,
+                  left: 0,
+                  right: 0,
+                  bottom: contentBottom,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _answeredWord(word),
                   ),
+                ),
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Word ${currentIndex + 1} / ${widget.deck.length}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 20,
+                      IgnorePointer(
+                        ignoring: showAnswer || showExample,
+                        excludingFromSemantics: showAnswer || showExample,
+                        child: Opacity(
+                          opacity: (showAnswer || showExample) ? 0 : 1,
+                          child: _frontWord(word),
                         ),
                       ),
-                      const SizedBox(height: 40),
-                      showAnswer
-                          ? speakableText(
-                              text: word.kanji,
-                              japanese: word.hiragana,
-                              style: const TextStyle(
-                                fontSize: 48,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : Text(
-                              word.kanji,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 48,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                      IconButton(
-                        iconSize: 40,
-                        icon: Icon(
-                          word.isFavorite
-                              ? Icons.star
-                              : Icons.star_border,
-                          color: Colors.amber,
-                        ),
-                        onPressed: () async {
-                          setState(() {
-                            word.isFavorite = !word.isFavorite;
-                          });
-
-                          await saveFavorites();
-
-                          print(
-                            "Saved Favorites: "
-                            "${words.where((w) => w.isFavorite).map((w) => w.kanji).toList()}"
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: _answerSlotHeight,
-                        child: showAnswer
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  speakableText(
-                                    text: word.hiragana,
-                                    japanese: word.hiragana,
-                                    style: const TextStyle(fontSize: 24),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  speakableText(
-                                    text: word.romaji,
-                                    japanese: word.hiragana,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      color: Colors.orange,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    '詞性：${word.wordType}',
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  speakableText(
-                                    text: word.meaning,
-                                    japanese: word.hiragana,
-                                    style: const TextStyle(
-                                      fontSize: 28,
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-                      SizedBox.fromSize(
-                        size: showAnswer
-                            ? const Size(168, 64)
-                            : _actionButtonSize,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: showAnswer
-                                ? const Size(168, 64)
-                                : _actionButtonSize,
-                            minimumSize: showAnswer
-                                ? const Size(168, 64)
-                                : _actionButtonSize,
-                            maximumSize: showAnswer
-                                ? const Size(168, 64)
-                                : _actionButtonSize,
-                            padding: EdgeInsets.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          onPressed: showAnswer ? nextWord : showCurrentAnswer,
-                          child: Text(
-                            showAnswer ? 'Next' : 'Show Answer',
-                            style: showAnswer
-                                ? TextStyle(
-                                    fontSize: largeLabelSize,
-                                    height: 1.1,
-                                  )
-                                : null,
-                          ),
-                        ),
+                      studyActionButton(
+                        label: actionLabel,
+                        onPressed: action,
+                        fontSize: largeLabelSize,
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          );
-        },
-      ),
-                  ),
-                ],
-              ),
-              if (showExample)
-                Positioned(
-                  bottom: goBackBottom,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: fixedButton('Go back', closeExample),
-                  ),
-                ),
               if (showAnswer && !showExample)
                 Positioned(
                   top: exampleTop,
