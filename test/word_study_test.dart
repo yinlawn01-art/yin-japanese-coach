@@ -264,14 +264,17 @@ void main() {
     final button = tester.widget<ElevatedButton>(
       find.widgetWithText(ElevatedButton, '學習'),
     );
-    expect(tester.getSize(find.widgetWithText(ElevatedButton, '學習')).height, 81);
+    expect(
+      tester.getSize(find.widgetWithText(ElevatedButton, '學習')).height,
+      closeTo(56.7, 0.1),
+    );
     expect(
       tester.getSize(find.widgetWithText(ElevatedButton, '學習')).width,
-      closeTo((800 - 40) * 0.9, 1),
+      closeTo((800 - 40) * 0.63, 1),
     );
     expect(
       button.style?.backgroundColor?.resolve(const <WidgetState>{}),
-      const Color(0xBFFFFFFF),
+      const Color(0x99FFFFFF),
     );
     expect(tester.widget<Text>(find.text('學習')).style?.fontSize, 28.8);
   });

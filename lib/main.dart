@@ -166,7 +166,7 @@ Future<void> loadFavoritesHome() async {
 
   @override
   Widget build(BuildContext context) {
-    const buttonHeight = 81.0;
+    const buttonHeight = 56.7;
     const buttonFontSize = 28.8;
     final homeButtonStyle = ElevatedButton.styleFrom(
       minimumSize: const Size.fromHeight(buttonHeight),
@@ -175,7 +175,7 @@ Future<void> loadFavoritesHome() async {
       visualDensity: VisualDensity.standard,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       textStyle: const TextStyle(fontSize: buttonFontSize, height: 1.1),
-      backgroundColor: const Color(0xBFFFFFFF),
+      backgroundColor: const Color(0x99FFFFFF),
       foregroundColor: const Color(0xFF1A4A8A),
       surfaceTintColor: Colors.transparent,
     );
@@ -183,7 +183,7 @@ Future<void> loadFavoritesHome() async {
     Widget homeButton(String label, Widget page) {
       return Align(
         child: FractionallySizedBox(
-          widthFactor: 0.9,
+          widthFactor: 0.63,
           child: ElevatedButton(
             style: homeButtonStyle,
             onPressed: () {
