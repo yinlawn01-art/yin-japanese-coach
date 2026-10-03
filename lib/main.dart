@@ -172,6 +172,7 @@ Future<void> loadFavoritesHome() async {
       minimumSize: const Size.fromHeight(buttonHeight),
       maximumSize: const Size.fromHeight(buttonHeight),
       padding: const EdgeInsets.symmetric(horizontal: 12),
+      visualDensity: VisualDensity.standard,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       textStyle: const TextStyle(fontSize: buttonFontSize, height: 1.1),
       backgroundColor: const Color(0xBFFFFFFF),
