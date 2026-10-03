@@ -566,9 +566,16 @@ Future<void> saveFavorites() async {
               constraints: BoxConstraints(
                 minHeight: constraints.maxHeight,
               ),
-              child: Center(
+              child: Align(
+                alignment:
+                    showAnswer ? Alignment.topCenter : Alignment.center,
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.fromLTRB(
+                    24,
+                    showAnswer ? exampleTop + 64 + 20 : 24,
+                    24,
+                    24,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
