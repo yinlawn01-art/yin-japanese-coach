@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'favorite_flashcard_page.dart';
 import 'soft_speech.dart';
+import 'example_sentence.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -384,6 +385,7 @@ Future<void> saveFavorites() async {
 
   int currentIndex = 0;
   bool showAnswer = false;
+  bool showExample = false;
 
   static const Size _actionButtonSize = Size(168, 48);
   static const double _answerSlotHeight = 210;
@@ -410,7 +412,40 @@ Future<void> saveFavorites() async {
       if (widget.deck.isEmpty) return;
       currentIndex = (currentIndex + 1) % widget.deck.length;
       showAnswer = false;
+      showExample = false;
     });
+  }
+
+  Future<void> openExample() async {
+    final sentence = exampleSentenceFor(widget.deck[currentIndex].kanji);
+    setState(() {
+      showExample = true;
+    });
+    await speakJapanese(sentence.hiragana);
+  }
+
+  void closeExample() {
+    flutterTts.stop();
+    setState(() {
+      showExample = false;
+    });
+  }
+
+  Widget fixedButton(String label, VoidCallback onPressed) {
+    return SizedBox.fromSize(
+      size: _actionButtonSize,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          fixedSize: _actionButtonSize,
+          minimumSize: _actionButtonSize,
+          maximumSize: _actionButtonSize,
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        onPressed: onPressed,
+        child: Text(label),
+      ),
+    );
   }
 
   Widget speakableText({
@@ -432,15 +467,85 @@ Future<void> saveFavorites() async {
     );
   }
 
+  Widget exampleBody(ExampleSentence sentence) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    speakableText(
+                      text: sentence.japanese,
+                      japanese: sentence.hiragana,
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    speakableText(
+                      text: sentence.hiragana,
+                      japanese: sentence.hiragana,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    const SizedBox(height: 10),
+                    speakableText(
+                      text: sentence.romaji,
+                      japanese: sentence.hiragana,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        color: Colors.orange,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      sentence.chinese,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final word = widget.deck[currentIndex];
+    final sentence = exampleSentenceFor(word.kanji);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flashcards'),
       ),
-      body: LayoutBuilder(
+      body: Column(
+        children: [
+          if (showAnswer && !showExample)
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Center(
+                child: fixedButton('例句', () {
+                  openExample();
+                }),
+              ),
+            ),
+          Expanded(
+            child: showExample
+                ? exampleBody(sentence)
+                : LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
             child: ConstrainedBox(
@@ -564,6 +669,16 @@ Future<void> saveFavorites() async {
             ),
           );
         },
+      ),
+          ),
+          if (showExample)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Center(
+                child: fixedButton('Go back', closeExample),
+              ),
+            ),
+        ],
       ),
     );
   }
