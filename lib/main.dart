@@ -280,6 +280,8 @@ List<Vocabulary> allWordsShuffled() {
   return List<Vocabulary>.from(words)..shuffle();
 }
 
+const Size _studyButtonSize = Size(336, 64);
+
 class FlashcardMenuPage extends StatelessWidget {
   const FlashcardMenuPage({super.key});
 
@@ -295,7 +297,11 @@ class FlashcardMenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buttonStyle = ElevatedButton.styleFrom(
-      minimumSize: const Size.fromHeight(64),
+      fixedSize: _studyButtonSize,
+      minimumSize: _studyButtonSize,
+      maximumSize: _studyButtonSize,
+      padding: EdgeInsets.zero,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       textStyle: const TextStyle(fontSize: 28),
     );
 
@@ -304,13 +310,11 @@ class FlashcardMenuPage extends StatelessWidget {
         title: const Text('單字'),
       ),
       body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ElevatedButton(
                   style: buttonStyle,
@@ -339,7 +343,6 @@ class FlashcardMenuPage extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
@@ -439,7 +442,7 @@ Future<void> saveFavorites() async {
   }) {
     final size = fontSize == null
         ? _actionButtonSize
-        : const Size(168, 64);
+        : _studyButtonSize;
     return SizedBox.fromSize(
       size: size,
       child: ElevatedButton(
@@ -480,20 +483,18 @@ Future<void> saveFavorites() async {
     );
   }
 
-  static const Size _nextButtonSize = Size(168, 64);
-
   Widget studyActionButton({
     required String label,
     required VoidCallback onPressed,
     required double fontSize,
   }) {
     return SizedBox.fromSize(
-      size: _nextButtonSize,
+      size: _studyButtonSize,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          fixedSize: _nextButtonSize,
-          minimumSize: _nextButtonSize,
-          maximumSize: _nextButtonSize,
+          fixedSize: _studyButtonSize,
+          minimumSize: _studyButtonSize,
+          maximumSize: _studyButtonSize,
           padding: EdgeInsets.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
@@ -541,10 +542,10 @@ Future<void> saveFavorites() async {
         _textHeight(kanji, kanjiStyle, bodyWidth - 48, textScaler) +
         iconHeight +
         _answerSlotHeight +
-        _nextButtonSize.height;
+        _studyButtonSize.height;
     final paddedHeight = contentHeight + 48;
     final columnTop = (bodyHeight - paddedHeight) / 2;
-    return columnTop + 24 + contentHeight - _nextButtonSize.height;
+    return columnTop + 24 + contentHeight - _studyButtonSize.height;
   }
 
   Widget _favoriteStar(Vocabulary word) {
