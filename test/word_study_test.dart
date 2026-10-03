@@ -108,7 +108,7 @@ void main() {
     );
     expect(addSize, const Size(288, 36));
     expect(studySize, const Size(288, 288));
-    expect(tester.widget<Text>(find.text('加10 個單字')).style?.fontSize, 11);
+    expect(tester.widget<Text>(find.text('加10 個單字')).style?.fontSize, 16.5);
     expect(tester.widget<Text>(find.text('單字學習(0)')).style?.fontSize, 52);
     expect(
       tester
