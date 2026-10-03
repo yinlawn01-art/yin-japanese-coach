@@ -6,21 +6,18 @@ const double speechVolumeNotch = 0.1;
 
 final Map<String, Map<String, String>?> _chosenVoices = {};
 
-/// Speaks at a natural pace. Japanese is one notch louder and 40% slower
-/// than normal. Chinese is one notch quieter. A male voice is used when
-/// the device has one.
+/// Speaks at a natural pace. Japanese is one notch louder and at 80% of
+/// normal speed. Chinese is one notch quieter. Japanese uses a female
+/// voice when the device has one. Chinese uses a male voice when it has one.
 Future<void> applyNaturalVoice(FlutterTts tts, String language) async {
   await tts.setLanguage(language);
   await tts.setVolume(volumeForLanguage(language));
   await tts.setPitch(1.0);
   await tts.setSpeechRate(rateForLanguage(language));
 
-  final voice = await _maleVoice(tts, language);
+  final voice = await _preferredVoice(tts, language);
   if (voice != null) {
-    await tts.setVoice({
-      'name': voice['name']!,
-      'locale': voice['locale']!,
-    });
+    await tts.setVoice({'name': voice['name']!, 'locale': voice['locale']!});
   }
 }
 
@@ -34,14 +31,14 @@ double volumeForLanguage(String language) {
   return stepped.clamp(0.0, 1.0);
 }
 
-/// Japanese is 40% slower than the platform's normal speaking rate.
+/// Japanese is 80% of the platform's normal speaking rate.
 double rateForLanguage(String language, {bool? web}) {
   final normal = (web ?? kIsWeb) ? 1.0 : 0.5;
-  if (language.toLowerCase().startsWith('ja')) return normal * 0.6;
+  if (language.toLowerCase().startsWith('ja')) return normal * 0.8;
   return normal;
 }
 
-Future<Map<String, String>?> _maleVoice(
+Future<Map<String, String>?> _preferredVoice(
   FlutterTts tts,
   String language,
 ) async {
@@ -93,7 +90,8 @@ Future<List<Map<String, String>>> _loadVoices(FlutterTts tts) async {
   return const [];
 }
 
-/// Prefers a male voice, then the clearest recording of that voice.
+/// Prefers a female Japanese voice, or a male voice for other languages,
+/// then the clearest recording of that voice.
 int scoreVoice(Map<String, String> voice, String language) {
   final name = (voice['name'] ?? '').toLowerCase();
   final locale = (voice['locale'] ?? '').toLowerCase().replaceAll('_', '-');
@@ -102,9 +100,15 @@ int scoreVoice(Map<String, String> voice, String language) {
   if (locale == language) score += 20;
 
   final male = gender == 'male' || _nameIsMale(name, language);
-  final female = gender == 'female' || _nameIsFemale(name);
-  if (male && gender != 'female') score += 400;
-  if (female && gender != 'male') score -= 400;
+  final female = gender == 'female' || _nameIsFemale(name, language);
+  final preferFemale = language.startsWith('ja');
+  if (preferFemale) {
+    if (female && gender != 'male') score += 400;
+    if (male && gender != 'female') score -= 400;
+  } else {
+    if (male && gender != 'female') score += 400;
+    if (female && gender != 'male') score -= 400;
+  }
 
   const qualityHints = [
     'neural',
@@ -142,9 +146,8 @@ bool _nameIsMale(String name, String language) {
   }
   if (name.contains(' male')) return true;
 
-  final code = RegExp(
-    r'(?:neural2|wavenet|standard|news)[-_ ]([a-d])\b',
-  ).firstMatch(name);
+  final code = RegExp(r'(?:neural2|wavenet|standard|news)[-_ ]([a-d])\b')
+      .firstMatch(name);
   if (code != null) {
     final letter = code.group(1)!;
     if (language.startsWith('ja')) return letter == 'c' || letter == 'd';
@@ -153,7 +156,7 @@ bool _nameIsMale(String name, String language) {
   return false;
 }
 
-bool _nameIsFemale(String name) {
+bool _nameIsFemale(String name, String language) {
   const names = [
     'kyoko',
     'nanami',
@@ -178,5 +181,13 @@ bool _nameIsFemale(String name) {
   for (final hint in names) {
     if (name.contains(hint)) return true;
   }
-  return name.contains(' female');
+  if (name.contains(' female')) return true;
+
+  final code = RegExp(r'(?:neural2|wavenet|standard|news)[-_ ]([a-d])\b')
+      .firstMatch(name);
+  if (code != null && language.startsWith('ja')) {
+    final letter = code.group(1)!;
+    return letter == 'a' || letter == 'b';
+  }
+  return false;
 }
