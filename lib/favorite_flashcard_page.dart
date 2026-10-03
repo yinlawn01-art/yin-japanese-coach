@@ -57,8 +57,6 @@ class _FavoriteFlashcardPageState
     Vocabulary get currentWord =>
     favoriteWords[currentIndex];
 
-    static const Size _actionButtonSize = Size(168, 48);
-
     static const Size _studyShowAnswerSize = Size(336, 64);
 
     static const double _answerSlotHeight = 196;
@@ -137,7 +135,11 @@ double _studyShowAnswerTop({
   return columnTop + 24 + contentHeight - _studyShowAnswerSize.height;
 }
 
-Widget _studyShowAnswerButton(double fontSize) {
+Widget _matchingButton(
+  String label,
+  VoidCallback onPressed,
+  double fontSize,
+) {
   return SizedBox.fromSize(
     size: _studyShowAnswerSize,
     child: ElevatedButton(
@@ -148,41 +150,13 @@ Widget _studyShowAnswerButton(double fontSize) {
         padding: EdgeInsets.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      onPressed: showCurrentAnswer,
-      child: Text(
-        'Show Answer',
-        maxLines: 1,
-        softWrap: false,
-        style: TextStyle(fontSize: fontSize, height: 1.1),
-      ),
-    ),
-  );
-}
-
-Widget fixedButton(
-  String label,
-  VoidCallback onPressed, {
-  double? fontSize,
-}) {
-  final size = fontSize == null
-      ? _actionButtonSize
-      : const Size(168, 64);
-  return SizedBox.fromSize(
-    size: size,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        fixedSize: size,
-        minimumSize: size,
-        maximumSize: size,
-        padding: EdgeInsets.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
       onPressed: onPressed,
       child: Text(
         label,
-        style: fontSize == null
-            ? null
-            : TextStyle(fontSize: fontSize, height: 1.1),
+        maxLines: 1,
+        softWrap: false,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: fontSize, height: 1.1),
       ),
     ),
   );
@@ -510,7 +484,7 @@ return Scaffold(
                     (screenHeight - constraints.maxHeight))
                 .clamp(0.0, constraints.maxHeight);
             final goBackRoom =
-                (constraints.maxHeight - _actionButtonSize.height)
+                (constraints.maxHeight - _studyShowAnswerSize.height)
                     .clamp(0.0, constraints.maxHeight);
             final goBackBottom =
                 (screenHeight * 0.40).clamp(0.0, goBackRoom);
@@ -529,58 +503,49 @@ return Scaffold(
             );
             final sentence = exampleSentenceFor(currentWord.kanji);
 
+            final answerBottom = (constraints.maxHeight - showAnswerTop + 8)
+                .clamp(0.0, constraints.maxHeight);
+
             return Stack(
               children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: showExample
-                          ? Padding(
-                              padding: EdgeInsets.only(
-                                bottom: goBackBottom +
-                                    _actionButtonSize.height,
-                              ),
-                              child: exampleBody(sentence),
-                            )
-                          : SingleChildScrollView(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  minHeight: constraints.maxHeight,
-                                ),
-                                child: Align(
-                                  alignment: showAnswer
-                                      ? Alignment.topCenter
-                                      : Alignment.center,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                      24,
-                                      showAnswer
-                                          ? exampleTop + 64 + 20
-                                          : 24,
-                                      24,
-                                      24,
-                                    ),
-                                    child: _favoriteCard(),
-                                  ),
-                                ),
-                              ),
-                            ),
+                if (showExample)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: goBackBottom + _studyShowAnswerSize.height,
+                    child: exampleBody(sentence),
+                  )
+                else if (showAnswer)
+                  Positioned(
+                    top: exampleTop + _studyShowAnswerSize.height + 12,
+                    left: 0,
+                    right: 0,
+                    bottom: answerBottom,
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: _answeredFavorite(),
                     ),
-                  ],
-                ),
+                  )
+                else
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: _favoriteCard(),
+                    ),
+                  ),
                 if (!showExample)
                   Positioned(
                     top: (screenHeight * 0.10 -
                             (screenHeight - constraints.maxHeight))
                         .clamp(0.0, constraints.maxHeight),
-                    left: 16,
-                    right: 16,
+                    left: 0,
+                    right: 0,
                     child: Center(
-                      child: ElevatedButton(
-                        onPressed: playAllFavorites,
-                        child: const Text(
-                          'Playing favorite words',
-                        ),
+                      child: _matchingButton(
+                        'Playing favorite words',
+                        playAllFavorites,
+                        largeLabelSize,
                       ),
                     ),
                   ),
@@ -590,7 +555,11 @@ return Scaffold(
                     left: 0,
                     right: 0,
                     child: Center(
-                      child: fixedButton('Go back', closeExample),
+                      child: _matchingButton(
+                        'Go back',
+                        closeExample,
+                        largeLabelSize,
+                      ),
                     ),
                   ),
                 if (showAnswer && !showExample)
@@ -599,22 +568,30 @@ return Scaffold(
                     left: 0,
                     right: 0,
                     child: Center(
-                      child: fixedButton(
+                      child: _matchingButton(
                         '例句',
                         () {
                           openExample();
                         },
-                        fontSize: largeLabelSize,
+                        largeLabelSize,
                       ),
                     ),
                   ),
-                if (!showAnswer && !showExample)
+                if (!showExample)
                   Positioned(
                     top: showAnswerTop,
                     left: 0,
                     right: 0,
                     child: Center(
-                      child: _studyShowAnswerButton(largeLabelSize),
+                      child: _matchingButton(
+                        showAnswer ? 'Next' : 'Show Answer',
+                        showAnswer
+                            ? nextFavorite
+                            : () {
+                                showCurrentAnswer();
+                              },
+                        largeLabelSize,
+                      ),
                     ),
                   ),
               ],
@@ -653,19 +630,10 @@ Widget _playingFavoritesView() {
           ),
         ),
         const SizedBox(height: 24),
-        SizedBox.fromSize(
-          size: _actionButtonSize,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              fixedSize: _actionButtonSize,
-              minimumSize: _actionButtonSize,
-              maximumSize: _actionButtonSize,
-              padding: EdgeInsets.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            onPressed: stopPlayingFavorites,
-            child: const Text('Stop'),
-          ),
+        _matchingButton(
+          'Stop',
+          stopPlayingFavorites,
+          (Theme.of(context).textTheme.labelLarge?.fontSize ?? 14) * 2,
         ),
       ],
     ),
@@ -751,22 +719,75 @@ children: [
           )
         : const SizedBox.shrink(),
   ),
+    ],
+  );
+}
 
-  if (showAnswer)
-    SizedBox.fromSize(
-      size: _actionButtonSize,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          fixedSize: _actionButtonSize,
-          minimumSize: _actionButtonSize,
-          maximumSize: _actionButtonSize,
-          padding: EdgeInsets.zero,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+Widget _answeredFavorite() {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      speakableText(
+        text: currentWord.kanji,
+        japanese: currentWord.romaji,
+        style: const TextStyle(
+          fontSize: 48,
+          fontWeight: FontWeight.bold,
+          height: 1.0,
         ),
-        onPressed: nextFavorite,
-        child: const Text('Next'),
       ),
-    ),
+      IconButton(
+        iconSize: 32,
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
+        constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+        tooltip: 'Remove from favorites',
+        icon: const Icon(
+          Icons.star,
+          color: Colors.amber,
+        ),
+        onPressed: removeCurrentFavorite,
+      ),
+      speakableText(
+        text: currentWord.hiragana,
+        japanese: currentWord.romaji,
+        style: const TextStyle(
+          fontSize: 28,
+          height: 1.1,
+          color: Colors.green,
+        ),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        currentWord.romaji,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 24,
+          height: 1.1,
+          color: Colors.orange,
+        ),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        currentWord.wordType,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 22,
+          height: 1.1,
+          fontWeight: FontWeight.bold,
+          color: Colors.purple,
+        ),
+      ),
+      const SizedBox(height: 4),
+      speakableText(
+        text: currentWord.meaning,
+        japanese: currentWord.romaji,
+        style: const TextStyle(
+          fontSize: 28,
+          height: 1.1,
+          color: Colors.blue,
+        ),
+      ),
     ],
   );
 }
