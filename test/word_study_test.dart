@@ -260,6 +260,49 @@ void main() {
       tester.getTopLeft(learning).dy,
       lessThan(tester.getTopLeft(kana).dy),
     );
+
+    final button = tester.widget<ElevatedButton>(
+      find.widgetWithText(ElevatedButton, '學習'),
+    );
+    expect(
+      tester.getSize(find.widgetWithText(ElevatedButton, '學習')).height,
+      closeTo(56.7, 0.1),
+    );
+    expect(
+      tester.getSize(find.widgetWithText(ElevatedButton, '學習')).width,
+      closeTo((800 - 40) * 0.63, 1),
+    );
+    expect(
+      button.style?.backgroundColor?.resolve(const <WidgetState>{}),
+      const Color(0x99FFFFFF),
+    );
+    expect(tester.widget<Text>(find.text('學習')).style?.fontSize, 28.8);
+  });
+
+  testWidgets('homepage fits an iPhone screen', (tester) async {
+    Future<void> expectFit(Size size) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      tester.view.padding = const FakeViewPadding(top: 47, bottom: 34);
+      tester.view.viewPadding = const FakeViewPadding(top: 47, bottom: 34);
+      await tester.pumpWidget(const MaterialApp(home: HomePage()));
+      await tester.pumpAndSettle();
+
+      final title = tester.getRect(find.text('龍吟の日本語コース'));
+      final last = tester.getRect(find.text('收藏單字 (0)'));
+      expect(title.top, greaterThanOrEqualTo(0));
+      expect(last.bottom, lessThanOrEqualTo(size.height));
+      expect(title.width, lessThanOrEqualTo(size.width));
+      expect(tester.takeException(), isNull);
+    }
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPadding);
+    addTearDown(tester.view.resetViewPadding);
+
+    await expectFit(const Size(390, 844));
+    await expectFit(const Size(375, 667));
   });
 
   testWidgets('marking the last word known opens the three choices', (

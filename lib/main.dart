@@ -166,12 +166,42 @@ Future<void> loadFavoritesHome() async {
 
   @override
   Widget build(BuildContext context) {
+    const buttonHeight = 56.7;
+    const buttonFontSize = 28.8;
     final homeButtonStyle = ElevatedButton.styleFrom(
-      minimumSize: const Size.fromHeight(90),
-      textStyle: const TextStyle(fontSize: 32),
-      backgroundColor: const Color(0xF2FFFFFF),
+      minimumSize: const Size.fromHeight(buttonHeight),
+      maximumSize: const Size.fromHeight(buttonHeight),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      visualDensity: VisualDensity.standard,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      textStyle: const TextStyle(fontSize: buttonFontSize, height: 1.1),
+      backgroundColor: const Color(0x99FFFFFF),
       foregroundColor: const Color(0xFF1A4A8A),
+      surfaceTintColor: Colors.transparent,
     );
+
+    Widget homeButton(String label, Widget page) {
+      return Align(
+        child: FractionallySizedBox(
+          widthFactor: 0.63,
+          child: ElevatedButton(
+            style: homeButtonStyle,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => page),
+              ).then((_) {
+                setState(() {});
+              });
+            },
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: buttonFontSize, height: 1.1),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -204,132 +234,92 @@ Future<void> loadFavoritesHome() async {
                       (screenHeight - constraints.maxHeight))
                   .clamp(0.0, constraints.maxHeight);
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: titleTop),
-                    const Text(
-                      '龍吟の日本語コース',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'LXGW WenKai',
-                        fontSize: 42,
-                        color: Color(0xFF0A2F6B),
-                        letterSpacing: 4,
-                        height: 1.3,
-                        shadows: [
-                          Shadow(
-                            color: Color(0xE6FFFFFF),
-                            blurRadius: 16,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 36),
-                    Text(
-                      'version: $appVersion',
-                      style: const TextStyle(
-                        color: Color(0xFF16325C),
-                        shadows: [
-                          Shadow(
-                            color: Color(0xE6FFFFFF),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Words Loaded: ${words.length}',
-                      style: const TextStyle(
-                        color: Color(0xFF16325C),
-                        shadows: [
-                          Shadow(
-                            color: Color(0xE6FFFFFF),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    ElevatedButton(
-                      style: homeButtonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LearningPage(),
-                          ),
-                        ).then((_) {
-                          setState(() {});
-                        });
-                      },
-                      child: const Text('學習'),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      style: homeButtonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const KanaMenuPage(),
-                          ),
-                        ).then((_) {
-                          setState(() {});
-                        });
-                      },
-                      child: const Text('五十音'),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      style: homeButtonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FavoriteKanaPage(),
-                          ),
-                        ).then((_) {
-                          setState(() {});
-                        });
-                      },
-                      child: Text('收藏五十音 ($kanaFavoriteCount)'),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      style: homeButtonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FlashcardMenuPage(),
-                          ),
-                        ).then((_) {
-                          setState(() {});
-                        });
-                      },
-                      child: const Text('單字'),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      style: homeButtonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FavoriteFlashcardPage(),
-                          ),
-                        ).then((_) {
-                          setState(() {});
-                        });
-                      },
-                      child: Text('收藏單字 ($favoriteCount)'),
+              final phone = constraints.maxWidth <= 480;
+              const title = Text(
+                '龍吟の日本語コース',
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                softWrap: false,
+                style: TextStyle(
+                  fontFamily: 'LXGW WenKai',
+                  fontSize: 42,
+                  color: Color(0xFF0A2F6B),
+                  letterSpacing: 4,
+                  height: 1.3,
+                  shadows: [
+                    Shadow(
+                      color: Color(0xE6FFFFFF),
+                      blurRadius: 16,
                     ),
                   ],
                 ),
+              );
+              final column = Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (phone)
+                    const Spacer(flex: 3)
+                  else
+                    SizedBox(height: titleTop),
+                  if (phone)
+                    const FittedBox(fit: BoxFit.scaleDown, child: title)
+                  else
+                    title,
+                  SizedBox(height: phone ? 12 : 36),
+                  Text(
+                    'version: $appVersion',
+                    style: const TextStyle(
+                      color: Color(0xFF16325C),
+                      shadows: [
+                        Shadow(
+                          color: Color(0xE6FFFFFF),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Words Loaded: ${words.length}',
+                    style: const TextStyle(
+                      color: Color(0xFF16325C),
+                      shadows: [
+                        Shadow(
+                          color: Color(0xE6FFFFFF),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: phone ? 16 : 30),
+                  homeButton('學習', const LearningPage()),
+                  const SizedBox(height: 10),
+                  homeButton('五十音', const KanaMenuPage()),
+                  const SizedBox(height: 10),
+                  homeButton('收藏五十音 ($kanaFavoriteCount)', const FavoriteKanaPage()),
+                  const SizedBox(height: 10),
+                  homeButton('單字', const FlashcardMenuPage()),
+                  const SizedBox(height: 10),
+                  homeButton(
+                    '收藏單字 ($favoriteCount)',
+                    const FavoriteFlashcardPage(),
+                  ),
+                  if (phone) const Spacer(flex: 2),
+                ],
+              );
+
+              if (phone) {
+                return SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 4),
+                    child: column,
+                  ),
+                );
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: column,
               );
             },
           ),
