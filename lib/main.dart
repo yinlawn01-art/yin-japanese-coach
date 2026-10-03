@@ -12,6 +12,8 @@ import 'romaji_speech.dart';
 import 'app_version.dart';
 import 'kana_data.dart';
 import 'kana_page.dart';
+import 'word_study.dart';
+import 'learning_page.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -155,6 +157,7 @@ Future<void> loadFavoritesHome() async {
   }
 
   await loadKanaFavorites();
+  await wordStudy.load();
 
   if (mounted) setState(() {});
 }
@@ -309,6 +312,21 @@ Future<void> loadFavoritesHome() async {
                         });
                       },
                       child: Text('收藏單字 ($favoriteCount)'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: homeButtonStyle,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LearningPage(),
+                          ),
+                        ).then((_) {
+                          setState(() {});
+                        });
+                      },
+                      child: const Text('學習'),
                     ),
                   ],
                 ),
