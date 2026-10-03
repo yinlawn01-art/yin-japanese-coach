@@ -11,10 +11,8 @@ import 'soft_speech.dart';
 import 'vocabulary_data.dart';
 import 'word_study.dart';
 
-const Size addWordsButtonSize = Size(240, 72);
-
-/// Square whose side is twice the height of [addWordsButtonSize].
-const Size studyQueueButtonSize = Size(144, 144);
+const Size addWordsButtonSize = Size(240, 36);
+const Size studyQueueButtonSize = Size(288, 288);
 
 const Size _studyButtonSize = Size(336, 64);
 const double _answerSlotHeight = 210;
@@ -87,10 +85,13 @@ class _LearningPageState extends State<LearningPage> {
                   maximumSize: addWordsButtonSize,
                   padding: EdgeInsets.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  textStyle: const TextStyle(fontSize: 22, height: 1.1),
+                  textStyle: const TextStyle(fontSize: 11, height: 1.1),
                 ),
                 onPressed: _ready ? _addTen : null,
-                child: const Text('加10 個單字'),
+                child: const Text(
+                  '加10 個單字',
+                  style: TextStyle(fontSize: 11, height: 1.1),
+                ),
               ),
             ),
             const SizedBox(height: 28),
@@ -101,7 +102,7 @@ class _LearningPageState extends State<LearningPage> {
                   fixedSize: studyQueueButtonSize,
                   minimumSize: studyQueueButtonSize,
                   maximumSize: studyQueueButtonSize,
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(20),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   shape: squareShape,
                 ),
@@ -110,7 +111,7 @@ class _LearningPageState extends State<LearningPage> {
                   fit: BoxFit.scaleDown,
                   child: Text(
                     '單字學習($count)',
-                    style: const TextStyle(fontSize: 26, height: 1.1),
+                    style: const TextStyle(fontSize: 52, height: 1.1),
                   ),
                 ),
               ),
