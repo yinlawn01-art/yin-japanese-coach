@@ -90,7 +90,7 @@ class KanaSpeaker {
   Future<void> reveal(KanaCard card, int token) async {
     await speakRomaji(card.romaji, token);
     if (token != generation) return;
-    await pause(const Duration(milliseconds: 1500), token);
+    await pause(const Duration(seconds: 1), token);
     if (token != generation) return;
     await speakRomaji(card.exampleRomaji, token);
   }
@@ -569,7 +569,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
       });
       await speaker.speakRomaji(current.romaji, token);
       if (!_isPlaying(token)) break;
-      await speaker.pause(const Duration(milliseconds: 1500), token);
+      await speaker.pause(const Duration(seconds: 1), token);
       if (!_isPlaying(token)) break;
 
       setState(() {
