@@ -543,7 +543,7 @@ return Scaffold(
                     right: 0,
                     child: Center(
                       child: _matchingButton(
-                        'Playing favorite words',
+                        '播放收藏單字',
                         playAllFavorites,
                         largeLabelSize,
                       ),
