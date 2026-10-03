@@ -235,7 +235,7 @@ Future<void> loadFavoritesHome() async {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const FlashcardPage(),
+                            builder: (context) => const FlashcardMenuPage(),
                           ),
                         ).then((_) {
                           setState(() {});
@@ -270,9 +270,82 @@ Future<void> loadFavoritesHome() async {
   }
 }
 
-class FlashcardPage extends StatefulWidget {
+List<Vocabulary> wordsOfType(String type) {
+  return words.where((word) => word.wordType.contains(type)).toList();
+}
 
-  const FlashcardPage({super.key});
+List<Vocabulary> allWordsShuffled() {
+  return List<Vocabulary>.from(words)..shuffle();
+}
+
+class FlashcardMenuPage extends StatelessWidget {
+  const FlashcardMenuPage({super.key});
+
+  void _open(BuildContext context, List<Vocabulary> deck) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FlashcardPage(deck: deck),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final buttonStyle = ElevatedButton.styleFrom(
+      minimumSize: const Size.fromHeight(64),
+      textStyle: const TextStyle(fontSize: 28),
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Flashcards'),
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  style: buttonStyle,
+                  onPressed: () => _open(context, wordsOfType('名詞')),
+                  child: const Text('名詞'),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  style: buttonStyle,
+                  onPressed: () => _open(context, wordsOfType('動詞')),
+                  child: const Text('動詞'),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  style: buttonStyle,
+                  onPressed: () => _open(context, wordsOfType('形容詞')),
+                  child: const Text('形容詞'),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  style: buttonStyle,
+                  onPressed: () => _open(context, allWordsShuffled()),
+                  child: const Text('全部'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FlashcardPage extends StatefulWidget {
+  const FlashcardPage({super.key, required this.deck});
+
+  final List<Vocabulary> deck;
 
   @override
   State<FlashcardPage> createState() => _FlashcardPageState();
@@ -322,7 +395,7 @@ Future<void> saveFavorites() async {
   }
 
   Future<void> showCurrentAnswer() async {
-    final japanese = words[currentIndex].hiragana;
+    final japanese = widget.deck[currentIndex].hiragana;
 
     setState(() {
       showAnswer = true;
@@ -334,8 +407,8 @@ Future<void> saveFavorites() async {
   void nextWord() {
     flutterTts.stop();
     setState(() {
-      if (words.isEmpty) return;
-      currentIndex = (currentIndex + 1) % words.length;
+      if (widget.deck.isEmpty) return;
+      currentIndex = (currentIndex + 1) % widget.deck.length;
       showAnswer = false;
     });
   }
@@ -361,7 +434,7 @@ Future<void> saveFavorites() async {
 
   @override
   Widget build(BuildContext context) {
-    final word = words[currentIndex];
+    final word = widget.deck[currentIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -383,7 +456,7 @@ Future<void> saveFavorites() async {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Word ${currentIndex + 1} / ${words.length}',
+                        'Word ${currentIndex + 1} / ${widget.deck.length}',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 20,
