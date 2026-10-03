@@ -552,13 +552,23 @@ Future<void> saveFavorites() async {
           final exampleTop = (screenHeight * 0.30 -
                   (screenHeight - constraints.maxHeight))
               .clamp(0.0, constraints.maxHeight);
+          final goBackRoom =
+              (constraints.maxHeight - _actionButtonSize.height)
+                  .clamp(0.0, constraints.maxHeight);
+          final goBackBottom =
+              (screenHeight * 0.40).clamp(0.0, goBackRoom);
           return Stack(
             children: [
               Column(
                 children: [
                   Expanded(
                     child: showExample
-                        ? exampleBody(sentence)
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                              bottom: goBackBottom + _actionButtonSize.height,
+                            ),
+                            child: exampleBody(sentence),
+                          )
                         : LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -708,15 +718,17 @@ Future<void> saveFavorites() async {
         },
       ),
                   ),
-                  if (showExample)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                      child: Center(
-                        child: fixedButton('Go back', closeExample),
-                      ),
-                    ),
                 ],
               ),
+              if (showExample)
+                Positioned(
+                  bottom: goBackBottom,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: fixedButton('Go back', closeExample),
+                  ),
+                ),
               if (showAnswer && !showExample)
                 Positioned(
                   top: exampleTop,
