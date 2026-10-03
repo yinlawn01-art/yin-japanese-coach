@@ -431,19 +431,31 @@ Future<void> saveFavorites() async {
     });
   }
 
-  Widget fixedButton(String label, VoidCallback onPressed) {
+  Widget fixedButton(
+    String label,
+    VoidCallback onPressed, {
+    double? fontSize,
+  }) {
+    final size = fontSize == null
+        ? _actionButtonSize
+        : const Size(168, 64);
     return SizedBox.fromSize(
-      size: _actionButtonSize,
+      size: size,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          fixedSize: _actionButtonSize,
-          minimumSize: _actionButtonSize,
-          maximumSize: _actionButtonSize,
+          fixedSize: size,
+          minimumSize: size,
+          maximumSize: size,
           padding: EdgeInsets.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         onPressed: onPressed,
-        child: Text(label),
+        child: Text(
+          label,
+          style: fontSize == null
+              ? null
+              : TextStyle(fontSize: fontSize, height: 1.1),
+        ),
       ),
     );
   }
@@ -527,25 +539,27 @@ Future<void> saveFavorites() async {
     final word = widget.deck[currentIndex];
     final sentence = exampleSentenceFor(word.kanji);
 
+    final largeLabelSize =
+        (Theme.of(context).textTheme.labelLarge?.fontSize ?? 14) * 2;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('單字'),
       ),
-      body: Column(
-        children: [
-          if (showAnswer && !showExample)
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Center(
-                child: fixedButton('例句', () {
-                  openExample();
-                }),
-              ),
-            ),
-          Expanded(
-            child: showExample
-                ? exampleBody(sentence)
-                : LayoutBuilder(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final screenHeight = MediaQuery.sizeOf(context).height;
+          final exampleTop = (screenHeight * 0.30 -
+                  (screenHeight - constraints.maxHeight))
+              .clamp(0.0, constraints.maxHeight);
+          return Stack(
+            children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: showExample
+                        ? exampleBody(sentence)
+                        : LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
             child: ConstrainedBox(
@@ -649,17 +663,33 @@ Future<void> saveFavorites() async {
                             : const SizedBox.shrink(),
                       ),
                       SizedBox.fromSize(
-                        size: _actionButtonSize,
+                        size: showAnswer
+                            ? const Size(168, 64)
+                            : _actionButtonSize,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            fixedSize: _actionButtonSize,
-                            minimumSize: _actionButtonSize,
-                            maximumSize: _actionButtonSize,
+                            fixedSize: showAnswer
+                                ? const Size(168, 64)
+                                : _actionButtonSize,
+                            minimumSize: showAnswer
+                                ? const Size(168, 64)
+                                : _actionButtonSize,
+                            maximumSize: showAnswer
+                                ? const Size(168, 64)
+                                : _actionButtonSize,
                             padding: EdgeInsets.zero,
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           onPressed: showAnswer ? nextWord : showCurrentAnswer,
-                          child: Text(showAnswer ? 'Next' : 'Show Answer'),
+                          child: Text(
+                            showAnswer ? 'Next' : 'Show Answer',
+                            style: showAnswer
+                                ? TextStyle(
+                                    fontSize: largeLabelSize,
+                                    height: 1.1,
+                                  )
+                                : null,
+                          ),
                         ),
                       ),
                     ],
@@ -670,15 +700,34 @@ Future<void> saveFavorites() async {
           );
         },
       ),
-          ),
-          if (showExample)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: Center(
-                child: fixedButton('Go back', closeExample),
+                  ),
+                  if (showExample)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                      child: Center(
+                        child: fixedButton('Go back', closeExample),
+                      ),
+                    ),
+                ],
               ),
-            ),
-        ],
+              if (showAnswer && !showExample)
+                Positioned(
+                  top: exampleTop,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: fixedButton(
+                      '例句',
+                      () {
+                        openExample();
+                      },
+                      fontSize: largeLabelSize,
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
