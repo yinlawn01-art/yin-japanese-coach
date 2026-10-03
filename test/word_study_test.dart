@@ -243,18 +243,17 @@ void main() {
     expect(find.text('語0'), findsWidgets);
   });
 
-  testWidgets('homepage lists 學習 first and the Japanese title', (
-    tester,
-  ) async {
+  testWidgets('homepage lists 學習 first and the title', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
 
-    final title = find.text('龍吟の日本語コース');
+    final title = find.text('龍吟的學日文APP');
     final learning = find.text('學習');
     final kana = find.text('五十音');
     expect(title, findsOneWidget);
     expect(tester.widget<Text>(title).style?.fontSize, 42);
     expect(tester.widget<Text>(title).style?.letterSpacing, 4);
+    expect(tester.getTopLeft(title).dy, closeTo(600 * 0.15, 2));
     expect(learning, findsOneWidget);
     expect(
       tester.getTopLeft(learning).dy,
@@ -288,9 +287,9 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: HomePage()));
       await tester.pumpAndSettle();
 
-      final title = tester.getRect(find.text('龍吟の日本語コース'));
+      final title = tester.getRect(find.text('龍吟的學日文APP'));
       final last = tester.getRect(find.text('收藏單字 (0)'));
-      expect(title.top, greaterThanOrEqualTo(0));
+      expect(title.top, closeTo(size.height * 0.15, 4));
       expect(last.bottom, lessThanOrEqualTo(size.height));
       expect(title.width, lessThanOrEqualTo(size.width));
       expect(tester.takeException(), isNull);
