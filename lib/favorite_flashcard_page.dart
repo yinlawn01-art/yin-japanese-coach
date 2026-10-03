@@ -14,6 +14,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 import 'soft_speech.dart';
 
+import 'example_sentence.dart';
+
 class FavoriteFlashcardPage extends StatefulWidget {
   const FavoriteFlashcardPage({super.key});
 
@@ -35,6 +37,8 @@ class _FavoriteFlashcardPageState
     int currentIndex = 0;   
 
     bool showAnswer = false;
+
+    bool showExample = false;
 
     bool isPlayingFavorites = false;
 
@@ -82,6 +86,105 @@ Future<void> showCurrentAnswer() async {
   await speakJapanese(japanese);
 }
 
+Future<void> openExample() async {
+  final sentence = exampleSentenceFor(currentWord.kanji);
+  setState(() {
+    showExample = true;
+  });
+  await speakJapanese(sentence.hiragana);
+}
+
+void closeExample() {
+  flutterTts.stop();
+  setState(() {
+    showExample = false;
+  });
+}
+
+Widget fixedButton(
+  String label,
+  VoidCallback onPressed, {
+  double? fontSize,
+}) {
+  final size = fontSize == null
+      ? _actionButtonSize
+      : const Size(168, 64);
+  return SizedBox.fromSize(
+    size: size,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        fixedSize: size,
+        minimumSize: size,
+        maximumSize: size,
+        padding: EdgeInsets.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      onPressed: onPressed,
+      child: Text(
+        label,
+        style: fontSize == null
+            ? null
+            : TextStyle(fontSize: fontSize, height: 1.1),
+      ),
+    ),
+  );
+}
+
+Widget exampleBody(ExampleSentence sentence) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      return SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  speakableText(
+                    text: sentence.japanese,
+                    japanese: sentence.hiragana,
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  speakableText(
+                    text: sentence.hiragana,
+                    japanese: sentence.hiragana,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                  const SizedBox(height: 10),
+                  speakableText(
+                    text: sentence.romaji,
+                    japanese: sentence.hiragana,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    sentence.chinese,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 Widget speakableText({
   required String text,
   required TextStyle style,
@@ -111,6 +214,7 @@ Future<void> removeCurrentFavorite() async {
 
   setState(() {
     showAnswer = false;
+    showExample = false;
 
     if (favoriteWords.isEmpty) {
       currentIndex = 0;
@@ -251,6 +355,7 @@ Future<void> playAllFavorites() async {
     setState(() {
       isPlayingFavorites = false;
       showAnswer = false;
+      showExample = false;
     });
   }
 }
@@ -266,6 +371,7 @@ Future<void> stopPlayingFavorites() async {
   setState(() {
     isPlayingFavorites = false;
     showAnswer = false;
+    showExample = false;
   });
 }
 
@@ -301,6 +407,7 @@ Future<void> nextFavorite() async {
     currentIndex = nextIndex;
 
     showAnswer = false;
+    showExample = false;
 
   });
 }
@@ -332,27 +439,98 @@ return Scaffold(
       ? _playingFavoritesView()
       : LayoutBuilder(
           builder: (context, constraints) {
+            final screenHeight = MediaQuery.sizeOf(context).height;
+            final exampleTop = (screenHeight * 0.30 -
+                    (screenHeight - constraints.maxHeight))
+                .clamp(0.0, constraints.maxHeight);
+            final goBackRoom =
+                (constraints.maxHeight - _actionButtonSize.height)
+                    .clamp(0.0, constraints.maxHeight);
+            final goBackBottom =
+                (screenHeight * 0.40).clamp(0.0, goBackRoom);
+            final largeLabelSize =
+                (Theme.of(context).textTheme.labelLarge?.fontSize ?? 14) * 2;
+            final sentence = exampleSentenceFor(currentWord.kanji);
+
             return Stack(
               children: [
-                Center(
-                  child: _favoriteCard(),
+                Column(
+                  children: [
+                    Expanded(
+                      child: showExample
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                bottom: goBackBottom +
+                                    _actionButtonSize.height,
+                              ),
+                              child: exampleBody(sentence),
+                            )
+                          : SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight,
+                                ),
+                                child: Align(
+                                  alignment: showAnswer
+                                      ? Alignment.topCenter
+                                      : Alignment.center,
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      24,
+                                      showAnswer
+                                          ? exampleTop + 64 + 20
+                                          : 24,
+                                      24,
+                                      24,
+                                    ),
+                                    child: _favoriteCard(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ),
+                  ],
                 ),
-                Positioned(
-                  top: (MediaQuery.sizeOf(context).height * 0.10 -
-                          (MediaQuery.sizeOf(context).height -
-                              constraints.maxHeight))
-                      .clamp(0.0, constraints.maxHeight),
-                  left: 16,
-                  right: 16,
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: playAllFavorites,
-                      child: const Text(
-                        'Playing favorite words',
+                if (!showExample)
+                  Positioned(
+                    top: (screenHeight * 0.10 -
+                            (screenHeight - constraints.maxHeight))
+                        .clamp(0.0, constraints.maxHeight),
+                    left: 16,
+                    right: 16,
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: playAllFavorites,
+                        child: const Text(
+                          'Playing favorite words',
+                        ),
                       ),
                     ),
                   ),
-                ),
+                if (showExample)
+                  Positioned(
+                    bottom: goBackBottom,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: fixedButton('Go back', closeExample),
+                    ),
+                  ),
+                if (showAnswer && !showExample)
+                  Positioned(
+                    top: exampleTop,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: fixedButton(
+                        '例句',
+                        () {
+                          openExample();
+                        },
+                        fontSize: largeLabelSize,
+                      ),
+                    ),
+                  ),
               ],
             );
           },
