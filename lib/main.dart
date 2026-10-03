@@ -211,13 +211,13 @@ Future<void> loadFavoritesHome() async {
                   children: [
                     SizedBox(height: titleTop),
                     const Text(
-                      '龍吟的日本課程',
+                      '龍吟の日本語コース',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'LXGW WenKai',
-                        fontSize: 42,
+                        fontSize: 84,
                         color: Color(0xFF0A2F6B),
-                        letterSpacing: 4,
+                        letterSpacing: 8,
                         height: 1.3,
                         shadows: [
                           Shadow(
@@ -254,6 +254,21 @@ Future<void> loadFavoritesHome() async {
                       ),
                     ),
                     const SizedBox(height: 30),
+                    ElevatedButton(
+                      style: homeButtonStyle,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LearningPage(),
+                          ),
+                        ).then((_) {
+                          setState(() {});
+                        });
+                      },
+                      child: const Text('學習'),
+                    ),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       style: homeButtonStyle,
                       onPressed: () {
@@ -312,21 +327,6 @@ Future<void> loadFavoritesHome() async {
                         });
                       },
                       child: Text('收藏單字 ($favoriteCount)'),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      style: homeButtonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LearningPage(),
-                          ),
-                        ).then((_) {
-                          setState(() {});
-                        });
-                      },
-                      child: const Text('學習'),
                     ),
                   ],
                 ),

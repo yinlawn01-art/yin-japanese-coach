@@ -180,17 +180,21 @@ void main() {
     expect(find.text('單字學習(9)'), findsOneWidget);
   });
 
-  testWidgets('homepage lists 學習 after 收藏單字', (tester) async {
+  testWidgets('homepage lists 學習 first and a larger Japanese title', (
+    tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
 
-    final favorites = find.textContaining('收藏單字');
+    final title = find.text('龍吟の日本語コース');
     final learning = find.text('學習');
-    expect(favorites, findsOneWidget);
+    final kana = find.text('五十音');
+    expect(title, findsOneWidget);
+    expect(tester.widget<Text>(title).style?.fontSize, 84);
     expect(learning, findsOneWidget);
     expect(
-      tester.getTopLeft(favorites).dy,
-      lessThan(tester.getTopLeft(learning).dy),
+      tester.getTopLeft(learning).dy,
+      lessThan(tester.getTopLeft(kana).dy),
     );
   });
 
