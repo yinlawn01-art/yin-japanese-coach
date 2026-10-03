@@ -9,6 +9,9 @@ import 'favorite_flashcard_page.dart';
 import 'soft_speech.dart';
 import 'example_sentence.dart';
 import 'romaji_speech.dart';
+import 'app_version.dart';
+import 'kana_data.dart';
+import 'kana_page.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -129,6 +132,8 @@ class _HomePageState extends State<HomePage> {
   int get favoriteCount =>
       words.where((w) => w.isFavorite).length;
 
+  int get kanaFavoriteCount => favoriteKanaCards.length;
+
 @override
 void initState() {
   super.initState();
@@ -149,7 +154,9 @@ Future<void> loadFavoritesHome() async {
         favorites.contains(word.kanji);
   }
 
-  setState(() {});
+  await loadKanaFavorites();
+
+  if (mounted) setState(() {});
 }
 
 
@@ -219,6 +226,19 @@ Future<void> loadFavoritesHome() async {
                     ),
                     const SizedBox(height: 36),
                     Text(
+                      'version: $appVersion',
+                      style: const TextStyle(
+                        color: Color(0xFF16325C),
+                        shadows: [
+                          Shadow(
+                            color: Color(0xE6FFFFFF),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
                       'Words Loaded: ${words.length}',
                       style: const TextStyle(
                         color: Color(0xFF16325C),
@@ -231,6 +251,36 @@ Future<void> loadFavoritesHome() async {
                       ),
                     ),
                     const SizedBox(height: 30),
+                    ElevatedButton(
+                      style: homeButtonStyle,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const KanaMenuPage(),
+                          ),
+                        ).then((_) {
+                          setState(() {});
+                        });
+                      },
+                      child: const Text('五十音'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: homeButtonStyle,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FavoriteKanaPage(),
+                          ),
+                        ).then((_) {
+                          setState(() {});
+                        });
+                      },
+                      child: Text('收藏五十音 ($kanaFavoriteCount)'),
+                    ),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       style: homeButtonStyle,
                       onPressed: () {
