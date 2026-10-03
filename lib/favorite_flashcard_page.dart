@@ -311,7 +311,7 @@ Future<void> nextFavorite() async {
   return Scaffold(
     appBar: AppBar(
       title: const Text(
-        'Favorite Words',
+        '收藏單字',
       ),
     ),
     body: const Center(
@@ -324,7 +324,7 @@ Future<void> nextFavorite() async {
 return Scaffold(
   appBar: AppBar(
     title: const Text(
-      'Favorite Words',
+      '收藏單字',
     ),
   ),
 

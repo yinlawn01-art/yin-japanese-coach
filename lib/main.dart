@@ -242,7 +242,7 @@ Future<void> loadFavoritesHome() async {
                           setState(() {});
                         });
                       },
-                      child: const Text('Flashcards'),
+                      child: const Text('單字'),
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
@@ -257,7 +257,7 @@ Future<void> loadFavoritesHome() async {
                           setState(() {});
                         });
                       },
-                      child: Text('Favorite Words ($favoriteCount)'),
+                      child: Text('收藏單字 ($favoriteCount)'),
                     ),
                   ],
                 ),
@@ -300,7 +300,7 @@ class FlashcardMenuPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flashcards'),
+        title: const Text('單字'),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -529,7 +529,7 @@ Future<void> saveFavorites() async {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flashcards'),
+        title: const Text('單字'),
       ),
       body: Column(
         children: [
