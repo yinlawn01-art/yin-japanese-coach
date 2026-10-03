@@ -50,11 +50,6 @@ await loadJsonFile(
   'assets/n5_adjectives.json',
   '🟣 形容詞',
 );
-
-await loadJsonFile(
-  'assets/n5_words.json',
-  '📚 單字',
-);
 }
 
 
