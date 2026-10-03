@@ -488,11 +488,6 @@ return Scaffold(
             final exampleTop = (screenHeight * 0.30 -
                     (screenHeight - constraints.maxHeight))
                 .clamp(0.0, constraints.maxHeight);
-            final goBackRoom =
-                (constraints.maxHeight - _studyShowAnswerSize.height)
-                    .clamp(0.0, constraints.maxHeight);
-            final goBackBottom =
-                (screenHeight * 0.40).clamp(0.0, goBackRoom);
             final largeLabelSize =
                 (Theme.of(context).textTheme.labelLarge?.fontSize ?? 14) * 2;
             final baseStyle = DefaultTextStyle.of(context).style;
@@ -518,7 +513,7 @@ return Scaffold(
                     top: 0,
                     left: 0,
                     right: 0,
-                    bottom: goBackBottom + _studyShowAnswerSize.height,
+                    bottom: answerBottom,
                     child: exampleBody(sentence),
                   )
                 else if (showAnswer)
@@ -556,7 +551,7 @@ return Scaffold(
                   ),
                 if (showExample)
                   Positioned(
-                    bottom: goBackBottom,
+                    top: showAnswerTop,
                     left: 0,
                     right: 0,
                     child: Center(
