@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'example_sentence.dart';
 import 'main.dart';
@@ -151,15 +150,6 @@ class _StudySessionPageState extends State<StudySessionPage> {
       await applyNaturalVoice(flutterTts, 'ja-JP');
       await flutterTts.speak(pronunciationForRomaji(romaji));
     } catch (_) {}
-  }
-
-  Future<void> saveFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final favorites = words
-        .where((word) => word.isFavorite)
-        .map((word) => word.kanji)
-        .toList();
-    await prefs.setStringList('favorites', favorites);
   }
 
   Future<void> showCurrentAnswer() async {
@@ -345,34 +335,16 @@ class _StudySessionPageState extends State<StudySessionPage> {
     required TextStyle kanjiStyle,
     required TextScaler textScaler,
   }) {
-    const iconHeight = 56.0;
     const gap = 40.0;
     final contentHeight =
         _textHeight(countText, countStyle, bodyWidth - 48, textScaler) +
         gap +
         _textHeight(kanji, kanjiStyle, bodyWidth - 48, textScaler) +
-        iconHeight +
         _answerSlotHeight +
         _studyButtonSize.height;
     final paddedHeight = contentHeight + 48;
     final columnTop = (bodyHeight - paddedHeight) / 2;
     return columnTop + 24 + contentHeight - _studyButtonSize.height;
-  }
-
-  Widget _favoriteStar(Vocabulary word) {
-    return IconButton(
-      iconSize: 40,
-      icon: Icon(
-        word.isFavorite ? Icons.star : Icons.star_border,
-        color: Colors.amber,
-      ),
-      onPressed: () async {
-        setState(() {
-          word.isFavorite = !word.isFavorite;
-        });
-        await saveFavorites();
-      },
-    );
   }
 
   Widget _frontWord(Vocabulary word, String countText) {
@@ -390,7 +362,6 @@ class _StudySessionPageState extends State<StudySessionPage> {
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
         ),
-        _favoriteStar(word),
         const SizedBox(height: _answerSlotHeight),
       ],
     );
@@ -410,22 +381,6 @@ class _StudySessionPageState extends State<StudySessionPage> {
           text: word.kanji,
           japanese: word.romaji,
           style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-        ),
-        IconButton(
-          iconSize: 32,
-          padding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-          constraints: const BoxConstraints.tightFor(width: 40, height: 40),
-          icon: Icon(
-            word.isFavorite ? Icons.star : Icons.star_border,
-            color: Colors.amber,
-          ),
-          onPressed: () async {
-            setState(() {
-              word.isFavorite = !word.isFavorite;
-            });
-            await saveFavorites();
-          },
         ),
         speakableText(
           text: word.hiragana,

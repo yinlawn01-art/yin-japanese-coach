@@ -129,6 +129,8 @@ void main() {
     expect(find.text('語0'), findsWidgets);
     expect(find.text('答案'), findsOneWidget);
     expect(find.text('意思0'), findsNothing);
+    expect(find.byIcon(Icons.star_border), findsNothing);
+    expect(find.byIcon(Icons.star), findsNothing);
 
     final answerSize = tester.getSize(
       find.widgetWithText(ElevatedButton, '答案'),
@@ -142,6 +144,8 @@ void main() {
     expect(find.text('go0'), findsOneWidget);
     expect(find.text('詞性：🔵 名詞'), findsOneWidget);
     expect(find.text('例句'), findsOneWidget);
+    expect(find.byIcon(Icons.star_border), findsNothing);
+    expect(find.byIcon(Icons.star), findsNothing);
 
     final known = find.widgetWithText(ElevatedButton, 'O');
     final unknown = find.widgetWithText(ElevatedButton, 'X');
