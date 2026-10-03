@@ -117,6 +117,11 @@ double _studyShowAnswerTop({
       textDirection: TextDirection.ltr,
       textScaler: textScaler,
       textAlign: TextAlign.center,
+      strutStyle: StrutStyle(
+        fontSize: style.fontSize,
+        height: style.height,
+        forceStrutHeight: true,
+      ),
     )..layout(maxWidth: bodyWidth - 48);
     return painter.height;
   }
