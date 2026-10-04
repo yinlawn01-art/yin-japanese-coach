@@ -1,0 +1,12 @@
+[
+  {"japanese": "水が飲みたいです。", "hiragana": "みずがのみたいです。", "romaji": "mizu ga nomitai desu.", "chinese": "想喝水。"},
+  {"japanese": "ご飯が食べたいです。", "hiragana": "ごはんがたべたいです。", "romaji": "gohan ga tabetai desu.", "chinese": "想吃飯。"},
+  {"japanese": "本が読みたいです。", "hiragana": "ほんがよみたいです。", "romaji": "hon ga yomitai desu.", "chinese": "想看書。"},
+  {"japanese": "学校に行きたいです。", "hiragana": "がっこうにいきたいです。", "romaji": "gakkou ni ikitai desu.", "chinese": "想去學校。"},
+  {"japanese": "家に帰りたいです。", "hiragana": "いえにかえりたいです。", "romaji": "ie ni kaeritai desu.", "chinese": "想回家。"},
+  {"japanese": "音楽が聞きたいです。", "hiragana": "おんがくがききたいです。", "romaji": "ongaku ga kikitai desu.", "chinese": "想聽音樂。"},
+  {"japanese": "映画が見たいです。", "hiragana": "えいががみたいです。", "romaji": "eiga ga mitai desu.", "chinese": "想看電影。"},
+  {"japanese": "友達に会いたいです。", "hiragana": "ともだちにあいたいです。", "romaji": "tomodachi ni aitai desu.", "chinese": "想和朋友見面。"},
+  {"japanese": "漢字が書きたいです。", "hiragana": "かんじがかきたいです。", "romaji": "kanji ga kakitai desu.", "chinese": "想寫漢字。"},
+  {"japanese": "海に行きたいです。", "hiragana": "うみにいきたいです。", "romaji": "umi ni ikitai desu.", "chinese": "想去海洋。"}
+]

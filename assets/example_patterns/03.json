@@ -1,0 +1,12 @@
+[
+  {"japanese": "部屋に本があります。", "hiragana": "へやにほんがあります。", "romaji": "heya ni hon ga arimasu.", "chinese": "房間裡有書。"},
+  {"japanese": "机に時計があります。", "hiragana": "つくえにとけいがあります。", "romaji": "tsukue ni tokei ga arimasu.", "chinese": "桌子上有時鐘。"},
+  {"japanese": "家に車があります。", "hiragana": "いえにくるまがあります。", "romaji": "ie ni kuruma ga arimasu.", "chinese": "家裡有汽車。"},
+  {"japanese": "駅に電車があります。", "hiragana": "えきにでんしゃがあります。", "romaji": "eki ni densha ga arimasu.", "chinese": "車站有電車。"},
+  {"japanese": "公園に木があります。", "hiragana": "こうえんにきがあります。", "romaji": "kouen ni ki ga arimasu.", "chinese": "公園裡有樹木。"},
+  {"japanese": "財布にお金があります。", "hiragana": "さいふにおかねがあります。", "romaji": "saifu ni okane ga arimasu.", "chinese": "錢包裡有金錢。"},
+  {"japanese": "部屋に窓があります。", "hiragana": "へやにまどがあります。", "romaji": "heya ni mado ga arimasu.", "chinese": "房間裡有窗戶。"},
+  {"japanese": "店に食べ物があります。", "hiragana": "みせにたべものがあります。", "romaji": "mise ni tabemono ga arimasu.", "chinese": "商店裡有食物。"},
+  {"japanese": "病院に薬があります。", "hiragana": "びょういんにくすりがあります。", "romaji": "byouin ni kusuri ga arimasu.", "chinese": "醫院裡有藥。"},
+  {"japanese": "空に飛行機があります。", "hiragana": "そらにひこうきがあります。", "romaji": "sora ni hikouki ga arimasu.", "chinese": "天空有飛機。"}
+]

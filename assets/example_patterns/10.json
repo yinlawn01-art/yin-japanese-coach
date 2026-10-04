@@ -1,0 +1,12 @@
+[
+  {"japanese": "水を飲んでください。", "hiragana": "みずをのんでください。", "romaji": "mizu o nonde kudasai.", "chinese": "請喝水。"},
+  {"japanese": "本を読んでください。", "hiragana": "ほんをよんでください。", "romaji": "hon o yonde kudasai.", "chinese": "請看書。"},
+  {"japanese": "椅子に座ってください。", "hiragana": "いすにすわってください。", "romaji": "isu ni suwatte kudasai.", "chinese": "請坐在椅子上。"},
+  {"japanese": "音楽を聞いてください。", "hiragana": "おんがくをきいてください。", "romaji": "ongaku o kiite kudasai.", "chinese": "請聽音樂。"},
+  {"japanese": "名前を書いてください。", "hiragana": "なまえをかいてください。", "romaji": "namae o kaite kudasai.", "chinese": "請寫名字。"},
+  {"japanese": "ドアを開けてください。", "hiragana": "ドアをあけてください。", "romaji": "doa o akete kudasai.", "chinese": "請打開門。"},
+  {"japanese": "写真を見てください。", "hiragana": "しゃしんをみてください。", "romaji": "shashin o mite kudasai.", "chinese": "請看照片。"},
+  {"japanese": "ご飯を食べてください。", "hiragana": "ごはんをたべてください。", "romaji": "gohan o tabete kudasai.", "chinese": "請吃飯。"},
+  {"japanese": "友達を待ってください。", "hiragana": "ともだちをまってください。", "romaji": "tomodachi o matte kudasai.", "chinese": "請等待朋友。"},
+  {"japanese": "学校に来てください。", "hiragana": "がっこうにきてください。", "romaji": "gakkou ni kite kudasai.", "chinese": "請來學校。"}
+]

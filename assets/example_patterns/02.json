@@ -1,0 +1,12 @@
+[
+  {"japanese": "今日は休みですか。", "hiragana": "きょうはやすみですか。", "romaji": "kyou wa yasumi desu ka.", "chinese": "今天是休假嗎？"},
+  {"japanese": "先生は医者ですか。", "hiragana": "せんせいはいしゃですか。", "romaji": "sensei wa isha desu ka.", "chinese": "老師是醫生嗎？"},
+  {"japanese": "子供は学生ですか。", "hiragana": "こどもはがくせいですか。", "romaji": "kodomo wa gakusei desu ka.", "chinese": "小孩是學生嗎？"},
+  {"japanese": "水は飲み物ですか。", "hiragana": "みずはのみものですか。", "romaji": "mizu wa nomimono desu ka.", "chinese": "水是飲料嗎？"},
+  {"japanese": "学校は図書館ですか。", "hiragana": "がっこうはとしょかんですか。", "romaji": "gakkou wa toshokan desu ka.", "chinese": "學校是圖書館嗎？"},
+  {"japanese": "猫は犬ですか。", "hiragana": "ねこはいぬですか。", "romaji": "neko wa inu desu ka.", "chinese": "貓是狗嗎？"},
+  {"japanese": "明日は誕生日ですか。", "hiragana": "あしたはたんじょうびですか。", "romaji": "ashita wa tanjoubi desu ka.", "chinese": "明天是生日嗎？"},
+  {"japanese": "部屋は静かですか。", "hiragana": "へやはしずかですか。", "romaji": "heya wa shizuka desu ka.", "chinese": "房間是安靜的嗎？"},
+  {"japanese": "試験は難しいですか。", "hiragana": "しけんはむずかしいですか。", "romaji": "shiken wa muzukashii desu ka.", "chinese": "考試是困難的嗎？"},
+  {"japanese": "ご飯は美味しいですか。", "hiragana": "ごはんはおいしいですか。", "romaji": "gohan wa oishii desu ka.", "chinese": "飯是好吃的嗎？"}
+]

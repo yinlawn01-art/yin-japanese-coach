@@ -14,6 +14,8 @@ import 'kana_data.dart';
 import 'kana_page.dart';
 import 'word_study.dart';
 import 'learning_page.dart';
+import 'example_pattern_page.dart';
+import 'example_patterns.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -68,6 +70,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await loadWords();
+  await loadExamplePatterns();
 
   runApp(
     const MyApp(),
@@ -302,7 +305,8 @@ Future<void> loadFavoritesHome() async {
                     '收藏單字 ($favoriteCount)',
                     const FavoriteFlashcardPage(),
                   ),
-                  if (phone) const Spacer(flex: 2),
+                  const SizedBox(height: 10),
+                  homeButton('例句', const ExamplePatternMenuPage()),
                 ],
               );
 
@@ -311,7 +315,7 @@ Future<void> loadFavoritesHome() async {
                   top: false,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-                    child: column,
+                    child: SingleChildScrollView(child: column),
                   ),
                 );
               }

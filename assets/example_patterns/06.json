@@ -1,0 +1,12 @@
+[
+  {"japanese": "仕事をします。", "hiragana": "しごとをします。", "romaji": "shigoto o shimasu.", "chinese": "做工作。"},
+  {"japanese": "運動をします。", "hiragana": "うんどうをします。", "romaji": "undou o shimasu.", "chinese": "做運動。"},
+  {"japanese": "旅行をします。", "hiragana": "りょこうをします。", "romaji": "ryokou o shimasu.", "chinese": "做旅行。"},
+  {"japanese": "宿題をします。", "hiragana": "しゅくだいをします。", "romaji": "shukudai o shimasu.", "chinese": "做作業。"},
+  {"japanese": "試験をします。", "hiragana": "しけんをします。", "romaji": "shiken o shimasu.", "chinese": "做考試。"},
+  {"japanese": "質問をします。", "hiragana": "しつもんをします。", "romaji": "shitsumon o shimasu.", "chinese": "做問題。"},
+  {"japanese": "電話をします。", "hiragana": "でんわをします。", "romaji": "denwa o shimasu.", "chinese": "做電話。"},
+  {"japanese": "勉強をします。", "hiragana": "べんきょうをします。", "romaji": "benkyou o shimasu.", "chinese": "做學習。"},
+  {"japanese": "料理をします。", "hiragana": "りょうりをします。", "romaji": "ryouri o shimasu.", "chinese": "做料理。"},
+  {"japanese": "掃除をします。", "hiragana": "そうじをします。", "romaji": "souji o shimasu.", "chinese": "做打掃。"}
+]

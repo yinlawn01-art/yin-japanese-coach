@@ -335,11 +335,15 @@ void main() {
       await tester.pumpAndSettle();
 
       final title = tester.getRect(find.text('龍吟的學日文APP'));
-      final last = tester.getRect(find.text('收藏單字 (0)'));
       expect(title.top, closeTo(size.height * 0.15, 4));
-      expect(last.bottom, lessThanOrEqualTo(size.height));
       expect(title.width, lessThanOrEqualTo(size.width));
       expect(tester.takeException(), isNull);
+      await tester.ensureVisible(find.text('例句'));
+      expect(tester.takeException(), isNull);
+      expect(
+        tester.getTopLeft(find.text('例句')).dy,
+        greaterThan(tester.getTopLeft(find.text('收藏單字 (0)')).dy),
+      );
     }
 
     addTearDown(tester.view.resetPhysicalSize);

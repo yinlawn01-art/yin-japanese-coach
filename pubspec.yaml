@@ -51,6 +51,7 @@ flutter:
     - assets/n5_nouns.json
     - assets/n5_adjectives.json
     - assets/homepage_shinkai.jpg
+    - assets/example_patterns/
 
   fonts:
     - family: LXGW WenKai

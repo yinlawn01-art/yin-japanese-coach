@@ -1,0 +1,12 @@
+[
+  {"japanese": "父は先生です。", "hiragana": "ちちはせんせいです。", "romaji": "chichi wa sensei desu.", "chinese": "父親是老師。"},
+  {"japanese": "母は看護師です。", "hiragana": "はははかんごしです。", "romaji": "haha wa kangoshi desu.", "chinese": "母親是護士。"},
+  {"japanese": "兄は学生です。", "hiragana": "あにはがくせいです。", "romaji": "ani wa gakusei desu.", "chinese": "哥哥是學生。"},
+  {"japanese": "妹は子供です。", "hiragana": "いもうとはこどもです。", "romaji": "imouto wa kodomo desu.", "chinese": "妹妹是小孩。"},
+  {"japanese": "友達は医者です。", "hiragana": "ともだちはいしゃです。", "romaji": "tomodachi wa isha desu.", "chinese": "朋友是醫生。"},
+  {"japanese": "水は飲み物です。", "hiragana": "みずはのみものです。", "romaji": "mizu wa nomimono desu.", "chinese": "水是飲料。"},
+  {"japanese": "ご飯は食べ物です。", "hiragana": "ごはんはたべものです。", "romaji": "gohan wa tabemono desu.", "chinese": "飯是食物。"},
+  {"japanese": "赤は色です。", "hiragana": "あかはいろです。", "romaji": "aka wa iro desu.", "chinese": "紅色是顏色。"},
+  {"japanese": "今日は休みです。", "hiragana": "きょうはやすみです。", "romaji": "kyou wa yasumi desu.", "chinese": "今天是休假。"},
+  {"japanese": "学校は静かです。", "hiragana": "がっこうはしずかです。", "romaji": "gakkou wa shizuka desu.", "chinese": "學校是安靜的。"}
+]
