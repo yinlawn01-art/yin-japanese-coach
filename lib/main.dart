@@ -311,11 +311,14 @@ Future<void> loadFavoritesHome() async {
                   ),
                   const SizedBox(height: 10),
                   homeButton(
-                    '例句 ($exampleFavoriteCount)',
+                    '例句(${exampleSentenceCount()})',
                     const ExamplePatternMenuPage(),
                   ),
                   const SizedBox(height: 10),
-                  homeButton('收藏例句', const FavoriteExamplePage()),
+                  homeButton(
+                    '收藏例句($exampleFavoriteCount)',
+                    const FavoriteExamplePage(),
+                  ),
                 ],
               );
 

@@ -336,6 +336,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
   }
 
   Future<void> markKnown() async {
+    final completed = studyQueue.indexes[currentIndex];
     final finished = studyQueue.removeAt(currentIndex);
     if (!finished) {
       setState(() {
@@ -350,7 +351,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
     await studyQueue.save();
     if (!mounted) return;
     if (finished) {
-      await _showFinishedDialog();
+      await _showFinishedDialog(completed);
     }
   }
 
@@ -383,7 +384,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
     });
   }
 
-  Future<void> _showFinishedDialog() async {
+  Future<void> _showFinishedDialog(int completedCatalogIndex) async {
     final choice = await showDialog<String>(
       context: context,
       barrierDismissible: true,
@@ -396,7 +397,8 @@ class _StudySessionPageState extends State<StudySessionPage> {
       },
     );
     if (!mounted) return;
-    if (choice == null || choice == 'record') {
+    final leave = choice == null || choice == 'record';
+    if (leave) {
       studyQueue.rememberBatchEnd(words.length);
     } else {
       if (choice == 'repeat' || choice == 'repeat-plus') {
@@ -405,10 +407,23 @@ class _StudySessionPageState extends State<StudySessionPage> {
       if (choice == 'repeat-plus' || choice == 'new') {
         studyQueue.addBatch(words.length);
       }
+      if (studyQueue.indexes.isNotEmpty) {
+        final position = studyQueue.indexes.indexOf(completedCatalogIndex);
+        final next = position < 0
+            ? 0
+            : (position + 1) % studyQueue.indexes.length;
+        setState(() {
+          currentIndex = next;
+          showAnswer = false;
+          showExample = false;
+        });
+      }
     }
     await studyQueue.save();
     if (!mounted) return;
-    Navigator.of(context).pop();
+    if (leave || studyQueue.indexes.isEmpty) {
+      Navigator.of(context).pop();
+    }
   }
 
   Widget studyActionButton({

@@ -61,6 +61,18 @@ const String allExamplesLabel = '(11) 全部';
 
 final List<ExamplePattern> examplePatterns = [];
 
+/// Sentences available from the 例句 page. 全部 already holds every sentence.
+int exampleSentenceCount() {
+  for (final pattern in examplePatterns) {
+    if (pattern.label == allExamplesLabel) return pattern.sentences.length;
+  }
+  var total = 0;
+  for (final pattern in examplePatterns) {
+    total += pattern.sentences.length;
+  }
+  return total;
+}
+
 final Set<String> exampleFavorites = {};
 
 List<PatternSentence> favoriteExampleSentences() {

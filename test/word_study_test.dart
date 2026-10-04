@@ -338,15 +338,15 @@ void main() {
       expect(title.top, closeTo(size.height * 0.15, 4));
       expect(title.width, lessThanOrEqualTo(size.width));
       expect(tester.takeException(), isNull);
-      await tester.ensureVisible(find.text('收藏例句'));
+      await tester.ensureVisible(find.text('收藏例句(0)'));
       expect(tester.takeException(), isNull);
       expect(
-        tester.getTopLeft(find.text('例句 (0)')).dy,
+        tester.getTopLeft(find.text('例句(0)')).dy,
         greaterThan(tester.getTopLeft(find.text('收藏單字 (0)')).dy),
       );
       expect(
-        tester.getTopLeft(find.text('收藏例句')).dy,
-        greaterThan(tester.getTopLeft(find.text('例句 (0)')).dy),
+        tester.getTopLeft(find.text('收藏例句(0)')).dy,
+        greaterThan(tester.getTopLeft(find.text('例句(0)')).dy),
       );
     }
 
@@ -460,8 +460,11 @@ void main() {
 
     await tester.tap(find.text('再重複一次'));
     await tester.pumpAndSettle();
-    expect(find.text('中→日學習(1)'), findsOneWidget);
-    expect(find.text('學習'), findsOneWidget);
+    expect(find.text('中→日學習'), findsOneWidget);
+    expect(find.text('(1 of 1)'), findsOneWidget);
+    expect(find.text('意思3'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.text('學習'), findsNothing);
     expect(zhJaStudy.indexes, [3]);
     expect(wordStudy.indexes, isEmpty);
   });
@@ -484,8 +487,11 @@ void main() {
     await tester.tap(find.text('重複 + 十個新單字'));
     await tester.pumpAndSettle();
 
-    expect(find.text('中→日學習(11)'), findsOneWidget);
-    expect(find.text('學習'), findsOneWidget);
+    expect(find.text('中→日學習'), findsOneWidget);
+    expect(find.text('(2 of 11)'), findsOneWidget);
+    expect(find.text('意思4'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.text('學習'), findsNothing);
     expect(zhJaStudy.indexes, [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]);
     expect(wordStudy.indexes, isEmpty);
   });
@@ -508,8 +514,11 @@ void main() {
     await tester.tap(find.text('再來十個新單字'));
     await tester.pumpAndSettle();
 
-    expect(find.text('中→日學習(10)'), findsOneWidget);
-    expect(find.text('學習'), findsOneWidget);
+    expect(find.text('中→日學習'), findsOneWidget);
+    expect(find.text('(1 of 10)'), findsOneWidget);
+    expect(find.text('意思4'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.text('學習'), findsNothing);
     expect(zhJaStudy.indexes, [4, 5, 6, 7, 8, 9, 10, 11, 0, 1]);
     expect(wordStudy.indexes, isEmpty);
   });
@@ -568,8 +577,11 @@ void main() {
 
     await tester.tap(repeat);
     await tester.pumpAndSettle();
-    expect(find.text('單字學習(1)'), findsOneWidget);
-    expect(find.text('學習'), findsOneWidget);
+    expect(find.text('單字學習'), findsOneWidget);
+    expect(find.text('(1 of 1)'), findsOneWidget);
+    expect(find.text('語3'), findsWidgets);
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.text('學習'), findsNothing);
     expect(wordStudy.indexes, [3]);
   });
 
@@ -591,8 +603,11 @@ void main() {
     await tester.tap(find.text('重複 + 十個新單字'));
     await tester.pumpAndSettle();
 
-    expect(find.text('單字學習(11)'), findsOneWidget);
-    expect(find.text('學習'), findsOneWidget);
+    expect(find.text('單字學習'), findsOneWidget);
+    expect(find.text('(2 of 11)'), findsOneWidget);
+    expect(find.text('語4'), findsWidgets);
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.text('學習'), findsNothing);
     expect(wordStudy.indexes, [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]);
   });
 
@@ -612,9 +627,40 @@ void main() {
     await tester.tap(find.text('再來十個新單字'));
     await tester.pumpAndSettle();
 
-    expect(find.text('單字學習(10)'), findsOneWidget);
-    expect(find.text('學習'), findsOneWidget);
+    expect(find.text('單字學習'), findsOneWidget);
+    expect(find.text('(1 of 10)'), findsOneWidget);
+    expect(find.text('語4'), findsWidgets);
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.text('學習'), findsNothing);
     expect(wordStudy.indexes, [4, 5, 6, 7, 8, 9, 10, 11, 0, 1]);
+  });
+
+  testWidgets('再重複一次 continues after the word that was just finished', (
+    tester,
+  ) async {
+    wordStudy.indexes = [2, 3, 4];
+    wordStudy.nextIndex = 5;
+    await wordStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('單字學習(3)'));
+    await tester.pumpAndSettle();
+
+    for (var round = 0; round < 3; round++) {
+      await tester.tap(find.text('答案'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ElevatedButton, 'O'));
+      await tester.pumpAndSettle();
+    }
+
+    await tester.tap(find.text('再重複一次'));
+    await tester.pumpAndSettle();
+    expect(find.text('(1 of 3)'), findsOneWidget);
+    expect(find.text('語2'), findsWidgets);
+    expect(find.text('答案'), findsOneWidget);
+    expect(wordStudy.indexes, [2, 3, 4]);
+    expect(find.text('學習'), findsNothing);
   });
 
   test('紀錄進程與結束 continues after the last word of the batch', () {
