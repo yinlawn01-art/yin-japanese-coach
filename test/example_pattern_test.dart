@@ -75,8 +75,8 @@ void main() {
     await tester.runAsync(loadExamplePatterns);
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('例句 (0)'));
-    await tester.tap(find.text('例句 (0)'));
+    await tester.ensureVisible(find.text('例句(100)'));
+    await tester.tap(find.text('例句(100)'));
     await tester.pumpAndSettle();
 
     expect(find.text('(1)～は～です : A是B (10)'), findsOneWidget);
@@ -128,8 +128,8 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('例句 (0)'));
-    await tester.tap(find.text('例句 (0)'));
+    await tester.ensureVisible(find.text('例句(100)'));
+    await tester.tap(find.text('例句(100)'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('(1)～は～です : A是B (10)'));
     await tester.pumpAndSettle();
@@ -141,14 +141,15 @@ void main() {
     await tester.pageBack();
     await tester.pumpAndSettle();
 
-    expect(find.text('例句 (1)'), findsOneWidget);
+    expect(find.text('例句(100)'), findsOneWidget);
+    expect(find.text('收藏例句(1)'), findsOneWidget);
     expect(
-      tester.getTopLeft(find.text('收藏例句')).dy,
-      greaterThan(tester.getTopLeft(find.text('例句 (1)')).dy),
+      tester.getTopLeft(find.text('收藏例句(1)')).dy,
+      greaterThan(tester.getTopLeft(find.text('例句(100)')).dy),
     );
 
-    await tester.ensureVisible(find.text('收藏例句'));
-    await tester.tap(find.text('收藏例句'));
+    await tester.ensureVisible(find.text('收藏例句(1)'));
+    await tester.tap(find.text('收藏例句(1)'));
     await tester.pumpAndSettle();
     expect(find.text('父は先生です。'), findsOneWidget);
     expect(find.text('播放收藏例句'), findsOneWidget);
@@ -173,7 +174,8 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
     await tester.pageBack();
     await tester.pumpAndSettle();
-    expect(find.text('例句 (0)'), findsOneWidget);
+    expect(find.text('例句(100)'), findsOneWidget);
+    expect(find.text('收藏例句(0)'), findsOneWidget);
   });
 
   testWidgets('收藏例句 continues to another saved sentence', (tester) async {
