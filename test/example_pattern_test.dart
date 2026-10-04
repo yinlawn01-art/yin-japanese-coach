@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yin_japanese_coach/example_patterns.dart';
+import 'package:yin_japanese_coach/favorite_example_page.dart';
 import 'package:yin_japanese_coach/main.dart';
 import 'package:yin_japanese_coach/romaji_speech.dart';
 
@@ -74,8 +75,8 @@ void main() {
     await tester.runAsync(loadExamplePatterns);
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('例句'));
-    await tester.tap(find.text('例句'));
+    await tester.ensureVisible(find.text('例句 (0)'));
+    await tester.tap(find.text('例句 (0)'));
     await tester.pumpAndSettle();
 
     expect(find.text('(1)～は～です : A是B (10)'), findsOneWidget);
@@ -118,6 +119,83 @@ void main() {
     expect(exampleFavorites, isNot(contains('父は先生です。')));
     expect(find.text('母は看護師です。'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('收藏例句 reviews a starred sentence and removes it', (tester) async {
+    await tester.runAsync(loadExamplePatterns);
+    await tester.pumpWidget(const MaterialApp(home: HomePage()));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('例句 (0)'));
+    await tester.tap(find.text('例句 (0)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('(1)～は～です : A是B (10)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('收藏例句'));
+    await tester.pumpAndSettle();
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    expect(find.text('例句 (1)'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('收藏例句')).dy,
+      greaterThan(tester.getTopLeft(find.text('例句 (1)')).dy),
+    );
+
+    await tester.ensureVisible(find.text('收藏例句'));
+    await tester.tap(find.text('收藏例句'));
+    await tester.pumpAndSettle();
+    expect(find.text('父は先生です。'), findsOneWidget);
+    expect(find.text('播放收藏例句'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    expect(find.text('ちちはせんせいです。'), findsOneWidget);
+    expect(find.text('chichi wa sensei desu.'), findsOneWidget);
+    expect(find.text('父親是老師。'), findsOneWidget);
+    expect(find.text('繼續'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.byIcon(Icons.star)).dy,
+      greaterThan(tester.getTopLeft(find.text('父は先生です。')).dy),
+    );
+
+    await tester.tap(find.byTooltip('Remove from favorites'));
+    await tester.pump();
+    expect(find.text('還沒有收藏例句。'), findsOneWidget);
+    expect(exampleFavorites, isEmpty);
+
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('例句 (0)'), findsOneWidget);
+  });
+
+  testWidgets('收藏例句 continues to another saved sentence', (tester) async {
+    await tester.runAsync(() async {
+      await loadExamplePatterns();
+      exampleFavorites
+        ..clear()
+        ..addAll(['父は先生です。', '母は看護師です。']);
+      await saveExampleFavorites();
+    });
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteExamplePage()));
+    await tester.pumpAndSettle();
+    expect(find.text('父は先生です。'), findsOneWidget);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    await tester.tap(find.text('繼續'));
+    await tester.pump();
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.text('母は看護師です。'), findsOneWidget);
+    expect(find.text('父は先生です。'), findsNothing);
 
     await tester.pump(const Duration(seconds: 2));
   });

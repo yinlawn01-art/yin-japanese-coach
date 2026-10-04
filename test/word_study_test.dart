@@ -338,11 +338,15 @@ void main() {
       expect(title.top, closeTo(size.height * 0.15, 4));
       expect(title.width, lessThanOrEqualTo(size.width));
       expect(tester.takeException(), isNull);
-      await tester.ensureVisible(find.text('例句'));
+      await tester.ensureVisible(find.text('收藏例句'));
       expect(tester.takeException(), isNull);
       expect(
-        tester.getTopLeft(find.text('例句')).dy,
+        tester.getTopLeft(find.text('例句 (0)')).dy,
         greaterThan(tester.getTopLeft(find.text('收藏單字 (0)')).dy),
+      );
+      expect(
+        tester.getTopLeft(find.text('收藏例句')).dy,
+        greaterThan(tester.getTopLeft(find.text('例句 (0)')).dy),
       );
     }
 

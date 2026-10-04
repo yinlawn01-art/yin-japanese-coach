@@ -16,6 +16,7 @@ import 'word_study.dart';
 import 'learning_page.dart';
 import 'example_pattern_page.dart';
 import 'example_patterns.dart';
+import 'favorite_example_page.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -139,6 +140,8 @@ class _HomePageState extends State<HomePage> {
 
   int get kanaFavoriteCount => favoriteKanaCards.length;
 
+  int get exampleFavoriteCount => exampleFavorites.length;
+
 @override
 void initState() {
   super.initState();
@@ -160,6 +163,7 @@ Future<void> loadFavoritesHome() async {
   }
 
   await loadKanaFavorites();
+  await loadExampleFavorites();
   await wordStudy.load();
 
   if (mounted) setState(() {});
@@ -306,7 +310,12 @@ Future<void> loadFavoritesHome() async {
                     const FavoriteFlashcardPage(),
                   ),
                   const SizedBox(height: 10),
-                  homeButton('例句', const ExamplePatternMenuPage()),
+                  homeButton(
+                    '例句 ($exampleFavoriteCount)',
+                    const ExamplePatternMenuPage(),
+                  ),
+                  const SizedBox(height: 10),
+                  homeButton('收藏例句', const FavoriteExamplePage()),
                 ],
               );
 
