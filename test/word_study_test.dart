@@ -20,6 +20,7 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     wordStudy.reset();
+    zhJaStudy.reset();
     words
       ..clear()
       ..addAll(List.generate(12, sample));
@@ -27,6 +28,7 @@ void main() {
 
   tearDown(() {
     wordStudy.reset();
+    zhJaStudy.reset();
     words.clear();
   });
 
@@ -307,6 +309,161 @@ void main() {
 
     await expectFit(const Size(390, 844));
     await expectFit(const Size(375, 667));
+  });
+
+  test('中→日學習 keeps its own place in the flashcard list', () async {
+    wordStudy.addBatch(words.length);
+    zhJaStudy.nextIndex = 2;
+    expect(zhJaStudy.addBatch(words.length), 10);
+    expect(zhJaStudy.indexes.first, 2);
+    expect(wordStudy.indexes.first, 0);
+
+    zhJaStudy.beginSession();
+    await zhJaStudy.save();
+    await wordStudy.save();
+    wordStudy.reset();
+    zhJaStudy.reset();
+    await wordStudy.load();
+    await zhJaStudy.load();
+    expect(wordStudy.nextIndex, 10);
+    expect(zhJaStudy.indexes.first, 2);
+    expect(zhJaStudy.sessionSnapshot.first, 2);
+  });
+
+  testWidgets('中→日學習 shows Chinese first and the Japanese answer', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+
+    final closed = find.text('中→日學習(0)');
+    await tester.ensureVisible(closed);
+    expect(
+      tester.getSize(find.widgetWithText(ElevatedButton, '中→日學習(0)')),
+      studyQueueButtonSize,
+    );
+    expect(
+      tester
+          .widget<ElevatedButton>(
+            find.widgetWithText(ElevatedButton, '中→日學習(0)'),
+          )
+          .onPressed,
+      isNull,
+    );
+
+    final add = find.text('加10 個單字到中→日學習');
+    await tester.ensureVisible(add);
+    await tester.tap(add);
+    await tester.pumpAndSettle();
+    expect(find.text('中→日學習(10)'), findsOneWidget);
+    expect(wordStudy.indexes, isEmpty);
+
+    final open = find.text('中→日學習(10)');
+    await tester.ensureVisible(open);
+    await tester.tap(open);
+    await tester.pumpAndSettle();
+    expect(find.text('(1 of 10)'), findsOneWidget);
+    expect(find.text('意思0'), findsOneWidget);
+    expect(find.text('語0'), findsNothing);
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.byIcon(Icons.star), findsNothing);
+
+    await tester.tap(find.text('答案'));
+    await tester.pumpAndSettle();
+    expect(find.text('語0'), findsWidgets);
+    expect(find.text('ご0'), findsOneWidget);
+    expect(find.text('go0'), findsOneWidget);
+    expect(find.text('詞性：🔵 名詞'), findsOneWidget);
+    expect(find.text('意思0'), findsWidgets);
+    expect(find.text('例句'), findsOneWidget);
+
+    final known = tester.getRect(find.widgetWithText(ElevatedButton, 'O'));
+    final unknown = tester.getRect(find.widgetWithText(ElevatedButton, 'X'));
+    expect(known.left, lessThan(unknown.left));
+    expect(unknown.left - known.right, closeTo(56, 1));
+    expect(tester.widget<Text>(find.text('O')).style?.color, Colors.green);
+    expect(tester.widget<Text>(find.text('X')).style?.color, Colors.red);
+
+    await tester.tap(find.widgetWithText(ElevatedButton, 'X'));
+    await tester.pumpAndSettle();
+    expect(find.text('(2 of 10)'), findsOneWidget);
+    expect(find.text('意思1'), findsOneWidget);
+    expect(zhJaStudy.indexes, hasLength(10));
+  });
+
+  testWidgets('finishing 中→日學習 restores that queue', (tester) async {
+    zhJaStudy.indexes = [3];
+    zhJaStudy.nextIndex = 4;
+    await zhJaStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+    final open = find.text('中→日學習(1)');
+    await tester.ensureVisible(open);
+    await tester.tap(open);
+    await tester.pumpAndSettle();
+    expect(find.text('意思3'), findsOneWidget);
+
+    await tester.tap(find.text('答案'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ElevatedButton, 'O'));
+    await tester.pumpAndSettle();
+    expect(find.text('恭喜你背完目前的中翻日, 接下來你想做甚麼?'), findsOneWidget);
+
+    await tester.tap(find.text('再重複一次'));
+    await tester.pumpAndSettle();
+    expect(find.text('中→日學習(1)'), findsOneWidget);
+    expect(find.text('學習'), findsOneWidget);
+    expect(zhJaStudy.indexes, [3]);
+    expect(wordStudy.indexes, isEmpty);
+  });
+
+  testWidgets('重複 + 十個新單字 restores 中→日 and adds the next ten', (tester) async {
+    zhJaStudy.indexes = [3];
+    zhJaStudy.nextIndex = 4;
+    await zhJaStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+    final open = find.text('中→日學習(1)');
+    await tester.ensureVisible(open);
+    await tester.tap(open);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('答案'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ElevatedButton, 'O'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('重複 + 十個新單字'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('中→日學習(11)'), findsOneWidget);
+    expect(find.text('學習'), findsOneWidget);
+    expect(zhJaStudy.indexes, [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]);
+    expect(wordStudy.indexes, isEmpty);
+  });
+
+  testWidgets('再來十個新單字 adds ten 中→日 words without restoring', (tester) async {
+    zhJaStudy.indexes = [3];
+    zhJaStudy.nextIndex = 4;
+    await zhJaStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+    final open = find.text('中→日學習(1)');
+    await tester.ensureVisible(open);
+    await tester.tap(open);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('答案'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ElevatedButton, 'O'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('再來十個新單字'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('中→日學習(10)'), findsOneWidget);
+    expect(find.text('學習'), findsOneWidget);
+    expect(zhJaStudy.indexes, [4, 5, 6, 7, 8, 9, 10, 11, 0, 1]);
+    expect(wordStudy.indexes, isEmpty);
   });
 
   testWidgets('marking the last word known opens the three choices', (

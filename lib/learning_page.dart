@@ -36,7 +36,9 @@ class _LearningPageState extends State<LearningPage> {
 
   Future<void> _load() async {
     await wordStudy.load();
+    await zhJaStudy.load();
     wordStudy.retainAvailable(words.length);
+    zhJaStudy.retainAvailable(words.length);
     if (mounted) {
       setState(() {
         _ready = true;
@@ -68,9 +70,30 @@ class _LearningPageState extends State<LearningPage> {
     if (mounted) setState(() {});
   }
 
+  Future<void> _addTenZhJa() async {
+    zhJaStudy.addBatch(words.length);
+    if (mounted) setState(() {});
+    await zhJaStudy.save();
+  }
+
+  Future<void> _openZhJa() async {
+    if (zhJaStudy.indexes.isEmpty) return;
+    zhJaStudy.beginSession();
+    await zhJaStudy.save();
+    if (!mounted) return;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const StudySessionPage(chineseToJapanese: true),
+      ),
+    );
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final count = wordStudy.indexes.length;
+    final zhJaCount = zhJaStudy.indexes.length;
     final squareShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8),
     );
@@ -101,51 +124,104 @@ class _LearningPageState extends State<LearningPage> {
           const SizedBox(height: 16),
           resetButton,
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox.fromSize(
-                    size: addWordsButtonSize,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: addWordsButtonSize,
-                        minimumSize: addWordsButtonSize,
-                        maximumSize: addWordsButtonSize,
-                        padding: EdgeInsets.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        textStyle: const TextStyle(fontSize: 16.5, height: 1.1),
-                      ),
-                      onPressed: _ready ? _addTen : null,
-                      child: const Text(
-                        '加10 個單字',
-                        style: TextStyle(fontSize: 16.5, height: 1.1),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  SizedBox.fromSize(
-                    size: studyQueueButtonSize,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: studyQueueButtonSize,
-                        minimumSize: studyQueueButtonSize,
-                        maximumSize: studyQueueButtonSize,
-                        padding: const EdgeInsets.all(20),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: squareShape,
-                      ),
-                      onPressed: count == 0 ? null : _openStudy,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          '單字學習($count)',
-                          style: const TextStyle(fontSize: 52, height: 1.1),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(0, 12, 0, 24),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Column(
+                  children: [
+                    SizedBox.fromSize(
+                      size: addWordsButtonSize,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: addWordsButtonSize,
+                          minimumSize: addWordsButtonSize,
+                          maximumSize: addWordsButtonSize,
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          textStyle: const TextStyle(
+                            fontSize: 16.5,
+                            height: 1.1,
+                          ),
+                        ),
+                        onPressed: _ready ? _addTen : null,
+                        child: const Text(
+                          '加10 個單字',
+                          style: TextStyle(fontSize: 16.5, height: 1.1),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 28),
+                    SizedBox.fromSize(
+                      size: studyQueueButtonSize,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: studyQueueButtonSize,
+                          minimumSize: studyQueueButtonSize,
+                          maximumSize: studyQueueButtonSize,
+                          padding: const EdgeInsets.all(20),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          shape: squareShape,
+                        ),
+                        onPressed: count == 0 ? null : _openStudy,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '單字學習($count)',
+                            style: const TextStyle(fontSize: 52, height: 1.1),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    SizedBox.fromSize(
+                      size: addWordsButtonSize,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: addWordsButtonSize,
+                          minimumSize: addWordsButtonSize,
+                          maximumSize: addWordsButtonSize,
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          textStyle: const TextStyle(
+                            fontSize: 16.5,
+                            height: 1.1,
+                          ),
+                        ),
+                        onPressed: _ready ? _addTenZhJa : null,
+                        child: const FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '加10 個單字到中→日學習',
+                            style: TextStyle(fontSize: 16.5, height: 1.1),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    SizedBox.fromSize(
+                      size: studyQueueButtonSize,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: studyQueueButtonSize,
+                          minimumSize: studyQueueButtonSize,
+                          maximumSize: studyQueueButtonSize,
+                          padding: const EdgeInsets.all(20),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          shape: squareShape,
+                        ),
+                        onPressed: zhJaCount == 0 ? null : _openZhJa,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '中→日學習($zhJaCount)',
+                            style: const TextStyle(fontSize: 52, height: 1.1),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -156,7 +232,9 @@ class _LearningPageState extends State<LearningPage> {
 }
 
 class StudySessionPage extends StatefulWidget {
-  const StudySessionPage({super.key});
+  const StudySessionPage({super.key, this.chineseToJapanese = false});
+
+  final bool chineseToJapanese;
 
   @override
   State<StudySessionPage> createState() => _StudySessionPageState();
@@ -164,6 +242,10 @@ class StudySessionPage extends StatefulWidget {
 
 class _StudySessionPageState extends State<StudySessionPage> {
   final FlutterTts flutterTts = FlutterTts();
+
+  WordStudy get studyQueue => widget.chineseToJapanese ? zhJaStudy : wordStudy;
+
+  String get _pageTitle => widget.chineseToJapanese ? '中→日學習' : '單字學習';
 
   int currentIndex = 0;
   bool showAnswer = false;
@@ -186,7 +268,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
   }
 
   Future<void> showCurrentAnswer() async {
-    final catalogIndex = wordStudy.indexes[currentIndex];
+    final catalogIndex = studyQueue.indexes[currentIndex];
     setState(() {
       showAnswer = true;
     });
@@ -200,10 +282,10 @@ class _StudySessionPageState extends State<StudySessionPage> {
   }
 
   Future<void> markKnown() async {
-    final finished = wordStudy.removeAt(currentIndex);
+    final finished = studyQueue.removeAt(currentIndex);
     if (!finished) {
       setState(() {
-        if (currentIndex >= wordStudy.indexes.length) {
+        if (currentIndex >= studyQueue.indexes.length) {
           currentIndex = 0;
         }
         showAnswer = false;
@@ -211,7 +293,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
       });
     }
     unawaited(_stopSpeech());
-    await wordStudy.save();
+    await studyQueue.save();
     if (!mounted) return;
     if (finished) {
       await _showFinishedDialog();
@@ -219,9 +301,9 @@ class _StudySessionPageState extends State<StudySessionPage> {
   }
 
   Future<void> markUnknown() async {
-    if (wordStudy.indexes.isEmpty) return;
+    if (studyQueue.indexes.isEmpty) return;
     setState(() {
-      currentIndex = (currentIndex + 1) % wordStudy.indexes.length;
+      currentIndex = (currentIndex + 1) % studyQueue.indexes.length;
       showAnswer = false;
       showExample = false;
     });
@@ -230,7 +312,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
 
   Future<void> openExample() async {
     final sentence = exampleSentenceFor(
-      words[wordStudy.indexes[currentIndex]].kanji,
+      words[studyQueue.indexes[currentIndex]].kanji,
     );
     setState(() {
       showExample = true;
@@ -252,17 +334,21 @@ class _StudySessionPageState extends State<StudySessionPage> {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        return const _FinishedDialog();
+        return _FinishedDialog(
+          message: widget.chineseToJapanese
+              ? '恭喜你背完目前的中翻日, 接下來你想做甚麼?'
+              : '恭喜你背完目前的單字, 接下來你想做甚麼?',
+        );
       },
     );
     if (!mounted || choice == null) return;
     if (choice == 'repeat' || choice == 'repeat-plus') {
-      wordStudy.restoreSession();
+      studyQueue.restoreSession();
     }
     if (choice == 'repeat-plus' || choice == 'new') {
-      wordStudy.addBatch(words.length);
+      studyQueue.addBatch(words.length);
     }
-    await wordStudy.save();
+    await studyQueue.save();
     if (!mounted) return;
     Navigator.of(context).pop();
   }
@@ -380,7 +466,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
     return columnTop + 24 + contentHeight - _studyButtonSize.height;
   }
 
-  Widget _frontWord(Vocabulary word, String countText) {
+  Widget _frontWord(String prompt, String countText) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -391,7 +477,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
         ),
         const SizedBox(height: 40),
         Text(
-          word.kanji,
+          prompt,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
         ),
@@ -547,32 +633,33 @@ class _StudySessionPageState extends State<StudySessionPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (wordStudy.indexes.isEmpty || words.isEmpty) {
+    if (studyQueue.indexes.isEmpty || words.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('單字學習')),
+        appBar: AppBar(title: Text(_pageTitle)),
         body: const SizedBox.shrink(),
       );
     }
 
-    if (currentIndex >= wordStudy.indexes.length) {
+    if (currentIndex >= studyQueue.indexes.length) {
       currentIndex = 0;
     }
-    final catalogIndex = wordStudy.indexes[currentIndex];
+    final catalogIndex = studyQueue.indexes[currentIndex];
     if (catalogIndex < 0 || catalogIndex >= words.length) {
       return Scaffold(
-        appBar: AppBar(title: const Text('單字學習')),
+        appBar: AppBar(title: Text(_pageTitle)),
         body: const SizedBox.shrink(),
       );
     }
 
     final word = words[catalogIndex];
-    final countText = '(${currentIndex + 1} of ${wordStudy.indexes.length})';
+    final countText = '(${currentIndex + 1} of ${studyQueue.indexes.length})';
+    final prompt = widget.chineseToJapanese ? word.meaning : word.kanji;
     final sentence = showExample ? exampleSentenceFor(word.kanji) : null;
     final largeLabelSize =
         (Theme.of(context).textTheme.labelLarge?.fontSize ?? 14) * 2;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('單字學習')),
+      appBar: AppBar(title: Text(_pageTitle)),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final screenHeight = MediaQuery.sizeOf(context).height;
@@ -584,7 +671,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
             bodyHeight: constraints.maxHeight,
             bodyWidth: constraints.maxWidth,
             countText: countText,
-            kanji: word.kanji,
+            kanji: prompt,
             countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
             kanjiStyle: baseStyle.merge(
               const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
@@ -629,11 +716,11 @@ class _StudySessionPageState extends State<StudySessionPage> {
                               child: IgnorePointer(
                                 child: Opacity(
                                   opacity: 0,
-                                  child: _frontWord(word, countText),
+                                  child: _frontWord(prompt, countText),
                                 ),
                               ),
                             )
-                          : _frontWord(word, countText),
+                          : _frontWord(prompt, countText),
                       _bottomAction(largeLabelSize),
                     ],
                   ),
@@ -663,9 +750,9 @@ class _StudySessionPageState extends State<StudySessionPage> {
 }
 
 class _FinishedDialog extends StatelessWidget {
-  const _FinishedDialog();
+  const _FinishedDialog({required this.message});
 
-  static const message = '恭喜你背完目前的單字, 接下來你想做甚麼?';
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -678,7 +765,7 @@ class _FinishedDialog extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 message,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, height: 1.4),
