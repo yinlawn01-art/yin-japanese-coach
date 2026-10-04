@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yin_japanese_coach/favorite_flashcard_page.dart';
 import 'package:yin_japanese_coach/main.dart';
 import 'package:yin_japanese_coach/vocabulary_data.dart';
 
@@ -65,5 +66,134 @@ void main() {
       deck.map((word) => word.kanji).toList()..sort(),
       words.map((word) => word.kanji).toList()..sort(),
     );
+  });
+
+  testWidgets('收藏單字 answer star waits for 繼續', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '会う',
+          hiragana: 'あう',
+          romaji: 'au',
+          meaning: '見面',
+          wordType: '🟢 動詞',
+          isFavorite: true,
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteFlashcardPage()));
+    await tester.pump();
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+
+    final kanjiTop = tester.getTopLeft(find.text('会う')).dy;
+    final readingTop = tester.getTopLeft(find.text('あう')).dy;
+    final starTop = tester.getTopLeft(find.byIcon(Icons.star)).dy;
+    expect(starTop, greaterThan(kanjiTop));
+    expect(starTop, lessThan(readingTop));
+
+    await tester.tap(find.byIcon(Icons.star));
+    await tester.pump();
+    expect(find.text('No favorite words yet.'), findsNothing);
+    expect(find.text('会う'), findsOneWidget);
+    expect(find.text('見面'), findsOneWidget);
+    expect(words.single.isFavorite, isTrue);
+    expect(
+      tester.getTopLeft(find.byIcon(Icons.star_border)).dy,
+      greaterThan(kanjiTop),
+    );
+    expect(
+      tester.getTopLeft(find.byIcon(Icons.star_border)).dy,
+      lessThan(tester.getTopLeft(find.text('あう')).dy),
+    );
+
+    await tester.tap(find.byIcon(Icons.star_border));
+    await tester.pump();
+    expect(find.byIcon(Icons.star), findsOneWidget);
+    expect(words.single.isFavorite, isTrue);
+
+    await tester.tap(find.byIcon(Icons.star));
+    await tester.pump();
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
+
+    await tester.tap(find.text('繼續'));
+    await tester.pump();
+    expect(find.text('No favorite words yet.'), findsOneWidget);
+    expect(words.single.isFavorite, isFalse);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('收藏單字 front star removes immediately', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '会う',
+          hiragana: 'あう',
+          romaji: 'au',
+          meaning: '見面',
+          wordType: '🟢 動詞',
+          isFavorite: true,
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteFlashcardPage()));
+    await tester.pump();
+    await tester.tap(find.byTooltip('Remove from favorites'));
+    await tester.pump();
+    expect(find.text('No favorite words yet.'), findsOneWidget);
+    expect(words.single.isFavorite, isFalse);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('收藏單字 繼續 removes only the marked saved word', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..addAll([
+        Vocabulary(
+          kanji: '会う',
+          hiragana: 'あう',
+          romaji: 'au',
+          meaning: '見面',
+          wordType: '🟢 動詞',
+          isFavorite: true,
+        ),
+        Vocabulary(
+          kanji: '開ける',
+          hiragana: 'あける',
+          romaji: 'akeru',
+          meaning: '打開',
+          wordType: '🟢 動詞',
+          isFavorite: true,
+        ),
+      ]);
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteFlashcardPage()));
+    await tester.pump();
+    expect(find.text('会う'), findsOneWidget);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.star));
+    await tester.pump();
+    expect(words.every((word) => word.isFavorite), isTrue);
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
+    expect(find.text('見面'), findsOneWidget);
+
+    await tester.tap(find.text('繼續'));
+    await tester.pump();
+    expect(words.first.isFavorite, isFalse);
+    expect(words.last.isFavorite, isTrue);
+    expect(find.text('会う'), findsNothing);
+    expect(find.text('開ける'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
   });
 }

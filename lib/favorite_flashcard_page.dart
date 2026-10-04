@@ -40,6 +40,8 @@ class _FavoriteFlashcardPageState
 
     bool showAnswer = false;
 
+    bool dropAfterContinue = false;
+
     bool showExample = false;
 
     bool isPlayingFavorites = false;
@@ -78,11 +80,18 @@ Future<void> speakJapanese(String romaji) async {
   await flutterTts.speak(pronunciationForRomaji(romaji));
 }
 
+void _toggleRemoveLater() {
+  setState(() {
+    dropAfterContinue = !dropAfterContinue;
+  });
+}
+
 Future<void> showCurrentAnswer() async {
   final romaji = currentWord.romaji;
 
   setState(() {
     showAnswer = true;
+    dropAfterContinue = false;
   });
 
   await speakJapanese(romaji);
@@ -242,16 +251,18 @@ Widget speakableText({
 }
 
 Future<void> removeCurrentFavorite() async {
-  await flutterTts.stop();
-
+  if (favoriteWords.isEmpty) return;
   currentWord.isFavorite = false;
-  await _saveFavorites();
 
-  if (!mounted) return;
+  if (!mounted) {
+    await _saveFavorites();
+    return;
+  }
 
   setState(() {
     showAnswer = false;
     showExample = false;
+    dropAfterContinue = false;
 
     if (favoriteWords.isEmpty) {
       currentIndex = 0;
@@ -259,6 +270,9 @@ Future<void> removeCurrentFavorite() async {
       currentIndex = favoriteWords.length - 1;
     }
   });
+
+  unawaited(flutterTts.stop());
+  await _saveFavorites();
 }
 
 bool _isCurrentPlay(int generation) {
@@ -430,31 +444,38 @@ void dispose() {
 }
 
 Future<void> nextFavorite() async {
+  final removing = dropAfterContinue;
+  if (removing && favoriteWords.isNotEmpty) {
+    currentWord.isFavorite = false;
+  }
 
-  await flutterTts.stop();
+  final total = favoriteWords.length;
+  var nextIndex = 0;
+  if (total > 1) {
+    if (removing) {
+      nextIndex = currentIndex >= total ? total - 1 : currentIndex;
+    } else {
+      do {
+        nextIndex = random.nextInt(total);
+      } while (nextIndex == currentIndex);
+    }
+  }
 
-  int nextIndex;
-
-  do {
-
-    nextIndex =
-        random.nextInt(
-          favoriteWords.length,
-        );
-
-  } while (
-    nextIndex == currentIndex &&
-    favoriteWords.length > 1
-  );
+  if (!mounted) {
+    unawaited(flutterTts.stop());
+    if (removing) await _saveFavorites();
+    return;
+  }
 
   setState(() {
-
+    dropAfterContinue = false;
     currentIndex = nextIndex;
-
     showAnswer = false;
     showExample = false;
-
   });
+
+  unawaited(flutterTts.stop());
+  if (removing) await _saveFavorites();
 }
 
   @override
@@ -742,11 +763,11 @@ Widget _answeredFavorite() {
         visualDensity: VisualDensity.compact,
         constraints: const BoxConstraints.tightFor(width: 40, height: 40),
         tooltip: 'Remove from favorites',
-        icon: const Icon(
-          Icons.star,
+        icon: Icon(
+          dropAfterContinue ? Icons.star_border : Icons.star,
           color: Colors.amber,
         ),
-        onPressed: removeCurrentFavorite,
+        onPressed: _toggleRemoveLater,
       ),
       speakableText(
         text: currentWord.hiragana,
