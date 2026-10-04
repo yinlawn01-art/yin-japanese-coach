@@ -165,6 +165,12 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
 
   void _speak(String romaji) {
     final token = speaker.begin();
+    if (isPlaying && mounted) {
+      setState(() {
+        isPlaying = false;
+        showAnswer = false;
+      });
+    }
     unawaited(speaker.speakRomaji(romaji, token));
   }
 
@@ -204,15 +210,24 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
             SizedBox(
               height: 160,
               child: Center(
-                child: Text(
-                  text,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: showChinese ? 32 : 36,
-                    fontWeight: FontWeight.bold,
-                    color: showChinese ? Colors.blue : Colors.black,
-                  ),
-                ),
+                child: showChinese || current == null
+                    ? Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      )
+                    : _speakable(
+                        current.japanese,
+                        current.romaji,
+                        const TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 24),
@@ -269,10 +284,10 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                      _speakable(
                         current.romaji,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        current.romaji,
+                        const TextStyle(
                           fontSize: 24,
                           height: 1.1,
                           color: Colors.orange,

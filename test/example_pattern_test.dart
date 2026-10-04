@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yin_japanese_coach/example_pattern_page.dart';
 import 'package:yin_japanese_coach/example_patterns.dart';
 import 'package:yin_japanese_coach/favorite_example_page.dart';
 import 'package:yin_japanese_coach/main.dart';
@@ -123,6 +124,41 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
   });
 
+  testWidgets('tapping the sentence, kana, or romaji reads the Japanese', (
+    tester,
+  ) async {
+    await tester.runAsync(loadExamplePatterns);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ExamplePatternStudyPage(pattern: examplePatterns.first),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(_readsOnTap(tester, '父は先生です。'), isTrue);
+    await tester.tap(find.text('父は先生です。'));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    expect(find.text('答案'), findsOneWidget);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    expect(_readsOnTap(tester, '父は先生です。'), isTrue);
+    expect(_readsOnTap(tester, 'ちちはせんせいです。'), isTrue);
+    expect(_readsOnTap(tester, 'chichi wa sensei desu.'), isTrue);
+    expect(_readsOnTap(tester, '父親是老師。'), isFalse);
+
+    await tester.tap(find.text('ちちはせんせいです。'));
+    await tester.pump();
+    await tester.tap(find.text('chichi wa sensei desu.'));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    expect(find.text('父は先生です。'), findsOneWidget);
+    expect(find.text('繼續'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
   testWidgets('收藏例句 reviews a starred sentence and removes it', (tester) async {
     await tester.runAsync(loadExamplePatterns);
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
@@ -161,6 +197,13 @@ void main() {
     expect(find.text('chichi wa sensei desu.'), findsOneWidget);
     expect(find.text('父親是老師。'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
+    expect(_readsOnTap(tester, '父は先生です。'), isTrue);
+    expect(_readsOnTap(tester, 'ちちはせんせいです。'), isTrue);
+    expect(_readsOnTap(tester, 'chichi wa sensei desu.'), isTrue);
+    expect(_readsOnTap(tester, '父親是老師。'), isFalse);
+    await tester.tap(find.text('chichi wa sensei desu.'));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
     expect(
       tester.getTopLeft(find.byIcon(Icons.star)).dy,
       greaterThan(tester.getTopLeft(find.text('父は先生です。')).dy),
@@ -201,6 +244,20 @@ void main() {
 
     await tester.pump(const Duration(seconds: 2));
   });
+}
+
+bool _readsOnTap(WidgetTester tester, String text) {
+  var found = false;
+  tester.element(find.text(text)).visitAncestorElements((ancestor) {
+    final widget = ancestor.widget;
+    if (widget is GestureDetector && widget.onTap != null) {
+      found = true;
+      return false;
+    }
+    if (widget is Scrollable) return false;
+    return true;
+  });
+  return found;
 }
 
 Future<Set<String>> _vocabularyKanji() async {

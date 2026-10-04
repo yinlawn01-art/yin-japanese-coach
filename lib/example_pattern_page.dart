@@ -134,6 +134,15 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
     });
   }
 
+  void _speak() {
+    final token = speaker.begin();
+    unawaited(speaker.speakRomaji(sentence.romaji, token));
+  }
+
+  Widget _spokenLine(String text, TextStyle style) {
+    return kanaSpeakable(text: text, style: style, onTap: _speak);
+  }
+
   Future<void> _showAnswer() async {
     final romaji = sentence.romaji;
     setState(() {
@@ -193,10 +202,9 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
+        _spokenLine(
           sentence.japanese,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
         ),
         kanaStar(
           favorite: favorite,
@@ -222,22 +230,19 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
           onPressed: _toggleRemoveLater,
           tooltip: 'Remove from favorites',
         ),
-        Text(
+        _spokenLine(
           sentence.japanese,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        Text(
+        _spokenLine(
           sentence.hiragana,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 24, height: 1.1),
+          const TextStyle(fontSize: 24, height: 1.1),
         ),
         const SizedBox(height: 4),
-        Text(
+        _spokenLine(
           sentence.romaji,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
+          const TextStyle(
             fontSize: 24,
             height: 1.1,
             color: Colors.orange,
