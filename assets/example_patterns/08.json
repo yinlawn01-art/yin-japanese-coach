@@ -1,0 +1,12 @@
+[
+  {"japanese": "学校に行きました。", "hiragana": "がっこうにいきました。", "romaji": "gakkou ni ikimashita.", "chinese": "去了學校。"},
+  {"japanese": "水を飲みました。", "hiragana": "みずをのみました。", "romaji": "mizu o nomimashita.", "chinese": "喝了水。"},
+  {"japanese": "ご飯を食べました。", "hiragana": "ごはんをたべました。", "romaji": "gohan o tabemashita.", "chinese": "吃了飯。"},
+  {"japanese": "本を読みました。", "hiragana": "ほんをよみました。", "romaji": "hon o yomimashita.", "chinese": "閱讀了書。"},
+  {"japanese": "音楽を聞きました。", "hiragana": "おんがくをききました。", "romaji": "ongaku o kikimashita.", "chinese": "聽了音樂。"},
+  {"japanese": "友達に会いました。", "hiragana": "ともだちにあいました。", "romaji": "tomodachi ni aimashita.", "chinese": "和朋友見面了。"},
+  {"japanese": "家に帰りました。", "hiragana": "いえにかえりました。", "romaji": "ie ni kaerimashita.", "chinese": "回家了。"},
+  {"japanese": "映画を見ました。", "hiragana": "えいがをみました。", "romaji": "eiga o mimashita.", "chinese": "看了電影。"},
+  {"japanese": "漢字を書きました。", "hiragana": "かんじをかきました。", "romaji": "kanji o kakimashita.", "chinese": "寫了漢字。"},
+  {"japanese": "駅で待ちました。", "hiragana": "えきでまちました。", "romaji": "eki de machimashita.", "chinese": "在車站等待了。"}
+]

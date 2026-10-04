@@ -1,0 +1,12 @@
+[
+  {"japanese": "学校に行きません。", "hiragana": "がっこうにいきません。", "romaji": "gakkou ni ikimasen.", "chinese": "不去學校。"},
+  {"japanese": "水を飲みません。", "hiragana": "みずをのみません。", "romaji": "mizu o nomimasen.", "chinese": "不喝水。"},
+  {"japanese": "本を読みません。", "hiragana": "ほんをよみません。", "romaji": "hon o yomimasen.", "chinese": "不看書。"},
+  {"japanese": "ご飯を食べません。", "hiragana": "ごはんをたべません。", "romaji": "gohan o tabemasen.", "chinese": "不吃飯。"},
+  {"japanese": "音楽を聞きません。", "hiragana": "おんがくをききません。", "romaji": "ongaku o kikimasen.", "chinese": "不聽音樂。"},
+  {"japanese": "新聞を見ません。", "hiragana": "しんぶんをみません。", "romaji": "shinbun o mimasen.", "chinese": "不看報紙。"},
+  {"japanese": "漢字を書きません。", "hiragana": "かんじをかきません。", "romaji": "kanji o kakimasen.", "chinese": "不寫漢字。"},
+  {"japanese": "友達を待ちません。", "hiragana": "ともだちをまちません。", "romaji": "tomodachi o machimasen.", "chinese": "不等待朋友。"},
+  {"japanese": "家に帰りません。", "hiragana": "いえにかえりません。", "romaji": "ie ni kaerimasen.", "chinese": "不回家。"},
+  {"japanese": "宿題をしません。", "hiragana": "しゅくだいをしません。", "romaji": "shukudai o shimasen.", "chinese": "不做作業。"}
+]

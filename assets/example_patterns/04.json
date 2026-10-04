@@ -1,0 +1,12 @@
+[
+  {"japanese": "部屋に子供がいます。", "hiragana": "へやにこどもがいます。", "romaji": "heya ni kodomo ga imasu.", "chinese": "房間裡有小孩。"},
+  {"japanese": "学校に先生がいます。", "hiragana": "がっこうにせんせいがいます。", "romaji": "gakkou ni sensei ga imasu.", "chinese": "學校裡有老師。"},
+  {"japanese": "家に母がいます。", "hiragana": "いえにははがいます。", "romaji": "ie ni haha ga imasu.", "chinese": "家裡有母親。"},
+  {"japanese": "公園に犬がいます。", "hiragana": "こうえんにいぬがいます。", "romaji": "kouen ni inu ga imasu.", "chinese": "公園裡有狗。"},
+  {"japanese": "家に猫がいます。", "hiragana": "いえにねこがいます。", "romaji": "ie ni neko ga imasu.", "chinese": "家裡有貓。"},
+  {"japanese": "病院に医者がいます。", "hiragana": "びょういんにいしゃがいます。", "romaji": "byouin ni isha ga imasu.", "chinese": "醫院裡有醫生。"},
+  {"japanese": "教室に学生がいます。", "hiragana": "きょうしつにがくせいがいます。", "romaji": "kyoushitsu ni gakusei ga imasu.", "chinese": "教室裡有學生。"},
+  {"japanese": "公園に鳥がいます。", "hiragana": "こうえんにとりがいます。", "romaji": "kouen ni tori ga imasu.", "chinese": "公園裡有鳥。"},
+  {"japanese": "会社に父がいます。", "hiragana": "かいしゃにちちがいます。", "romaji": "kaisha ni chichi ga imasu.", "chinese": "公司裡有父親。"},
+  {"japanese": "駅に友達がいます。", "hiragana": "えきにともだちがいます。", "romaji": "eki ni tomodachi ga imasu.", "chinese": "車站裡有朋友。"}
+]

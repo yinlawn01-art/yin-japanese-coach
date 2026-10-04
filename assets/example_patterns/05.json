@@ -1,0 +1,12 @@
+[
+  {"japanese": "学校に行きます。", "hiragana": "がっこうにいきます。", "romaji": "gakkou ni ikimasu.", "chinese": "去學校。"},
+  {"japanese": "駅に行きます。", "hiragana": "えきにいきます。", "romaji": "eki ni ikimasu.", "chinese": "去車站。"},
+  {"japanese": "銀行に行きます。", "hiragana": "ぎんこうにいきます。", "romaji": "ginkou ni ikimasu.", "chinese": "去銀行。"},
+  {"japanese": "病院に行きます。", "hiragana": "びょういんにいきます。", "romaji": "byouin ni ikimasu.", "chinese": "去醫院。"},
+  {"japanese": "図書館に行きます。", "hiragana": "としょかんにいきます。", "romaji": "toshokan ni ikimasu.", "chinese": "去圖書館。"},
+  {"japanese": "公園に行きます。", "hiragana": "こうえんにいきます。", "romaji": "kouen ni ikimasu.", "chinese": "去公園。"},
+  {"japanese": "大学に行きます。", "hiragana": "だいがくにいきます。", "romaji": "daigaku ni ikimasu.", "chinese": "去大學。"},
+  {"japanese": "海に行きます。", "hiragana": "うみにいきます。", "romaji": "umi ni ikimasu.", "chinese": "去海洋。"},
+  {"japanese": "山に行きます。", "hiragana": "やまにいきます。", "romaji": "yama ni ikimasu.", "chinese": "去山。"},
+  {"japanese": "家に行きます。", "hiragana": "いえにいきます。", "romaji": "ie ni ikimasu.", "chinese": "去家。"}
+]
