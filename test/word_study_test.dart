@@ -260,7 +260,6 @@ void main() {
 
     final study = find.widgetWithText(ElevatedButton, '單字學習(1)');
     final reset = find.text('重新整理(中→日學習)');
-    await tester.ensureVisible(reset);
     final studyRect = tester.getRect(study);
     final resetRect = tester.getRect(
       find.widgetWithText(ElevatedButton, '重新整理(中→日學習)'),
@@ -268,7 +267,8 @@ void main() {
     final addRect = tester.getRect(
       find.widgetWithText(ElevatedButton, '加10 個單字到中→日學習'),
     );
-    expect(resetRect.top - studyRect.bottom, greaterThan(16));
+    expect(resetRect.top, closeTo(600 * 0.60, 2));
+    expect(resetRect.top, greaterThan(studyRect.bottom));
     expect(resetRect.top, lessThan(addRect.top));
     expect(resetRect.size, addWordsButtonSize);
     expect(
