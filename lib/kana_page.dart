@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+import 'bundled_text.dart';
 import 'kana_data.dart';
 import 'romaji_speech.dart';
 import 'soft_speech.dart';
@@ -215,7 +216,7 @@ class KanaMenuPage extends StatelessWidget {
       maximumSize: kanaButtonSize,
       padding: EdgeInsets.zero,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      textStyle: const TextStyle(fontSize: 28),
+      textStyle: bundledText.copyWith(fontSize: 28),
     );
 
     return Scaffold(

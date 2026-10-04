@@ -6,6 +6,7 @@ import 'vocabulary_data.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'favorite_flashcard_page.dart';
+import 'bundled_text.dart';
 import 'soft_speech.dart';
 import 'example_sentence.dart';
 import 'romaji_speech.dart';
@@ -89,6 +90,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
+        fontFamily: 'AppText',
+        fontFamilyFallback: const [
+          'AppJapanese',
+          'AppEmoji',
+        ],
       ),
       home: const HomePage(),
     );
@@ -181,7 +187,7 @@ Future<void> loadFavoritesHome() async {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       visualDensity: VisualDensity.standard,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      textStyle: const TextStyle(fontSize: buttonFontSize, height: 1.1),
+      textStyle: bundledText.copyWith(fontSize: buttonFontSize, height: 1.1),
       backgroundColor: const Color(0x99FFFFFF),
       foregroundColor: const Color(0xFF1A4A8A),
       surfaceTintColor: Colors.transparent,
@@ -374,7 +380,7 @@ class FlashcardMenuPage extends StatelessWidget {
       maximumSize: _studyButtonSize,
       padding: EdgeInsets.zero,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      textStyle: const TextStyle(fontSize: 28),
+      textStyle: bundledText.copyWith(fontSize: 28),
     );
 
     final nouns = wordsOfType('名詞');

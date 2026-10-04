@@ -57,6 +57,15 @@ flutter:
     - family: LXGW WenKai
       fonts:
         - asset: fonts/LXGWWenKai-Regular.ttf
+    - family: AppText
+      fonts:
+        - asset: fonts/AppText-Regular.ttf
+    - family: AppJapanese
+      fonts:
+        - asset: fonts/AppJapanese-Regular.ttf
+    - family: AppEmoji
+      fonts:
+        - asset: fonts/AppEmoji-Regular.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

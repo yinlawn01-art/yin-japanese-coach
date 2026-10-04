@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+import 'bundled_text.dart';
 import 'example_sentence.dart';
 import 'main.dart';
 import 'romaji_speech.dart';
@@ -113,7 +114,7 @@ class _LearningPageState extends State<LearningPage> {
           maximumSize: addWordsButtonSize,
           padding: EdgeInsets.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          textStyle: const TextStyle(fontSize: 16.5, height: 1.1),
+          textStyle: bundledText.copyWith(fontSize: 16.5, height: 1.1),
         ),
         onPressed: _ready ? _restartFromBeginning : null,
         child: const Text(
@@ -160,7 +161,7 @@ class _LearningPageState extends State<LearningPage> {
                               maximumSize: addWordsButtonSize,
                               padding: EdgeInsets.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              textStyle: const TextStyle(
+                              textStyle: bundledText.copyWith(
                                 fontSize: 16.5,
                                 height: 1.1,
                               ),
@@ -207,7 +208,7 @@ class _LearningPageState extends State<LearningPage> {
                               maximumSize: addWordsButtonSize,
                               padding: EdgeInsets.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              textStyle: const TextStyle(
+                              textStyle: bundledText.copyWith(
                                 fontSize: 16.5,
                                 height: 1.1,
                               ),
@@ -232,7 +233,7 @@ class _LearningPageState extends State<LearningPage> {
                               maximumSize: addWordsButtonSize,
                               padding: EdgeInsets.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              textStyle: const TextStyle(
+                              textStyle: bundledText.copyWith(
                                 fontSize: 16.5,
                                 height: 1.1,
                               ),
