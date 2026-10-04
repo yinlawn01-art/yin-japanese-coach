@@ -18,6 +18,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
   final Random random = Random();
   int index = 0;
   bool showAnswer = false;
+  bool dropAfterContinue = false;
   bool ready = false;
   bool isPlaying = false;
   bool showChinese = false;
@@ -67,28 +68,46 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
     await saveExampleFavorites();
   }
 
+  void _toggleRemoveLater() {
+    setState(() {
+      dropAfterContinue = !dropAfterContinue;
+    });
+  }
+
   Future<void> _showAnswer() async {
     final romaji = sentence.romaji;
     setState(() {
       showAnswer = true;
+      dropAfterContinue = false;
     });
     final token = speaker.begin();
     await speaker.speakRomaji(romaji, token);
   }
 
   void _next() {
+    final removing = dropAfterContinue;
+    final japanese = sentence.japanese;
+    if (removing) {
+      exampleFavorites.remove(japanese);
+    }
     final total = sentences.length;
     var nextIndex = 0;
     if (total > 1) {
-      do {
-        nextIndex = random.nextInt(total);
-      } while (nextIndex == index);
+      if (removing) {
+        nextIndex = index >= total ? total - 1 : index;
+      } else {
+        do {
+          nextIndex = random.nextInt(total);
+        } while (nextIndex == index);
+      }
     }
     setState(() {
+      dropAfterContinue = false;
       index = nextIndex;
       showAnswer = false;
     });
     unawaited(speaker.stop());
+    if (removing) unawaited(saveExampleFavorites());
   }
 
   int _nextPlayIndex(int length, int current) {
@@ -266,10 +285,12 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                       ),
                     ),
                     kanaStar(
-                      favorite: true,
-                      onPressed: () {
-                        unawaited(_remove());
-                      },
+                      favorite: showAnswer ? !dropAfterContinue : true,
+                      onPressed: showAnswer
+                          ? _toggleRemoveLater
+                          : () {
+                              unawaited(_remove());
+                            },
                       tooltip: 'Remove from favorites',
                     ),
                     if (showAnswer) ...[

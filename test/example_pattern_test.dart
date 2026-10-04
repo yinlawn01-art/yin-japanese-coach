@@ -211,6 +211,25 @@ void main() {
 
     await tester.tap(find.byTooltip('Remove from favorites'));
     await tester.pump();
+    expect(find.text('還沒有收藏例句。'), findsNothing);
+    expect(find.text('父は先生です。'), findsOneWidget);
+    expect(exampleFavorites, contains('父は先生です。'));
+    expect(
+      tester.getTopLeft(find.byIcon(Icons.star_border)).dy,
+      greaterThan(tester.getTopLeft(find.text('父は先生です。')).dy),
+    );
+
+    await tester.tap(find.byIcon(Icons.star_border));
+    await tester.pump();
+    expect(find.byIcon(Icons.star), findsOneWidget);
+    expect(exampleFavorites, contains('父は先生です。'));
+
+    await tester.tap(find.byIcon(Icons.star));
+    await tester.pump();
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
+
+    await tester.tap(find.text('繼續'));
+    await tester.pump();
     expect(find.text('還沒有收藏例句。'), findsOneWidget);
     expect(exampleFavorites, isEmpty);
 
@@ -240,6 +259,54 @@ void main() {
     await tester.pump();
     expect(find.text('答案'), findsOneWidget);
     expect(find.text('母は看護師です。'), findsOneWidget);
+    expect(find.text('父は先生です。'), findsNothing);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('收藏例句 front star removes immediately', (tester) async {
+    await tester.runAsync(() async {
+      await loadExamplePatterns();
+      exampleFavorites
+        ..clear()
+        ..add('父は先生です。');
+      await saveExampleFavorites();
+    });
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteExamplePage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Remove from favorites'));
+    await tester.pump();
+    expect(find.text('還沒有收藏例句。'), findsOneWidget);
+    expect(exampleFavorites, isEmpty);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('繼續 removes only the marked saved sentence', (tester) async {
+    await tester.runAsync(() async {
+      await loadExamplePatterns();
+      exampleFavorites
+        ..clear()
+        ..addAll(['父は先生です。', '母は看護師です。']);
+      await saveExampleFavorites();
+    });
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteExamplePage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.star));
+    await tester.pump();
+    expect(exampleFavorites, containsAll(['父は先生です。', '母は看護師です。']));
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
+
+    await tester.tap(find.text('繼續'));
+    await tester.pump();
+    expect(exampleFavorites, hasLength(1));
+    expect(exampleFavorites, contains('母は看護師です。'));
+    expect(find.text('母は看護師です。'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
     expect(find.text('父は先生です。'), findsNothing);
 
     await tester.pump(const Duration(seconds: 2));
