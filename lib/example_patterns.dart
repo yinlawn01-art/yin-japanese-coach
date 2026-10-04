@@ -63,6 +63,18 @@ final List<ExamplePattern> examplePatterns = [];
 
 final Set<String> exampleFavorites = {};
 
+List<PatternSentence> favoriteExampleSentences() {
+  final saved = exampleFavorites;
+  final sentences = <PatternSentence>[];
+  for (final pattern in examplePatterns) {
+    if (pattern.label == allExamplesLabel) continue;
+    for (final sentence in pattern.sentences) {
+      if (saved.contains(sentence.japanese)) sentences.add(sentence);
+    }
+  }
+  return sentences;
+}
+
 Future<void> loadExamplePatterns() async {
   if (examplePatterns.length == _patternFiles.length + 1) return;
 
