@@ -237,7 +237,7 @@ Future<void> loadFavoritesHome() async {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final screenHeight = MediaQuery.sizeOf(context).height;
-              final titleTop = (screenHeight * 0.15 -
+              final titleTop = (screenHeight * 0.10 -
                       (screenHeight - constraints.maxHeight))
                   .clamp(0.0, constraints.maxHeight);
 
@@ -296,7 +296,6 @@ Future<void> loadFavoritesHome() async {
                     ),
                   ),
                   SizedBox(height: phone ? 16 : 30),
-                  SizedBox(height: buttonHeight),
                   homeButton('學習', const LearningPage()),
                   const SizedBox(height: 10),
                   homeButton('五十音', const KanaMenuPage()),
