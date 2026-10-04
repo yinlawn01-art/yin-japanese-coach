@@ -321,7 +321,7 @@ void main() {
     expect(
       tester.getTopLeft(find.widgetWithText(ElevatedButton, '學習')).dy -
           tester.getBottomLeft(find.textContaining('Words Loaded')).dy,
-      closeTo(30, 2),
+      closeTo(30 + 600 * 0.10, 2),
     );
   });
 
@@ -337,6 +337,11 @@ void main() {
       final title = tester.getRect(find.text('龍吟的學日文APP'));
       expect(title.top, closeTo(size.height * 0.10, 4));
       expect(title.width, lessThanOrEqualTo(size.width));
+      expect(
+        tester.getTopLeft(find.widgetWithText(ElevatedButton, '學習')).dy -
+            tester.getBottomLeft(find.textContaining('Words Loaded')).dy,
+        closeTo(16 + size.height * 0.10, 4),
+      );
       expect(tester.takeException(), isNull);
       await tester.ensureVisible(find.text('收藏例句(0)'));
       expect(tester.takeException(), isNull);
