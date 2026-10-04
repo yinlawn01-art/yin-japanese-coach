@@ -6,9 +6,19 @@ const wordStudyIndexesKey = 'wordStudyIndexes';
 const wordStudyNextKey = 'wordStudyNext';
 const wordStudySnapshotKey = 'wordStudySnapshot';
 
-/// The 單字學習 queue. Each entry is an index into the flashcard catalog
+/// A study queue. Each entry is an index into the flashcard catalog
 /// (`words`), in the order those cards are numbered.
 class WordStudy {
+  WordStudy({
+    this.indexesKey = wordStudyIndexesKey,
+    this.nextKey = wordStudyNextKey,
+    this.snapshotKey = wordStudySnapshotKey,
+  });
+
+  final String indexesKey;
+  final String nextKey;
+  final String snapshotKey;
+
   List<int> indexes = [];
   int nextIndex = 0;
   List<int> sessionSnapshot = [];
@@ -83,9 +93,9 @@ class WordStudy {
 
   Future<void> _read() async {
     final prefs = await SharedPreferences.getInstance();
-    indexes = _readList(prefs, wordStudyIndexesKey);
-    sessionSnapshot = _readList(prefs, wordStudySnapshotKey);
-    nextIndex = prefs.getInt(wordStudyNextKey) ?? 0;
+    indexes = _readList(prefs, indexesKey);
+    sessionSnapshot = _readList(prefs, snapshotKey);
+    nextIndex = prefs.getInt(nextKey) ?? 0;
   }
 
   Future<void> save() {
@@ -101,9 +111,9 @@ class WordStudy {
 
   Future<void> _write(List<int> indexes, List<int> snapshot, int next) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(wordStudyIndexesKey, jsonEncode(indexes));
-    await prefs.setString(wordStudySnapshotKey, jsonEncode(snapshot));
-    await prefs.setInt(wordStudyNextKey, next);
+    await prefs.setString(indexesKey, jsonEncode(indexes));
+    await prefs.setString(snapshotKey, jsonEncode(snapshot));
+    await prefs.setInt(nextKey, next);
   }
 
   static List<int> _readList(SharedPreferences prefs, String key) {
@@ -119,3 +129,10 @@ class WordStudy {
 }
 
 final wordStudy = WordStudy();
+
+/// Chinese prompt, Japanese answer. Separate from [wordStudy].
+final zhJaStudy = WordStudy(
+  indexesKey: 'zhJaStudyIndexes',
+  nextKey: 'zhJaStudyNext',
+  snapshotKey: 'zhJaStudySnapshot',
+);
