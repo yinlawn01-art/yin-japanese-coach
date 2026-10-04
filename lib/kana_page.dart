@@ -505,9 +505,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
   }
 
   Future<void> _removeFavorite() async {
-    await speaker.stop();
     card.isFavorite = false;
-    await saveKanaFavorites();
     if (!mounted) return;
     setState(() {
       showAnswer = false;
@@ -517,6 +515,8 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
         currentIndex = favorites.length - 1;
       }
     });
+    unawaited(speaker.stop());
+    await saveKanaFavorites();
   }
 
   Future<void> _showAnswer() async {
@@ -772,6 +772,11 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        kanaStar(
+          favorite: true,
+          onPressed: _removeFavorite,
+          tooltip: 'Remove from favorites',
+        ),
         kanaSpeakable(
           text: current.kana,
           onTap: () {
@@ -783,12 +788,6 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
             fontWeight: FontWeight.bold,
             height: 1.0,
           ),
-        ),
-        kanaStar(
-          favorite: true,
-          onPressed: _removeFavorite,
-          compact: true,
-          tooltip: 'Remove from favorites',
         ),
         kanaSpeakable(
           text: current.romaji,

@@ -181,4 +181,31 @@ void main() {
       card.isFavorite = false;
     }
   });
+
+  testWidgets('收藏五十音 answer star is above the kana and removes it', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    for (final card in allKanaCards) {
+      card.isFavorite = false;
+    }
+    hiraganaCards.first.isFavorite = true;
+    await saveKanaFavorites();
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteKanaPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+
+    final star = tester.getTopLeft(find.byIcon(Icons.star));
+    expect(star.dy, lessThan(tester.getTopLeft(find.text('あ')).dy));
+    expect(star.dy, lessThan(tester.getTopLeft(find.text('あめ')).dy));
+
+    await tester.tap(find.byIcon(Icons.star));
+    await tester.pump();
+    expect(find.text('還沒有收藏五十音。'), findsOneWidget);
+    expect(hiraganaCards.first.isFavorite, isFalse);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
 }
