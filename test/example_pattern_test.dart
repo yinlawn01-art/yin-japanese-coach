@@ -70,6 +70,32 @@ void main() {
     expect(outside, {'勉', '強', '料', '理', '掃', '除'});
   });
 
+  testWidgets('例句 buttons fit an iPhone 15 Pro Max', (tester) async {
+    tester.view.physicalSize = const Size(430, 932);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.runAsync(loadExamplePatterns);
+    await tester.pumpWidget(const MaterialApp(home: ExamplePatternMenuPage()));
+    await tester.pumpAndSettle();
+
+    final first = find.widgetWithText(
+      ElevatedButton,
+      '(1)～は～です : A是B (10)',
+    );
+    final last = find.widgetWithText(ElevatedButton, '(11) 全部 (100)');
+    expect(tester.getSize(first).height, closeTo(64 * 0.9, 0.2));
+    expect(tester.getSize(last).height, closeTo(64 * 0.9, 0.2));
+    expect(
+      tester.widget<Text>(find.text('(1)～は～です : A是B (10)')).style?.fontSize,
+      closeTo(22 * 0.9, 0.1),
+    );
+    expect(tester.getTopLeft(first).dy, greaterThanOrEqualTo(56));
+    expect(tester.getBottomLeft(last).dy, lessThanOrEqualTo(932));
+    expect(find.text('(7)～ません : 不～ (10)'), findsOneWidget);
+  });
+
   testWidgets('例句 shows each pattern and reads the next sentence', (
     tester,
   ) async {

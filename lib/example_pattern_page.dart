@@ -47,8 +47,14 @@ class _ExamplePatternMenuPageState extends State<ExamplePatternMenuPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: SizedBox(
-                        height: 64,
+                        height: 64 * 0.9,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(64 * 0.9),
+                            maximumSize: const Size.fromHeight(64 * 0.9),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                          ),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -64,7 +70,10 @@ class _ExamplePatternMenuPageState extends State<ExamplePatternMenuPage> {
                               pattern.buttonLabel,
                               maxLines: 1,
                               softWrap: false,
-                              style: const TextStyle(fontSize: 22, height: 1.1),
+                              style: const TextStyle(
+                                fontSize: 22 * 0.9,
+                                height: 1.1,
+                              ),
                             ),
                           ),
                         ),
