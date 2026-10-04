@@ -132,7 +132,7 @@ void main() {
       find.widgetWithText(ElevatedButton, '單字學習(0)'),
     );
     expect(addSize, const Size(288, 36));
-    expect(studySize, const Size(288, 288));
+    expect(studySize, const Size(288, 144));
     expect(tester.widget<Text>(find.text('加10 個單字')).style?.fontSize, 16.5);
     expect(tester.widget<Text>(find.text('單字學習(0)')).style?.fontSize, 52);
     expect(
@@ -219,12 +219,12 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
 
-    final reset = find.text('重新整理');
+    final reset = find.text('重新整理 (單字)');
     final add = find.text('加10 個單字');
     expect(reset, findsOneWidget);
     expect(tester.getTopLeft(reset).dy, lessThan(tester.getTopLeft(add).dy));
     expect(
-      tester.getSize(find.widgetWithText(ElevatedButton, '重新整理')),
+      tester.getSize(find.widgetWithText(ElevatedButton, '重新整理 (單字)')),
       addWordsButtonSize,
     );
 
@@ -243,6 +243,46 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('(1 of 10)'), findsOneWidget);
     expect(find.text('語0'), findsWidgets);
+  });
+
+  testWidgets('重新整理(中→日學習) is below 單字學習 and restarts that list', (
+    tester,
+  ) async {
+    zhJaStudy.indexes = [2, 3];
+    zhJaStudy.nextIndex = 4;
+    await zhJaStudy.save();
+    wordStudy.indexes = [0];
+    wordStudy.nextIndex = 1;
+    await wordStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+
+    final study = find.widgetWithText(ElevatedButton, '單字學習(1)');
+    final reset = find.text('重新整理(中→日學習)');
+    await tester.ensureVisible(reset);
+    final studyRect = tester.getRect(study);
+    final resetRect = tester.getRect(
+      find.widgetWithText(ElevatedButton, '重新整理(中→日學習)'),
+    );
+    final addRect = tester.getRect(
+      find.widgetWithText(ElevatedButton, '加10 個單字到中→日學習'),
+    );
+    expect(resetRect.top - studyRect.bottom, greaterThan(16));
+    expect(resetRect.top, lessThan(addRect.top));
+    expect(resetRect.size, addWordsButtonSize);
+    expect(
+      tester.getSize(find.widgetWithText(ElevatedButton, '中→日學習(2)')).height,
+      144,
+    );
+
+    await tester.tap(reset);
+    await tester.pumpAndSettle();
+    expect(find.text('中→日學習(0)'), findsOneWidget);
+    expect(zhJaStudy.indexes, isEmpty);
+    expect(zhJaStudy.nextIndex, 0);
+    expect(wordStudy.indexes, [0]);
+    expect(wordStudy.nextIndex, 1);
   });
 
   testWidgets('homepage lists 學習 first and the title', (tester) async {
