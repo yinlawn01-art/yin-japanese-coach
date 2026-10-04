@@ -285,6 +285,18 @@ void main() {
     expect(wordStudy.nextIndex, 1);
   });
 
+  testWidgets('Chinese and Japanese use bundled fonts', (tester) async {
+    await tester.pumpWidget(const MyApp());
+    await tester.pump();
+
+    final style = Theme.of(
+      tester.element(find.byType(HomePage)),
+    ).textTheme.bodyMedium;
+    expect(style?.fontFamily, 'AppText');
+    expect(style?.fontFamilyFallback, contains('AppJapanese'));
+    expect(style?.fontFamilyFallback, contains('AppEmoji'));
+  });
+
   testWidgets('homepage lists 學習 first and the title', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();

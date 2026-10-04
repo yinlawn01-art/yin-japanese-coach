@@ -23,7 +23,7 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter build web --base-href "/yin-japanese-coach/"
+      - run: flutter build web --base-href "/yin-japanese-coach/" --no-web-resources-cdn
 
       - uses: actions/upload-pages-artifact@v3
         with:
