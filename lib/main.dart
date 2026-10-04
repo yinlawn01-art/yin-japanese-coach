@@ -296,7 +296,7 @@ Future<void> loadFavoritesHome() async {
                   const SizedBox(height: 10),
                   homeButton('收藏五十音 ($kanaFavoriteCount)', const FavoriteKanaPage()),
                   const SizedBox(height: 10),
-                  homeButton('單字', const FlashcardMenuPage()),
+                  homeButton('單字(${words.length})', const FlashcardMenuPage()),
                   const SizedBox(height: 10),
                   homeButton(
                     '收藏單字 ($favoriteCount)',
@@ -362,6 +362,10 @@ class FlashcardMenuPage extends StatelessWidget {
       textStyle: const TextStyle(fontSize: 28),
     );
 
+    final nouns = wordsOfType('名詞');
+    final verbs = wordsOfType('動詞');
+    final adjectives = wordsOfType('形容詞');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('單字'),
@@ -375,26 +379,26 @@ class FlashcardMenuPage extends StatelessWidget {
               children: [
                 ElevatedButton(
                   style: buttonStyle,
-                  onPressed: () => _open(context, wordsOfType('名詞')),
-                  child: const Text('名詞'),
+                  onPressed: () => _open(context, nouns),
+                  child: Text('名詞(${nouns.length})'),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   style: buttonStyle,
-                  onPressed: () => _open(context, wordsOfType('動詞')),
-                  child: const Text('動詞'),
+                  onPressed: () => _open(context, verbs),
+                  child: Text('動詞(${verbs.length})'),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   style: buttonStyle,
-                  onPressed: () => _open(context, wordsOfType('形容詞')),
-                  child: const Text('形容詞'),
+                  onPressed: () => _open(context, adjectives),
+                  child: Text('形容詞(${adjectives.length})'),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   style: buttonStyle,
                   onPressed: () => _open(context, allWordsShuffled()),
-                  child: const Text('全部'),
+                  child: Text('全部(${words.length})'),
                 ),
               ],
             ),

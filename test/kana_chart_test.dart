@@ -8,6 +8,7 @@ import 'package:yin_japanese_coach/kana_data.dart';
 import 'package:yin_japanese_coach/kana_page.dart';
 import 'package:yin_japanese_coach/main.dart';
 import 'package:yin_japanese_coach/romaji_speech.dart';
+import 'package:yin_japanese_coach/vocabulary_data.dart';
 
 String _spoken(String romaji) {
   return pronunciationForRomaji(romaji).replaceAll(' ', '');
@@ -114,11 +115,11 @@ void main() {
 
     expect(
       tester.getTopLeft(find.text('五十音')).dy,
-      lessThan(tester.getTopLeft(find.text('單字')).dy),
+      lessThan(tester.getTopLeft(find.text('單字(${words.length})')).dy),
     );
     expect(
       tester.getTopLeft(find.text('收藏五十音 (0)')).dy,
-      lessThan(tester.getTopLeft(find.text('單字')).dy),
+      lessThan(tester.getTopLeft(find.text('單字(${words.length})')).dy),
     );
 
     await tester.tap(find.text('五十音'));
