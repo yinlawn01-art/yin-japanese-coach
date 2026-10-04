@@ -11,7 +11,7 @@ import 'vocabulary_data.dart';
 import 'word_study.dart';
 
 const Size addWordsButtonSize = Size(288, 36);
-const Size studyQueueButtonSize = Size(288, 288);
+const Size studyQueueButtonSize = Size(288, 144);
 
 const Size _studyButtonSize = Size(336, 64);
 const double _answerSlotHeight = 210;
@@ -56,6 +56,12 @@ class _LearningPageState extends State<LearningPage> {
     wordStudy.restartFromBeginning();
     if (mounted) setState(() {});
     await wordStudy.save();
+  }
+
+  Future<void> _restartZhJa() async {
+    zhJaStudy.restartFromBeginning();
+    if (mounted) setState(() {});
+    await zhJaStudy.save();
   }
 
   Future<void> _openStudy() async {
@@ -111,7 +117,7 @@ class _LearningPageState extends State<LearningPage> {
         ),
         onPressed: _ready ? _restartFromBeginning : null,
         child: const Text(
-          '重新整理',
+          '重新整理 (單字)',
           style: TextStyle(fontSize: 16.5, height: 1.1),
         ),
       ),
@@ -169,6 +175,31 @@ class _LearningPageState extends State<LearningPage> {
                           child: Text(
                             '單字學習($count)',
                             style: const TextStyle(fontSize: 52, height: 1.1),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    SizedBox.fromSize(
+                      size: addWordsButtonSize,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: addWordsButtonSize,
+                          minimumSize: addWordsButtonSize,
+                          maximumSize: addWordsButtonSize,
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          textStyle: const TextStyle(
+                            fontSize: 16.5,
+                            height: 1.1,
+                          ),
+                        ),
+                        onPressed: _ready ? _restartZhJa : null,
+                        child: const FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '重新整理(中→日學習)',
+                            style: TextStyle(fontSize: 16.5, height: 1.1),
                           ),
                         ),
                       ),

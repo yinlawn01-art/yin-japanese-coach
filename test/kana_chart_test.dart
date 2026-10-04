@@ -203,6 +203,16 @@ void main() {
 
     await tester.tap(find.byIcon(Icons.star));
     await tester.pump();
+    expect(find.text('還沒有收藏五十音。'), findsNothing);
+    expect(find.text('あ'), findsWidgets);
+    expect(hiraganaCards.first.isFavorite, isTrue);
+    expect(
+      tester.getTopLeft(find.byIcon(Icons.star_border)).dy,
+      lessThan(tester.getTopLeft(find.text('あ')).dy),
+    );
+
+    await tester.tap(find.text('繼續'));
+    await tester.pump();
     expect(find.text('還沒有收藏五十音。'), findsOneWidget);
     expect(hiraganaCards.first.isFavorite, isFalse);
 

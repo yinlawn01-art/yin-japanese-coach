@@ -482,6 +482,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
   final Random random = Random();
   int currentIndex = 0;
   bool showAnswer = false;
+  bool dropAfterContinue = false;
   bool isPlaying = false;
   _PlayPhase playPhase = _PlayPhase.kana;
   KanaCard? playingCard;
@@ -519,28 +520,54 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
     await saveKanaFavorites();
   }
 
+  void _toggleRemoveLater() {
+    setState(() {
+      dropAfterContinue = !dropAfterContinue;
+    });
+  }
+
   Future<void> _showAnswer() async {
     final current = card;
     final token = speaker.begin();
     setState(() {
       showAnswer = true;
+      dropAfterContinue = false;
     });
     await speaker.reveal(current, token);
   }
 
   Future<void> _next() async {
-    await speaker.stop();
-    if (!mounted || favorites.isEmpty) return;
-    var nextIndex = currentIndex;
-    if (favorites.length > 1) {
-      do {
-        nextIndex = random.nextInt(favorites.length);
-      } while (nextIndex == currentIndex);
+    final removing = dropAfterContinue;
+    if (removing) {
+      card.isFavorite = false;
     }
-    setState(() {
-      currentIndex = nextIndex;
-      showAnswer = false;
-    });
+    dropAfterContinue = false;
+    if (!mounted) return;
+    if (favorites.isEmpty) {
+      setState(() {
+        currentIndex = 0;
+        showAnswer = false;
+      });
+    } else {
+      var nextIndex = 0;
+      if (favorites.length > 1) {
+        if (removing) {
+          nextIndex = currentIndex >= favorites.length
+              ? favorites.length - 1
+              : currentIndex;
+        } else {
+          do {
+            nextIndex = random.nextInt(favorites.length);
+          } while (nextIndex == currentIndex);
+        }
+      }
+      setState(() {
+        currentIndex = nextIndex;
+        showAnswer = false;
+      });
+    }
+    unawaited(speaker.stop());
+    if (removing) await saveKanaFavorites();
   }
 
   bool _isPlaying(int token) {
@@ -773,8 +800,8 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         kanaStar(
-          favorite: true,
-          onPressed: _removeFavorite,
+          favorite: !dropAfterContinue,
+          onPressed: _toggleRemoveLater,
           tooltip: 'Remove from favorites',
         ),
         kanaSpeakable(
