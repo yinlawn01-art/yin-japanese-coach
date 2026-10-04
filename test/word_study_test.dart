@@ -559,6 +559,12 @@ void main() {
       repeatPlusRect.left - repeatRect.right,
       closeTo(tenNewRect.left - repeatPlusRect.right, 0.5),
     );
+    final record = tester.getRect(
+      find.widgetWithText(ElevatedButton, '紀錄進程與結束'),
+    );
+    expect(record.top, greaterThan(repeatRect.bottom));
+    expect(record.left, closeTo(repeatRect.left, 1));
+    expect(record.right, closeTo(tenNewRect.right, 1));
 
     await tester.tap(repeat);
     await tester.pumpAndSettle();
@@ -609,5 +615,94 @@ void main() {
     expect(find.text('單字學習(10)'), findsOneWidget);
     expect(find.text('學習'), findsOneWidget);
     expect(wordStudy.indexes, [4, 5, 6, 7, 8, 9, 10, 11, 0, 1]);
+  });
+
+  test('紀錄進程與結束 continues after the last word of the batch', () {
+    wordStudy.indexes = List<int>.generate(21, (offset) => 29 + offset);
+    wordStudy.beginSession();
+    wordStudy.nextIndex = 0;
+    wordStudy.indexes = [];
+
+    wordStudy.rememberBatchEnd(60);
+
+    expect(wordStudy.nextIndex, 50);
+    expect(wordStudy.indexes, isEmpty);
+    expect(wordStudy.addBatch(60), 10);
+    expect(wordStudy.indexes.first, 50);
+    expect(wordStudy.indexes, List<int>.generate(10, (offset) => 50 + offset));
+  });
+
+  testWidgets('紀錄進程與結束 returns to 學習 and the next ten start after the batch', (
+    tester,
+  ) async {
+    wordStudy.indexes = [2, 3, 4];
+    wordStudy.nextIndex = 0;
+    await wordStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('單字學習(3)'));
+    await tester.pumpAndSettle();
+
+    for (var round = 0; round < 3; round++) {
+      await tester.tap(find.text('答案'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ElevatedButton, 'O'));
+      await tester.pumpAndSettle();
+    }
+
+    expect(find.text('恭喜你背完目前的單字, 接下來你想做甚麼?'), findsOneWidget);
+    await tester.tap(find.text('紀錄進程與結束'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('學習'), findsOneWidget);
+    expect(find.text('單字學習(0)'), findsOneWidget);
+    expect(wordStudy.indexes, isEmpty);
+    expect(wordStudy.nextIndex, 5);
+    expect(zhJaStudy.indexes, isEmpty);
+
+    await tester.tap(find.text('加10 個單字'));
+    await tester.pumpAndSettle();
+    expect(wordStudy.indexes.first, 5);
+    expect(wordStudy.indexes, [5, 6, 7, 8, 9, 10, 11, 0, 1, 2]);
+  });
+
+  testWidgets('tapping outside the 中→日 finish box keeps the next batch', (
+    tester,
+  ) async {
+    zhJaStudy.indexes = [2, 3, 4];
+    zhJaStudy.nextIndex = 0;
+    await zhJaStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+    final open = find.text('中→日學習(3)');
+    await tester.ensureVisible(open);
+    await tester.tap(open);
+    await tester.pumpAndSettle();
+
+    for (var round = 0; round < 3; round++) {
+      await tester.tap(find.text('答案'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ElevatedButton, 'O'));
+      await tester.pumpAndSettle();
+    }
+
+    expect(find.text('恭喜你背完目前的中翻日, 接下來你想做甚麼?'), findsOneWidget);
+    await tester.tapAt(const Offset(8, 8));
+    await tester.pumpAndSettle();
+
+    expect(find.text('學習'), findsOneWidget);
+    expect(find.text('中→日學習(0)'), findsOneWidget);
+    expect(zhJaStudy.indexes, isEmpty);
+    expect(zhJaStudy.nextIndex, 5);
+    expect(wordStudy.nextIndex, 0);
+
+    final add = find.text('加10 個單字到中→日學習');
+    await tester.ensureVisible(add);
+    await tester.tap(add);
+    await tester.pumpAndSettle();
+    expect(zhJaStudy.indexes.first, 5);
+    expect(wordStudy.indexes, isEmpty);
   });
 }
