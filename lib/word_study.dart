@@ -80,6 +80,22 @@ class WordStudy {
     indexes = List<int>.of(sessionSnapshot);
   }
 
+  /// Keeps the place just after the last word of the batch that was opened,
+  /// and leaves the queue empty so the next batch starts there.
+  void rememberBatchEnd(int totalWords) {
+    if (sessionSnapshot.isNotEmpty) {
+      var last = sessionSnapshot.first;
+      for (final index in sessionSnapshot) {
+        if (index > last) last = index;
+      }
+      nextIndex = last + 1;
+    }
+    indexes = [];
+    if (totalWords > 0) {
+      nextIndex %= totalWords;
+    }
+  }
+
   /// Removes the word at [position]. Returns true when the queue is empty.
   bool removeAt(int position) {
     if (position < 0 || position >= indexes.length) return indexes.isEmpty;

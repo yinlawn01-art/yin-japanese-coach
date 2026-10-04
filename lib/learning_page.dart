@@ -386,7 +386,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
   Future<void> _showFinishedDialog() async {
     final choice = await showDialog<String>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (dialogContext) {
         return _FinishedDialog(
           message: widget.chineseToJapanese
@@ -395,12 +395,16 @@ class _StudySessionPageState extends State<StudySessionPage> {
         );
       },
     );
-    if (!mounted || choice == null) return;
-    if (choice == 'repeat' || choice == 'repeat-plus') {
-      studyQueue.restoreSession();
-    }
-    if (choice == 'repeat-plus' || choice == 'new') {
-      studyQueue.addBatch(words.length);
+    if (!mounted) return;
+    if (choice == null || choice == 'record') {
+      studyQueue.rememberBatchEnd(words.length);
+    } else {
+      if (choice == 'repeat' || choice == 'repeat-plus') {
+        studyQueue.restoreSession();
+      }
+      if (choice == 'repeat-plus' || choice == 'new') {
+        studyQueue.addBatch(words.length);
+      }
     }
     await studyQueue.save();
     if (!mounted) return;
@@ -833,6 +837,23 @@ class _FinishedDialog extends StatelessWidget {
                   const SizedBox(width: 12),
                   _choice(context, '再來十個新單字', 'new'),
                 ],
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop('record'),
+                  child: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '紀錄進程與結束',
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(fontSize: 18, height: 1.1),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
