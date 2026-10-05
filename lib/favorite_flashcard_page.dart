@@ -515,6 +515,15 @@ Future<void> _playChineseThenJapanese(Vocabulary word, int generation) async {
     generation,
   );
   if (!_isCurrentPlay(generation)) return;
+  await _pause(const Duration(milliseconds: 1500), generation);
+  if (!_isCurrentPlay(generation)) return;
+
+  await _speakLine(
+    pronunciationForRomaji(word.romaji),
+    'ja-JP',
+    generation,
+  );
+  if (!_isCurrentPlay(generation)) return;
   await _pause(const Duration(seconds: 2), generation);
 }
 
