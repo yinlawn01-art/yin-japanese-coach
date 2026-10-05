@@ -304,7 +304,7 @@ Future<void> loadFavoritesHome() async {
                       'にちまんまん',
                       maxLines: 1,
                       softWrap: false,
-                      style: titleStyle(titleBlue, letterSpacing: -7),
+                      style: titleStyle(titleBlue, letterSpacing: -8),
                     ),
                     const SizedBox(width: 9),
                     const SizedBox(
@@ -321,7 +321,7 @@ Future<void> loadFavoritesHome() async {
                     ),
                     const SizedBox(width: 9),
                     SizedBox(
-                      width: 24,
+                      width: 21,
                       height: 46,
                       child: OverflowBox(
                         alignment: Alignment.centerLeft,
@@ -341,7 +341,7 @@ Future<void> loadFavoritesHome() async {
                       '日文會慢慢變好',
                       maxLines: 1,
                       softWrap: false,
-                      style: titleStyle(titlePink),
+                      style: titleStyle(titlePink, letterSpacing: -1),
                     ),
                   ],
                 ),
