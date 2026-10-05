@@ -399,4 +399,69 @@ void main() {
 
     await tester.pump(const Duration(seconds: 2));
   });
+
+  testWidgets('中→日 播放收藏單字 shows Chinese then Japanese', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '学校',
+          hiragana: 'がっこう',
+          romaji: 'gakkou',
+          meaning: '學校',
+          wordType: '🔵 名詞',
+          isZhJaFavorite: true,
+        ),
+      );
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: FavoriteFlashcardPage(chineseToJapanese: true),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.text('播放收藏單字'));
+    await tester.pump();
+    expect(find.text('Stop'), findsOneWidget);
+    expect(find.text('學校'), findsOneWidget);
+    expect(find.text('学校'), findsNothing);
+
+    await tester.pump(const Duration(seconds: 8));
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(find.text('学校'), findsOneWidget);
+    expect(find.text('學校'), findsNothing);
+    expect(find.text('Stop'), findsOneWidget);
+
+    await tester.tap(find.text('Stop'));
+    await tester.pump(const Duration(seconds: 8));
+  });
+
+  testWidgets('日→中 播放收藏單字 still shows Japanese first', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '学校',
+          hiragana: 'がっこう',
+          romaji: 'gakkou',
+          meaning: '學校',
+          wordType: '🔵 名詞',
+          isFavorite: true,
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteFlashcardPage()));
+    await tester.pump();
+    await tester.tap(find.text('播放收藏單字'));
+    await tester.pump();
+    expect(find.text('Stop'), findsOneWidget);
+    expect(find.text('学校'), findsOneWidget);
+    expect(find.text('學校'), findsNothing);
+
+    await tester.tap(find.text('Stop'));
+    await tester.pump(const Duration(seconds: 8));
+  });
 }

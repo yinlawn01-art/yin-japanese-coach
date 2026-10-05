@@ -391,14 +391,26 @@ Future<void> _speakLine(
   flutterTts.setErrorHandler((_) => finish());
   flutterTts.setCancelHandler(finish);
 
-  await applyNaturalVoice(flutterTts, language);
+  try {
+    await applyNaturalVoice(flutterTts, language).timeout(
+      const Duration(seconds: 8),
+    );
+  } catch (_) {
+    finish();
+    return;
+  }
 
   if (!_isCurrentPlay(generation)) {
     finish();
     return;
   }
 
-  await flutterTts.speak(text);
+  try {
+    await flutterTts.speak(text).timeout(const Duration(seconds: 8));
+  } catch (_) {
+    finish();
+    return;
+  }
   await done.future.timeout(
     const Duration(seconds: 8),
     onTimeout: finish,
@@ -427,20 +439,99 @@ int _nextPlayIndex(int length, int current) {
   return next;
 }
 
+Future<void> _playJapaneseThenChinese(Vocabulary word, int generation) async {
+  if (!mounted || generation != _playGeneration) return;
+  setState(() {
+    playingWord = word;
+    showPlayingJapanese = true;
+  });
+
+  await _speakLine(
+    pronunciationForRomaji(word.romaji),
+    'ja-JP',
+    generation,
+  );
+  if (!_isCurrentPlay(generation)) return;
+  await _pause(const Duration(milliseconds: 1500), generation);
+  if (!_isCurrentPlay(generation)) return;
+
+  await _speakLine(
+    pronunciationForRomaji(word.romaji),
+    'ja-JP',
+    generation,
+  );
+  if (!_isCurrentPlay(generation)) return;
+  await _pause(const Duration(seconds: 2), generation);
+  if (!_isCurrentPlay(generation)) return;
+
+  if (!mounted || generation != _playGeneration) return;
+  setState(() {
+    showPlayingJapanese = false;
+  });
+
+  final chineseShownAt = DateTime.now();
+  await _speakLine(word.meaning, 'zh-TW', generation);
+  if (!_isCurrentPlay(generation)) return;
+
+  final chineseVisibleFor = DateTime.now().difference(chineseShownAt);
+  const minimumChineseTime = Duration(seconds: 2);
+  if (chineseVisibleFor < minimumChineseTime) {
+    await _pause(
+      minimumChineseTime - chineseVisibleFor,
+      generation,
+    );
+  }
+}
+
+Future<void> _playChineseThenJapanese(Vocabulary word, int generation) async {
+  if (!mounted || generation != _playGeneration) return;
+  setState(() {
+    playingWord = word;
+    showPlayingJapanese = false;
+  });
+
+  final chineseShownAt = DateTime.now();
+  await _speakLine(word.meaning, 'zh-TW', generation);
+  if (!_isCurrentPlay(generation)) return;
+
+  final chineseVisibleFor = DateTime.now().difference(chineseShownAt);
+  const minimumChineseTime = Duration(seconds: 2);
+  if (chineseVisibleFor < minimumChineseTime) {
+    await _pause(
+      minimumChineseTime - chineseVisibleFor,
+      generation,
+    );
+  }
+  if (!_isCurrentPlay(generation)) return;
+
+  if (!mounted || generation != _playGeneration) return;
+  setState(() {
+    showPlayingJapanese = true;
+  });
+
+  await _speakLine(
+    pronunciationForRomaji(word.romaji),
+    'ja-JP',
+    generation,
+  );
+  if (!_isCurrentPlay(generation)) return;
+  await _pause(const Duration(seconds: 2), generation);
+}
+
 Future<void> playAllFavorites() async {
   if (isPlayingFavorites || favoriteWords.isEmpty) return;
 
   final generation = ++_playGeneration;
   var index = random.nextInt(favoriteWords.length);
 
-  await flutterTts.stop();
-  if (!mounted || generation != _playGeneration) return;
-
   setState(() {
     isPlayingFavorites = true;
-    showPlayingJapanese = true;
+    showPlayingJapanese = !widget.chineseToJapanese;
     playingWord = favoriteWords[index];
   });
+
+  unawaited(flutterTts.stop());
+  if (!mounted || generation != _playGeneration) return;
 
   while (_isCurrentPlay(generation)) {
     final list = favoriteWords;
@@ -448,47 +539,10 @@ Future<void> playAllFavorites() async {
     if (index >= list.length) index = 0;
 
     final word = list[index];
-
-    if (!mounted || generation != _playGeneration) break;
-    setState(() {
-      playingWord = word;
-      showPlayingJapanese = true;
-    });
-
-    await _speakLine(
-      pronunciationForRomaji(word.romaji),
-      'ja-JP',
-      generation,
-    );
-    if (!_isCurrentPlay(generation)) break;
-    await _pause(const Duration(milliseconds: 1500), generation);
-    if (!_isCurrentPlay(generation)) break;
-
-    await _speakLine(
-      pronunciationForRomaji(word.romaji),
-      'ja-JP',
-      generation,
-    );
-    if (!_isCurrentPlay(generation)) break;
-    await _pause(const Duration(seconds: 2), generation);
-    if (!_isCurrentPlay(generation)) break;
-
-    if (!mounted || generation != _playGeneration) break;
-    setState(() {
-      showPlayingJapanese = false;
-    });
-
-    final chineseShownAt = DateTime.now();
-    await _speakLine(word.meaning, 'zh-TW', generation);
-    if (!_isCurrentPlay(generation)) break;
-
-    final chineseVisibleFor = DateTime.now().difference(chineseShownAt);
-    const minimumChineseTime = Duration(seconds: 2);
-    if (chineseVisibleFor < minimumChineseTime) {
-      await _pause(
-        minimumChineseTime - chineseVisibleFor,
-        generation,
-      );
+    if (widget.chineseToJapanese) {
+      await _playChineseThenJapanese(word, generation);
+    } else {
+      await _playJapaneseThenChinese(word, generation);
     }
     if (!_isCurrentPlay(generation)) break;
 
