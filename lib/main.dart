@@ -264,22 +264,85 @@ Future<void> loadFavoritesHome() async {
                   .clamp(0.0, constraints.maxHeight);
 
               final phone = constraints.maxWidth <= 480;
-              const title = Text(
-                'にちまんまん | 不急，日文會慢慢變好',
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                softWrap: false,
-                style: TextStyle(
+              // Tight brush line: blue hiragana, a thin bar, then pink Chinese.
+              const titleHalo = <Shadow>[
+                Shadow(
+                  color: Color(0xF5FFFFFF),
+                  offset: Offset(-1, 0),
+                  blurRadius: 0.4,
+                ),
+                Shadow(
+                  color: Color(0xF5FFFFFF),
+                  offset: Offset(1, 0),
+                  blurRadius: 0.4,
+                ),
+                Shadow(
+                  color: Color(0xF5FFFFFF),
+                  offset: Offset(0, -1),
+                  blurRadius: 0.4,
+                ),
+                Shadow(
+                  color: Color(0xF5FFFFFF),
+                  offset: Offset(0, 1),
+                  blurRadius: 0.4,
+                ),
+                Shadow(
+                  color: Color(0xCCFFFFFF),
+                  blurRadius: 2.5,
+                ),
+              ];
+              TextStyle titleStyle(Color color) {
+                return TextStyle(
                   fontFamily: 'LXGW WenKai',
-                  fontFamilyFallback: ['AppJapanese', 'AppText', 'AppEmoji'],
+                  fontFamilyFallback: const [
+                    'AppJapanese',
+                    'AppText',
+                    'AppEmoji',
+                  ],
                   fontSize: 42,
-                  color: Color(0xFF0A2F6B),
-                  letterSpacing: 4,
-                  height: 1.3,
-                  shadows: [
-                    Shadow(
-                      color: Color(0xE6FFFFFF),
-                      blurRadius: 16,
+                  height: 1.05,
+                  letterSpacing: 0,
+                  color: color,
+                  shadows: titleHalo,
+                );
+              }
+
+              const titleBlue = Color(0xFF155F81);
+              const titlePink = Color(0xFFD060C0);
+              final title = FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  key: const Key('home-title'),
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'にちまんまん',
+                      maxLines: 1,
+                      softWrap: false,
+                      style: titleStyle(titleBlue),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 3,
+                      height: 32,
+                      decoration: const BoxDecoration(
+                        color: titleBlue,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xF5FFFFFF),
+                            blurRadius: 1.2,
+                            spreadRadius: 0.4,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '不急，日文會慢慢變好',
+                      maxLines: 1,
+                      softWrap: false,
+                      style: titleStyle(titlePink),
                     ),
                   ],
                 ),
@@ -288,7 +351,7 @@ Future<void> loadFavoritesHome() async {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: titleTop),
-                  const FittedBox(fit: BoxFit.scaleDown, child: title),
+                  title,
                   SizedBox(height: phone ? 12 : 36),
                   Text(
                     'version: $appVersion',
