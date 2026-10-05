@@ -400,7 +400,9 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
   });
 
-  testWidgets('中→日 播放收藏單字 shows Chinese then Japanese', (tester) async {
+  testWidgets('中→日 播放收藏單字 shows Chinese then reads Japanese twice', (
+    tester,
+  ) async {
     SharedPreferences.setMockInitialValues({});
     words
       ..clear()
@@ -433,6 +435,11 @@ void main() {
     expect(find.text('学校'), findsOneWidget);
     expect(find.text('學校'), findsNothing);
     expect(find.text('Stop'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 8));
+    await tester.pump(const Duration(milliseconds: 1500));
+    expect(find.text('学校'), findsOneWidget);
+    expect(find.text('學校'), findsNothing);
 
     await tester.tap(find.text('Stop'));
     await tester.pump(const Duration(seconds: 8));
