@@ -265,12 +265,13 @@ Future<void> loadFavoritesHome() async {
 
               final phone = constraints.maxWidth <= 480;
               const title = Text(
-                '龍吟的學日文APP',
+                'にちまんまん | 不急，日文會慢慢變好',
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 softWrap: false,
                 style: TextStyle(
                   fontFamily: 'LXGW WenKai',
+                  fontFamilyFallback: ['AppJapanese', 'AppText', 'AppEmoji'],
                   fontSize: 42,
                   color: Color(0xFF0A2F6B),
                   letterSpacing: 4,
@@ -287,10 +288,7 @@ Future<void> loadFavoritesHome() async {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: titleTop),
-                  if (phone)
-                    const FittedBox(fit: BoxFit.scaleDown, child: title)
-                  else
-                    title,
+                  const FittedBox(fit: BoxFit.scaleDown, child: title),
                   SizedBox(height: phone ? 12 : 36),
                   Text(
                     'version: $appVersion',
