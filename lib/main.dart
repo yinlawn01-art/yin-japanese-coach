@@ -265,7 +265,18 @@ Future<void> loadFavoritesHome() async {
 
               final phone = constraints.maxWidth <= 480;
               // Tight brush line: blue hiragana, a thin bar, then pink Chinese.
+              // Same-color offsets thicken WenKai, which is only shipped as Regular.
               TextStyle titleStyle(Color color) {
+                const thicken = <Offset>[
+                  Offset(-1.4, 0),
+                  Offset(1.4, 0),
+                  Offset(0, -1.4),
+                  Offset(0, 1.4),
+                  Offset(-1, -1),
+                  Offset(1, -1),
+                  Offset(-1, 1),
+                  Offset(1, 1),
+                ];
                 return TextStyle(
                   fontFamily: 'LXGW WenKai',
                   fontFamilyFallback: const [
@@ -275,8 +286,12 @@ Future<void> loadFavoritesHome() async {
                   ],
                   fontSize: 42,
                   height: 1.05,
-                  letterSpacing: 0,
+                  letterSpacing: -2,
                   color: color,
+                  shadows: [
+                    for (final offset in thicken)
+                      Shadow(color: color, offset: offset, blurRadius: 0.3),
+                  ],
                 );
               }
 
@@ -295,13 +310,13 @@ Future<void> loadFavoritesHome() async {
                       softWrap: false,
                       style: titleStyle(titleBlue),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 5),
                     const SizedBox(
-                      width: 5,
+                      width: 8,
                       height: 32,
                       child: ColoredBox(color: titleBlue),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 5),
                     Text(
                       '不急，日文會慢慢變好',
                       maxLines: 1,
