@@ -318,7 +318,30 @@ Future<void> loadFavoritesHome() async {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      '不急，日文會慢慢變好',
+                      '不急',
+                      maxLines: 1,
+                      softWrap: false,
+                      style: titleStyle(titlePink),
+                    ),
+                    SizedBox(
+                      width: 14,
+                      height: 46,
+                      child: OverflowBox(
+                        alignment: Alignment.centerLeft,
+                        minWidth: 0,
+                        maxWidth: 48,
+                        minHeight: 0,
+                        maxHeight: 46,
+                        child: Text(
+                          '，',
+                          maxLines: 1,
+                          softWrap: false,
+                          style: titleStyle(titlePink),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '日文會慢慢變好',
                       maxLines: 1,
                       softWrap: false,
                       style: titleStyle(titlePink),
