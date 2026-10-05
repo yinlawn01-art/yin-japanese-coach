@@ -302,7 +302,7 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
 
-    final title = find.text('龍吟的學日文APP');
+    final title = find.text('にちまんまん | 不急，日文會慢慢變好');
     final learning = find.text('學習');
     final kana = find.text('五十音');
     expect(title, findsOneWidget);
@@ -347,7 +347,7 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: HomePage()));
       await tester.pumpAndSettle();
 
-      final title = tester.getRect(find.text('龍吟的學日文APP'));
+      final title = tester.getRect(find.text('にちまんまん | 不急，日文會慢慢變好'));
       expect(title.top, closeTo(size.height * 0.10, 4));
       expect(title.width, lessThanOrEqualTo(size.width));
       expect(
