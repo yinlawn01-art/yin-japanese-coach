@@ -309,10 +309,10 @@ void main() {
     expect(title, findsOneWidget);
     expect(motto, findsOneWidget);
     expect(tester.widget<Text>(title).style?.fontSize, 42);
-    expect(tester.widget<Text>(title).style?.letterSpacing, 0);
+    expect(tester.widget<Text>(title).style?.letterSpacing, -2);
     expect(tester.widget<Text>(title).style?.color, const Color(0xFF155F81));
     expect(tester.widget<Text>(motto).style?.color, const Color(0xFFD060C0));
-    expect(tester.widget<Text>(motto).style?.letterSpacing, 0);
+    expect(tester.widget<Text>(motto).style?.letterSpacing, -2);
     expect(tester.getTopLeft(title).dy, closeTo(600 * 0.10, 2));
     expect(learning, findsOneWidget);
     expect(
