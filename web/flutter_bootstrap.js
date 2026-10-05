@@ -47,6 +47,7 @@
     if (controller) {
       var page = location.href.split('#')[0];
       var indexUrl = new URL('index.html', document.baseURI).href;
+      controller.postMessage({ type: 'precache-shell' });
       controller.postMessage({
         type: 'cache-urls',
         urls: [page, indexUrl],
