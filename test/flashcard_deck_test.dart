@@ -129,7 +129,7 @@ void main() {
     expect(find.text('學校'), findsOneWidget);
     expect(find.text('学校'), findsNothing);
     expect(find.text('(1 of 1)'), findsOneWidget);
-    expect(find.byIcon(Icons.star_border), findsNothing);
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
@@ -142,14 +142,121 @@ void main() {
     expect(find.text('例句'), findsOneWidget);
     expect(find.text('O'), findsNothing);
     expect(find.text('X'), findsNothing);
-    expect(find.byIcon(Icons.star), findsNothing);
-    expect(find.byIcon(Icons.star_border), findsNothing);
+    expect(find.byIcon(Icons.star_border).hitTestable(), findsOneWidget);
 
     await tester.tap(find.text('繼續'));
     await tester.pump();
     expect(find.text('學校'), findsOneWidget);
     expect(find.text('学校'), findsNothing);
     expect(find.text('答案'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('日→中 star saves the word in 日→中收藏 only', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '学校',
+          hiragana: 'がっこう',
+          romaji: 'gakkou',
+          meaning: '學校',
+          wordType: '🔵 名詞',
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FlashcardMenuPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(_directionButton('名詞', '日→中單字'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.star_border));
+    await tester.pump();
+    expect(words.single.isFavorite, isTrue);
+    expect(words.single.isZhJaFavorite, isFalse);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        key: ValueKey('favorites'),
+        home: FavoriteWordsMenuPage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('日→中單字'), findsOneWidget);
+    expect(find.text('中→日單字'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(ElevatedButton, '日→中單字'));
+    await tester.pumpAndSettle();
+    expect(find.text('学校'), findsOneWidget);
+    expect(find.text('學校'), findsNothing);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ElevatedButton, '中→日單字'));
+    await tester.pumpAndSettle();
+    expect(find.text('No favorite words yet.'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('中→日 stars save and remove the word in 中→日收藏', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '学校',
+          hiragana: 'がっこう',
+          romaji: 'gakkou',
+          meaning: '學校',
+          wordType: '🔵 名詞',
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FlashcardMenuPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(_directionButton('名詞', '中→日單字'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.star_border));
+    await tester.pump();
+    expect(words.single.isZhJaFavorite, isTrue);
+    expect(words.single.isFavorite, isFalse);
+
+    await tester.tap(find.byIcon(Icons.star));
+    await tester.pump();
+    expect(words.single.isZhJaFavorite, isFalse);
+
+    await tester.tap(find.byIcon(Icons.star_border));
+    await tester.pump();
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.star).hitTestable());
+    await tester.pump();
+    expect(words.single.isZhJaFavorite, isFalse);
+    expect(words.single.isFavorite, isFalse);
+
+    await tester.tap(find.byIcon(Icons.star_border).hitTestable());
+    await tester.pump();
+    expect(words.single.isZhJaFavorite, isTrue);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        key: ValueKey('favorites'),
+        home: FavoriteWordsMenuPage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ElevatedButton, '中→日單字'));
+    await tester.pumpAndSettle();
+    expect(find.text('學校'), findsOneWidget);
+    expect(find.text('学校'), findsNothing);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    expect(find.text('学校'), findsOneWidget);
+    expect(find.text('繼續'), findsOneWidget);
+    expect(find.byIcon(Icons.star), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 2));
   });

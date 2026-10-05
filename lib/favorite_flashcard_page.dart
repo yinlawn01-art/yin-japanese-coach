@@ -18,8 +18,65 @@ import 'example_sentence.dart';
 
 import 'romaji_speech.dart';
 
+import 'bundled_text.dart';
+
+class FavoriteWordsMenuPage extends StatelessWidget {
+  const FavoriteWordsMenuPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const size = Size(336, 64);
+    final buttonStyle = ElevatedButton.styleFrom(
+      fixedSize: size,
+      minimumSize: size,
+      maximumSize: size,
+      padding: EdgeInsets.zero,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      textStyle: bundledText.copyWith(fontSize: 28),
+    );
+    final labelStyle = bundledText.copyWith(fontSize: 28, height: 1.1);
+
+    void open(bool chineseToJapanese) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FavoriteFlashcardPage(
+            chineseToJapanese: chineseToJapanese,
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('收藏單字'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              style: buttonStyle,
+              onPressed: () => open(false),
+              child: Text('日→中單字', style: labelStyle),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              style: buttonStyle,
+              onPressed: () => open(true),
+              child: Text('中→日單字', style: labelStyle),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class FavoriteFlashcardPage extends StatefulWidget {
-  const FavoriteFlashcardPage({super.key});
+  const FavoriteFlashcardPage({super.key, this.chineseToJapanese = false});
+
+  final bool chineseToJapanese;
 
   @override
   State<FavoriteFlashcardPage> createState() =>
@@ -31,10 +88,25 @@ class _FavoriteFlashcardPageState
 
       final FlutterTts flutterTts = FlutterTts();
 
-  List<Vocabulary> get favoriteWords =>
-      words
-          .where((w) => w.isFavorite)
-          .toList();
+  List<Vocabulary> get favoriteWords => words
+      .where(
+        (w) => widget.chineseToJapanese ? w.isZhJaFavorite : w.isFavorite,
+      )
+      .toList();
+
+  String get _pageTitle =>
+      widget.chineseToJapanese ? '中→日單字' : '日→中單字';
+
+  String _prompt(Vocabulary word) =>
+      widget.chineseToJapanese ? word.meaning : word.kanji;
+
+  void _clearSaved(Vocabulary word) {
+    if (widget.chineseToJapanese) {
+      word.isZhJaFavorite = false;
+    } else {
+      word.isFavorite = false;
+    }
+  }
 
     int currentIndex = 0;   
 
@@ -67,11 +139,16 @@ Future<void> _saveFavorites() async {
   final prefs = await SharedPreferences.getInstance();
 
   final favorites = words
-      .where((w) => w.isFavorite)
+      .where(
+        (w) => widget.chineseToJapanese ? w.isZhJaFavorite : w.isFavorite,
+      )
       .map((w) => w.kanji)
       .toList();
 
-  await prefs.setStringList('favorites', favorites);
+  await prefs.setStringList(
+    widget.chineseToJapanese ? 'zhJaFavorites' : 'favorites',
+    favorites,
+  );
 }
 
 Future<void> speakJapanese(String romaji) async {
@@ -252,7 +329,7 @@ Widget speakableText({
 
 Future<void> removeCurrentFavorite() async {
   if (favoriteWords.isEmpty) return;
-  currentWord.isFavorite = false;
+  _clearSaved(currentWord);
 
   if (!mounted) {
     await _saveFavorites();
@@ -446,7 +523,7 @@ void dispose() {
 Future<void> nextFavorite() async {
   final removing = dropAfterContinue;
   if (removing && favoriteWords.isNotEmpty) {
-    currentWord.isFavorite = false;
+    _clearSaved(currentWord);
   }
 
   final total = favoriteWords.length;
@@ -483,9 +560,7 @@ Future<void> nextFavorite() async {
  if (favoriteWords.isEmpty) {
   return Scaffold(
     appBar: AppBar(
-      title: const Text(
-        '收藏單字',
-      ),
+      title: Text(_pageTitle),
     ),
     body: const Center(
       child: Text(
@@ -496,9 +571,7 @@ Future<void> nextFavorite() async {
 }   
 return Scaffold(
   appBar: AppBar(
-    title: const Text(
-      '收藏單字',
-    ),
+    title: Text(_pageTitle),
   ),
 
  body: isPlayingFavorites
@@ -515,7 +588,7 @@ return Scaffold(
             final showAnswerTop = _studyShowAnswerTop(
               bodyHeight: constraints.maxHeight,
               bodyWidth: constraints.maxWidth,
-              kanji: currentWord.kanji,
+              kanji: _prompt(currentWord),
               countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
               kanjiStyle: baseStyle.merge(
                 const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
@@ -677,7 +750,7 @@ children: [
           ),
         )
       : Text(
-          currentWord.kanji,
+          _prompt(currentWord),
           style: const TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,

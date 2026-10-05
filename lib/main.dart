@@ -108,6 +108,7 @@ class Vocabulary {
   final String wordType;
 
   bool isFavorite;
+  bool isZhJaFavorite;
 
 Vocabulary({
   required this.kanji,
@@ -116,6 +117,7 @@ Vocabulary({
   required this.meaning,
   required this.wordType,
   this.isFavorite = false,
+  this.isZhJaFavorite = false,
 });
 
   factory Vocabulary.fromJson(
@@ -142,7 +144,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   int get favoriteCount =>
-      words.where((w) => w.isFavorite).length;
+      words.where((w) => w.isFavorite || w.isZhJaFavorite).length;
 
   int get kanaFavoriteCount => favoriteKanaCards.length;
 
@@ -162,10 +164,14 @@ Future<void> loadFavoritesHome() async {
 
   final favorites =
       prefs.getStringList('favorites') ?? [];
+  final zhJaFavorites =
+      prefs.getStringList('zhJaFavorites') ?? [];
 
   for (var word in words) {
     word.isFavorite =
         favorites.contains(word.kanji);
+    word.isZhJaFavorite =
+        zhJaFavorites.contains(word.kanji);
   }
 
   await loadKanaFavorites();
@@ -312,7 +318,7 @@ Future<void> loadFavoritesHome() async {
                   const SizedBox(height: 10),
                   homeButton(
                     '收藏單字 ($favoriteCount)',
-                    const FavoriteFlashcardPage(),
+                    const FavoriteWordsMenuPage(),
                   ),
                   const SizedBox(height: 10),
                   homeButton(
@@ -504,12 +510,14 @@ Future<void> saveFavorites() async {
 
   final favorites =
       words
-          .where((w) => w.isFavorite)
+          .where(
+            (w) => widget.chineseToJapanese ? w.isZhJaFavorite : w.isFavorite,
+          )
           .map((w) => w.kanji)
           .toList();
 
   await prefs.setStringList(
-    'favorites',
+    widget.chineseToJapanese ? 'zhJaFavorites' : 'favorites',
     favorites,
   );
 
@@ -690,25 +698,46 @@ Future<void> saveFavorites() async {
     return columnTop + 24 + contentHeight - _studyButtonSize.height;
   }
 
-  Widget _favoriteStar(Vocabulary word) {
+  bool _isDirectionFavorite(Vocabulary word) => widget.chineseToJapanese
+      ? word.isZhJaFavorite
+      : word.isFavorite;
+
+  Future<void> _toggleDirectionFavorite(Vocabulary word) async {
+    setState(() {
+      if (widget.chineseToJapanese) {
+        word.isZhJaFavorite = !word.isZhJaFavorite;
+      } else {
+        word.isFavorite = !word.isFavorite;
+      }
+    });
+
+    await saveFavorites();
+
+    print(
+      "Saved Favorites: "
+      "${words.where(_isDirectionFavorite).map((w) => w.kanji).toList()}"
+    );
+  }
+
+  Widget _favoriteStar(Vocabulary word, {bool compact = false}) {
+    final icon = Icon(
+      _isDirectionFavorite(word) ? Icons.star : Icons.star_border,
+      color: Colors.amber,
+    );
+    if (compact) {
+      return IconButton(
+        iconSize: 32,
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
+        constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+        icon: icon,
+        onPressed: () => _toggleDirectionFavorite(word),
+      );
+    }
     return IconButton(
       iconSize: 40,
-      icon: Icon(
-        word.isFavorite ? Icons.star : Icons.star_border,
-        color: Colors.amber,
-      ),
-      onPressed: () async {
-        setState(() {
-          word.isFavorite = !word.isFavorite;
-        });
-
-        await saveFavorites();
-
-        print(
-          "Saved Favorites: "
-          "${words.where((w) => w.isFavorite).map((w) => w.kanji).toList()}"
-        );
-      },
+      icon: icon,
+      onPressed: () => _toggleDirectionFavorite(word),
     );
   }
 
@@ -730,7 +759,7 @@ Future<void> saveFavorites() async {
             fontWeight: FontWeight.bold,
           ),
         ),
-        if (!widget.chineseToJapanese) _favoriteStar(word),
+        _favoriteStar(word),
         const SizedBox(height: _answerSlotHeight),
       ],
     );
@@ -757,22 +786,7 @@ Future<void> saveFavorites() async {
             fontWeight: FontWeight.bold,
           ),
         ),
-        IconButton(
-          iconSize: 32,
-          padding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-          constraints: const BoxConstraints.tightFor(width: 40, height: 40),
-          icon: Icon(
-            word.isFavorite ? Icons.star : Icons.star_border,
-            color: Colors.amber,
-          ),
-          onPressed: () async {
-            setState(() {
-              word.isFavorite = !word.isFavorite;
-            });
-            await saveFavorites();
-          },
-        ),
+        _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
           japanese: word.romaji,
@@ -828,6 +842,7 @@ Future<void> saveFavorites() async {
           japanese: word.romaji,
           style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
         ),
+        _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
           japanese: word.romaji,
@@ -951,7 +966,7 @@ Future<void> saveFavorites() async {
               const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
             ),
             textScaler: MediaQuery.textScalerOf(context),
-            iconHeight: widget.chineseToJapanese ? 0 : 56,
+            iconHeight: 56,
           );
           final contentBottom = (constraints.maxHeight - buttonTop + 8)
               .clamp(0.0, constraints.maxHeight);
