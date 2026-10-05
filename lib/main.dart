@@ -135,6 +135,18 @@ Vocabulary({
 }
 
 
+Future<void> saveDirectionFavorites(bool chineseToJapanese) async {
+  final prefs = await SharedPreferences.getInstance();
+  final saved = words
+      .where((word) => chineseToJapanese ? word.isZhJaFavorite : word.isFavorite)
+      .map((word) => word.kanji)
+      .toList();
+  await prefs.setStringList(
+    chineseToJapanese ? 'zhJaFavorites' : 'favorites',
+    saved,
+  );
+}
+
 class HomePage extends StatefulWidget {
   
   const HomePage({super.key});
@@ -180,8 +192,6 @@ Future<void> loadFavoritesHome() async {
 
   if (mounted) setState(() {});
 }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -506,21 +516,9 @@ void initState() {
 }
 
 Future<void> saveFavorites() async {
+  await saveDirectionFavorites(widget.chineseToJapanese);
+
   final prefs = await SharedPreferences.getInstance();
-
-  final favorites =
-      words
-          .where(
-            (w) => widget.chineseToJapanese ? w.isZhJaFavorite : w.isFavorite,
-          )
-          .map((w) => w.kanji)
-          .toList();
-
-  await prefs.setStringList(
-    widget.chineseToJapanese ? 'zhJaFavorites' : 'favorites',
-    favorites,
-  );
-
   final check =
       prefs.getStringList('favorites');
 

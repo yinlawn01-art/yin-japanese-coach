@@ -20,8 +20,25 @@ import 'romaji_speech.dart';
 
 import 'bundled_text.dart';
 
-class FavoriteWordsMenuPage extends StatelessWidget {
+class FavoriteWordsMenuPage extends StatefulWidget {
   const FavoriteWordsMenuPage({super.key});
+
+  @override
+  State<FavoriteWordsMenuPage> createState() => _FavoriteWordsMenuPageState();
+}
+
+class _FavoriteWordsMenuPageState extends State<FavoriteWordsMenuPage> {
+  Future<void> _open(bool chineseToJapanese) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FavoriteFlashcardPage(
+          chineseToJapanese: chineseToJapanese,
+        ),
+      ),
+    );
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +52,8 @@ class FavoriteWordsMenuPage extends StatelessWidget {
       textStyle: bundledText.copyWith(fontSize: 28),
     );
     final labelStyle = bundledText.copyWith(fontSize: 28, height: 1.1);
-
-    void open(bool chineseToJapanese) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FavoriteFlashcardPage(
-            chineseToJapanese: chineseToJapanese,
-          ),
-        ),
-      );
-    }
+    final jaCount = words.where((word) => word.isFavorite).length;
+    final zhCount = words.where((word) => word.isZhJaFavorite).length;
 
     return Scaffold(
       appBar: AppBar(
@@ -57,14 +65,14 @@ class FavoriteWordsMenuPage extends StatelessWidget {
           children: [
             ElevatedButton(
               style: buttonStyle,
-              onPressed: () => open(false),
-              child: Text('日→中單字', style: labelStyle),
+              onPressed: () => _open(false),
+              child: Text('日→中單字($jaCount)', style: labelStyle),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               style: buttonStyle,
-              onPressed: () => open(true),
-              child: Text('中→日單字', style: labelStyle),
+              onPressed: () => _open(true),
+              child: Text('中→日單字($zhCount)', style: labelStyle),
             ),
           ],
         ),
