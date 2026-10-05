@@ -265,32 +265,6 @@ Future<void> loadFavoritesHome() async {
 
               final phone = constraints.maxWidth <= 480;
               // Tight brush line: blue hiragana, a thin bar, then pink Chinese.
-              const titleHalo = <Shadow>[
-                Shadow(
-                  color: Color(0xF5FFFFFF),
-                  offset: Offset(-1, 0),
-                  blurRadius: 0.4,
-                ),
-                Shadow(
-                  color: Color(0xF5FFFFFF),
-                  offset: Offset(1, 0),
-                  blurRadius: 0.4,
-                ),
-                Shadow(
-                  color: Color(0xF5FFFFFF),
-                  offset: Offset(0, -1),
-                  blurRadius: 0.4,
-                ),
-                Shadow(
-                  color: Color(0xF5FFFFFF),
-                  offset: Offset(0, 1),
-                  blurRadius: 0.4,
-                ),
-                Shadow(
-                  color: Color(0xCCFFFFFF),
-                  blurRadius: 2.5,
-                ),
-              ];
               TextStyle titleStyle(Color color) {
                 return TextStyle(
                   fontFamily: 'LXGW WenKai',
@@ -303,7 +277,6 @@ Future<void> loadFavoritesHome() async {
                   height: 1.05,
                   letterSpacing: 0,
                   color: color,
-                  shadows: titleHalo,
                 );
               }
 
@@ -323,19 +296,10 @@ Future<void> loadFavoritesHome() async {
                       style: titleStyle(titleBlue),
                     ),
                     const SizedBox(width: 8),
-                    Container(
-                      width: 3,
+                    const SizedBox(
+                      width: 5,
                       height: 32,
-                      decoration: const BoxDecoration(
-                        color: titleBlue,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xF5FFFFFF),
-                            blurRadius: 1.2,
-                            spreadRadius: 0.4,
-                          ),
-                        ],
-                      ),
+                      child: ColoredBox(color: titleBlue),
                     ),
                     const SizedBox(width: 8),
                     Text(
