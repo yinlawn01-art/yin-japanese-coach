@@ -5,6 +5,13 @@ import 'package:yin_japanese_coach/favorite_flashcard_page.dart';
 import 'package:yin_japanese_coach/main.dart';
 import 'package:yin_japanese_coach/vocabulary_data.dart';
 
+Finder _directionButton(String section, String label) {
+  return find.descendant(
+    of: find.byKey(Key(section)),
+    matching: find.widgetWithText(ElevatedButton, label),
+  );
+}
+
 Vocabulary sample(String kanji, String wordType) {
   return Vocabulary(
     kanji: kanji,
@@ -51,11 +58,100 @@ void main() {
     expect(find.text('動詞(2)'), findsOneWidget);
     expect(find.text('形容詞(1)'), findsOneWidget);
     expect(find.text('全部(5)'), findsOneWidget);
+    expect(find.text('日→中單字'), findsNWidgets(4));
+    expect(find.text('中→日單字'), findsNWidgets(4));
 
-    await tester.tap(find.text('名詞(2)'));
+    await tester.tap(_directionButton('名詞', '日→中單字'));
     await tester.pumpAndSettle();
     expect(find.text('学校'), findsOneWidget);
     expect(find.text('会う'), findsNothing);
+  });
+
+  testWidgets('日→中單字 keeps the Japanese word and the current answer', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '学校',
+          hiragana: 'がっこう',
+          romaji: 'gakkou',
+          meaning: '學校',
+          wordType: '🔵 名詞',
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FlashcardMenuPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(_directionButton('名詞', '日→中單字'));
+    await tester.pumpAndSettle();
+    expect(find.text('学校'), findsOneWidget);
+    expect(find.text('學校'), findsNothing);
+    expect(find.text('Word 1 / 1'), findsOneWidget);
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    expect(find.text('学校'), findsWidgets);
+    expect(find.text('がっこう'), findsOneWidget);
+    expect(find.text('gakkou'), findsOneWidget);
+    expect(find.text('詞性：🔵 名詞'), findsOneWidget);
+    expect(find.text('學校'), findsOneWidget);
+    expect(find.text('繼續'), findsOneWidget);
+    expect(find.text('例句'), findsOneWidget);
+    expect(find.byIcon(Icons.star_border), findsWidgets);
+    expect(find.text('O'), findsNothing);
+    expect(find.text('X'), findsNothing);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('中→日單字 shows Chinese and 繼續 after 答案', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '学校',
+          hiragana: 'がっこう',
+          romaji: 'gakkou',
+          meaning: '學校',
+          wordType: '🔵 名詞',
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FlashcardMenuPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(_directionButton('名詞', '中→日單字'));
+    await tester.pumpAndSettle();
+    expect(find.text('學校'), findsOneWidget);
+    expect(find.text('学校'), findsNothing);
+    expect(find.text('(1 of 1)'), findsOneWidget);
+    expect(find.byIcon(Icons.star_border), findsNothing);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    expect(find.text('学校'), findsOneWidget);
+    expect(find.text('がっこう'), findsOneWidget);
+    expect(find.text('gakkou'), findsOneWidget);
+    expect(find.text('詞性：🔵 名詞'), findsOneWidget);
+    expect(find.text('學校'), findsWidgets);
+    expect(find.text('繼續'), findsOneWidget);
+    expect(find.text('例句'), findsOneWidget);
+    expect(find.text('O'), findsNothing);
+    expect(find.text('X'), findsNothing);
+    expect(find.byIcon(Icons.star), findsNothing);
+    expect(find.byIcon(Icons.star_border), findsNothing);
+
+    await tester.tap(find.text('繼續'));
+    await tester.pump();
+    expect(find.text('學校'), findsOneWidget);
+    expect(find.text('学校'), findsNothing);
+    expect(find.text('答案'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
   });
 
   test('全部 includes every word once', () {

@@ -363,12 +363,62 @@ const Size _studyButtonSize = Size(336, 64);
 class FlashcardMenuPage extends StatelessWidget {
   const FlashcardMenuPage({super.key});
 
-  void _open(BuildContext context, List<Vocabulary> deck) {
+  void _open(
+    BuildContext context,
+    List<Vocabulary> deck, {
+    bool chineseToJapanese = false,
+  }) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FlashcardPage(deck: deck),
+        builder: (context) => FlashcardPage(
+          deck: deck,
+          chineseToJapanese: chineseToJapanese,
+        ),
       ),
+    );
+  }
+
+  Widget _directionPair(
+    BuildContext context,
+    ButtonStyle buttonStyle,
+    String title,
+    List<Vocabulary> deck, {
+    bool shuffle = false,
+  }) {
+    List<Vocabulary> openDeck() => shuffle ? allWordsShuffled() : deck;
+    final labelStyle = bundledText.copyWith(fontSize: 28, height: 1.1);
+
+    return Column(
+      key: Key(title),
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$title(${deck.length})',
+          style: bundledText.copyWith(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton(
+          style: buttonStyle,
+          onPressed: deck.isEmpty ? null : () => _open(context, openDeck()),
+          child: Text('日→中單字', style: labelStyle),
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton(
+          style: buttonStyle,
+          onPressed: deck.isEmpty
+              ? null
+              : () => _open(
+                  context,
+                  openDeck(),
+                  chineseToJapanese: true,
+                ),
+          child: Text('中→日單字', style: labelStyle),
+        ),
+      ],
     );
   }
 
@@ -391,48 +441,51 @@ class FlashcardMenuPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('單字'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style: buttonStyle,
-                  onPressed: () => _open(context, nouns),
-                  child: Text('名詞(${nouns.length})'),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _directionPair(context, buttonStyle, '名詞', nouns),
+                      const SizedBox(height: 24),
+                      _directionPair(context, buttonStyle, '動詞', verbs),
+                      const SizedBox(height: 24),
+                      _directionPair(context, buttonStyle, '形容詞', adjectives),
+                      const SizedBox(height: 24),
+                      _directionPair(
+                        context,
+                        buttonStyle,
+                        '全部',
+                        words,
+                        shuffle: true,
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  style: buttonStyle,
-                  onPressed: () => _open(context, verbs),
-                  child: Text('動詞(${verbs.length})'),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  style: buttonStyle,
-                  onPressed: () => _open(context, adjectives),
-                  child: Text('形容詞(${adjectives.length})'),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  style: buttonStyle,
-                  onPressed: () => _open(context, allWordsShuffled()),
-                  child: Text('全部(${words.length})'),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
+      ),
     );
   }
 }
 
 class FlashcardPage extends StatefulWidget {
-  const FlashcardPage({super.key, required this.deck});
+  const FlashcardPage({
+    super.key,
+    required this.deck,
+    this.chineseToJapanese = false,
+  });
 
   final List<Vocabulary> deck;
+  final bool chineseToJapanese;
 
   @override
   State<FlashcardPage> createState() => _FlashcardPageState();
@@ -606,6 +659,13 @@ Future<void> saveFavorites() async {
     return painter.height;
   }
 
+  String get _countText => widget.chineseToJapanese
+      ? '(${currentIndex + 1} of ${widget.deck.length})'
+      : 'Word ${currentIndex + 1} / ${widget.deck.length}';
+
+  String _prompt(Vocabulary word) =>
+      widget.chineseToJapanese ? word.meaning : word.kanji;
+
   /// Top of the action button inside the body, matching Show Answer's place
   /// after the button grows to Next's height around the same center.
   double _actionButtonTop({
@@ -616,8 +676,8 @@ Future<void> saveFavorites() async {
     required TextStyle countStyle,
     required TextStyle kanjiStyle,
     required TextScaler textScaler,
+    double iconHeight = 56,
   }) {
-    const iconHeight = 56.0;
     const gap = 40.0;
     final contentHeight = _textHeight(countText, countStyle, bodyWidth - 48, textScaler) +
         gap +
@@ -657,31 +717,34 @@ Future<void> saveFavorites() async {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Word ${currentIndex + 1} / ${widget.deck.length}',
+          _countText,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 20),
         ),
         const SizedBox(height: 40),
         Text(
-          word.kanji,
+          _prompt(word),
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,
           ),
         ),
-        _favoriteStar(word),
+        if (!widget.chineseToJapanese) _favoriteStar(word),
         const SizedBox(height: _answerSlotHeight),
       ],
     );
   }
 
   Widget _answeredWord(Vocabulary word) {
+    if (widget.chineseToJapanese) {
+      return _chinesePromptAnswer(word);
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Word ${currentIndex + 1} / ${widget.deck.length}',
+          _countText,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 20, height: 1.1),
         ),
@@ -709,6 +772,61 @@ Future<void> saveFavorites() async {
             });
             await saveFavorites();
           },
+        ),
+        speakableText(
+          text: word.hiragana,
+          japanese: word.romaji,
+          style: const TextStyle(fontSize: 24, height: 1.1),
+        ),
+        const SizedBox(height: 4),
+        speakableText(
+          text: word.romaji,
+          japanese: word.romaji,
+          style: const TextStyle(
+            fontSize: 24,
+            height: 1.1,
+            color: Colors.orange,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          '詞性：${word.wordType}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 24,
+            height: 1.1,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        speakableText(
+          text: word.meaning,
+          japanese: word.romaji,
+          style: const TextStyle(
+            fontSize: 28,
+            height: 1.1,
+            color: Colors.blue,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Same fields as the study answer: kanji, reading, romaji, 詞性, meaning.
+  Widget _chinesePromptAnswer(Vocabulary word) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          _countText,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20, height: 1.1),
+        ),
+        const SizedBox(height: 8),
+        speakableText(
+          text: word.kanji,
+          japanese: word.romaji,
+          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
         ),
         speakableText(
           text: word.hiragana,
@@ -826,13 +944,14 @@ Future<void> saveFavorites() async {
           final buttonTop = _actionButtonTop(
             bodyHeight: constraints.maxHeight,
             bodyWidth: constraints.maxWidth,
-            countText: 'Word ${currentIndex + 1} / ${widget.deck.length}',
-            kanji: word.kanji,
+            countText: _countText,
+            kanji: _prompt(word),
             countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
             kanjiStyle: baseStyle.merge(
               const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
             ),
             textScaler: MediaQuery.textScalerOf(context),
+            iconHeight: widget.chineseToJapanese ? 0 : 56,
           );
           final contentBottom = (constraints.maxHeight - buttonTop + 8)
               .clamp(0.0, constraints.maxHeight);
