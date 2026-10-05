@@ -1,2 +1,2 @@
 /// Major.minor version shown on the homepage.
-const String appVersion = '2.6';
+const String appVersion = '2.7';
