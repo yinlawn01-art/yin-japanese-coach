@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yin_japanese_coach/favorite_flashcard_page.dart';
 import 'package:yin_japanese_coach/learning_page.dart';
 import 'package:yin_japanese_coach/main.dart';
 import 'package:yin_japanese_coach/vocabulary_data.dart';
@@ -129,16 +130,16 @@ void main() {
       find.widgetWithText(ElevatedButton, '加10 個單字'),
     );
     final studySize = tester.getSize(
-      find.widgetWithText(ElevatedButton, '單字學習(0)'),
+      find.widgetWithText(ElevatedButton, '日→中單字(0)'),
     );
     expect(addSize, const Size(288, 36));
     expect(studySize, const Size(288, 144));
     expect(tester.widget<Text>(find.text('加10 個單字')).style?.fontSize, 16.5);
-    expect(tester.widget<Text>(find.text('單字學習(0)')).style?.fontSize, 52);
+    expect(tester.widget<Text>(find.text('日→中單字(0)')).style?.fontSize, 52);
     expect(
       tester
           .widget<ElevatedButton>(
-            find.widgetWithText(ElevatedButton, '單字學習(0)'),
+            find.widgetWithText(ElevatedButton, '日→中單字(0)'),
           )
           .onPressed,
       isNull,
@@ -146,15 +147,15 @@ void main() {
 
     await tester.tap(find.text('加10 個單字'));
     await tester.pumpAndSettle();
-    expect(find.text('單字學習(10)'), findsOneWidget);
+    expect(find.text('日→中單字(10)'), findsOneWidget);
 
-    await tester.tap(find.text('單字學習(10)'));
+    await tester.tap(find.text('日→中單字(10)'));
     await tester.pumpAndSettle();
     expect(find.text('(1 of 10)'), findsOneWidget);
     expect(find.text('語0'), findsWidgets);
     expect(find.text('答案'), findsOneWidget);
     expect(find.text('意思0'), findsNothing);
-    expect(find.byIcon(Icons.star_border), findsNothing);
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
     expect(find.byIcon(Icons.star), findsNothing);
 
     final answerSize = tester.getSize(
@@ -169,7 +170,7 @@ void main() {
     expect(find.text('go0'), findsOneWidget);
     expect(find.text('詞性：🔵 名詞'), findsOneWidget);
     expect(find.text('例句'), findsOneWidget);
-    expect(find.byIcon(Icons.star_border), findsNothing);
+    expect(find.byIcon(Icons.star_border), findsWidgets);
     expect(find.byIcon(Icons.star), findsNothing);
 
     final known = find.widgetWithText(ElevatedButton, 'O');
@@ -192,9 +193,9 @@ void main() {
 
     await tester.pageBack();
     await tester.pumpAndSettle();
-    expect(find.text('單字學習(10)'), findsOneWidget);
+    expect(find.text('日→中單字(10)'), findsOneWidget);
 
-    await tester.tap(find.text('單字學習(10)'));
+    await tester.tap(find.text('日→中單字(10)'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('答案'));
     await tester.pumpAndSettle();
@@ -206,7 +207,7 @@ void main() {
 
     await tester.pageBack();
     await tester.pumpAndSettle();
-    expect(find.text('單字學習(9)'), findsOneWidget);
+    expect(find.text('日→中單字(9)'), findsOneWidget);
   });
 
   testWidgets('重新整理 is at the top and the next batch starts at word 1', (
@@ -230,16 +231,16 @@ void main() {
 
     await tester.tap(reset);
     await tester.pumpAndSettle();
-    expect(find.text('單字學習(0)'), findsOneWidget);
+    expect(find.text('日→中單字(0)'), findsOneWidget);
     expect(wordStudy.nextIndex, 0);
     expect(wordStudy.indexes, isEmpty);
 
     await tester.tap(add);
     await tester.pumpAndSettle();
-    expect(find.text('單字學習(10)'), findsOneWidget);
+    expect(find.text('日→中單字(10)'), findsOneWidget);
     expect(wordStudy.indexes.first, 0);
 
-    await tester.tap(find.text('單字學習(10)'));
+    await tester.tap(find.text('日→中單字(10)'));
     await tester.pumpAndSettle();
     expect(find.text('(1 of 10)'), findsOneWidget);
     expect(find.text('語0'), findsWidgets);
@@ -258,7 +259,7 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
 
-    final study = find.widgetWithText(ElevatedButton, '單字學習(1)');
+    final study = find.widgetWithText(ElevatedButton, '日→中單字(1)');
     final reset = find.text('重新整理(中→日學習)');
     final studyRect = tester.getRect(study);
     final resetRect = tester.getRect(
@@ -272,13 +273,13 @@ void main() {
     expect(resetRect.top, lessThan(addRect.top));
     expect(resetRect.size, addWordsButtonSize);
     expect(
-      tester.getSize(find.widgetWithText(ElevatedButton, '中→日學習(2)')).height,
+      tester.getSize(find.widgetWithText(ElevatedButton, '中→日單字(2)')).height,
       144,
     );
 
     await tester.tap(reset);
     await tester.pumpAndSettle();
-    expect(find.text('中→日學習(0)'), findsOneWidget);
+    expect(find.text('中→日單字(0)'), findsOneWidget);
     expect(zhJaStudy.indexes, isEmpty);
     expect(zhJaStudy.nextIndex, 0);
     expect(wordStudy.indexes, [0]);
@@ -395,22 +396,82 @@ void main() {
     expect(zhJaStudy.sessionSnapshot.first, 2);
   });
 
+  testWidgets('study stars save into the matching 收藏單字 list', (tester) async {
+    wordStudy.indexes = [0];
+    wordStudy.nextIndex = 1;
+    await wordStudy.save();
+    zhJaStudy.indexes = [1];
+    zhJaStudy.nextIndex = 2;
+    await zhJaStudy.save();
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('日→中單字(1)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.star_border));
+    await tester.pump();
+    expect(words[0].isFavorite, isTrue);
+    expect(words[0].isZhJaFavorite, isFalse);
+
+    await tester.tap(find.byIcon(Icons.star));
+    await tester.pump();
+    expect(words[0].isFavorite, isFalse);
+
+    await tester.tap(find.byIcon(Icons.star_border));
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    final zh = find.text('中→日單字(1)');
+    await tester.ensureVisible(zh);
+    await tester.tap(zh);
+    await tester.pumpAndSettle();
+    expect(find.text('意思1'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.star_border));
+    await tester.pump();
+    expect(words[1].isZhJaFavorite, isTrue);
+    expect(words[1].isFavorite, isFalse);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.star).hitTestable());
+    await tester.pump();
+    expect(words[1].isZhJaFavorite, isFalse);
+
+    await tester.tap(find.byIcon(Icons.star_border).hitTestable());
+    await tester.pump();
+    expect(words[1].isZhJaFavorite, isTrue);
+    expect(words[0].isFavorite, isTrue);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        key: ValueKey('favorites'),
+        home: FavoriteWordsMenuPage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('日→中單字(1)'), findsOneWidget);
+    expect(find.text('中→日單字(1)'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
   testWidgets('中→日學習 shows Chinese first and the Japanese answer', (
     tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
 
-    final closed = find.text('中→日學習(0)');
+    final closed = find.text('中→日單字(0)');
     await tester.ensureVisible(closed);
     expect(
-      tester.getSize(find.widgetWithText(ElevatedButton, '中→日學習(0)')),
+      tester.getSize(find.widgetWithText(ElevatedButton, '中→日單字(0)')),
       studyQueueButtonSize,
     );
     expect(
       tester
           .widget<ElevatedButton>(
-            find.widgetWithText(ElevatedButton, '中→日學習(0)'),
+            find.widgetWithText(ElevatedButton, '中→日單字(0)'),
           )
           .onPressed,
       isNull,
@@ -420,10 +481,10 @@ void main() {
     await tester.ensureVisible(add);
     await tester.tap(add);
     await tester.pumpAndSettle();
-    expect(find.text('中→日學習(10)'), findsOneWidget);
+    expect(find.text('中→日單字(10)'), findsOneWidget);
     expect(wordStudy.indexes, isEmpty);
 
-    final open = find.text('中→日學習(10)');
+    final open = find.text('中→日單字(10)');
     await tester.ensureVisible(open);
     await tester.tap(open);
     await tester.pumpAndSettle();
@@ -431,7 +492,7 @@ void main() {
     expect(find.text('意思0'), findsOneWidget);
     expect(find.text('語0'), findsNothing);
     expect(find.text('答案'), findsOneWidget);
-    expect(find.byIcon(Icons.star), findsNothing);
+    expect(find.byIcon(Icons.star_border), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pumpAndSettle();
@@ -463,7 +524,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    final open = find.text('中→日學習(1)');
+    final open = find.text('中→日單字(1)');
     await tester.ensureVisible(open);
     await tester.tap(open);
     await tester.pumpAndSettle();
@@ -477,7 +538,7 @@ void main() {
 
     await tester.tap(find.text('再重複一次'));
     await tester.pumpAndSettle();
-    expect(find.text('中→日學習'), findsOneWidget);
+    expect(find.text('中→日單字'), findsOneWidget);
     expect(find.text('(1 of 1)'), findsOneWidget);
     expect(find.text('意思3'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
@@ -493,7 +554,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    final open = find.text('中→日學習(1)');
+    final open = find.text('中→日單字(1)');
     await tester.ensureVisible(open);
     await tester.tap(open);
     await tester.pumpAndSettle();
@@ -504,7 +565,7 @@ void main() {
     await tester.tap(find.text('重複 + 十個新單字'));
     await tester.pumpAndSettle();
 
-    expect(find.text('中→日學習'), findsOneWidget);
+    expect(find.text('中→日單字'), findsOneWidget);
     expect(find.text('(2 of 11)'), findsOneWidget);
     expect(find.text('意思4'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
@@ -520,7 +581,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    final open = find.text('中→日學習(1)');
+    final open = find.text('中→日單字(1)');
     await tester.ensureVisible(open);
     await tester.tap(open);
     await tester.pumpAndSettle();
@@ -531,7 +592,7 @@ void main() {
     await tester.tap(find.text('再來十個新單字'));
     await tester.pumpAndSettle();
 
-    expect(find.text('中→日學習'), findsOneWidget);
+    expect(find.text('中→日單字'), findsOneWidget);
     expect(find.text('(1 of 10)'), findsOneWidget);
     expect(find.text('意思4'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
@@ -549,9 +610,9 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    expect(find.text('單字學習(1)'), findsOneWidget);
+    expect(find.text('日→中單字(1)'), findsOneWidget);
 
-    await tester.tap(find.text('單字學習(1)'));
+    await tester.tap(find.text('日→中單字(1)'));
     await tester.pumpAndSettle();
     expect(find.text('(1 of 1)'), findsOneWidget);
     expect(find.text('語3'), findsWidgets);
@@ -594,7 +655,7 @@ void main() {
 
     await tester.tap(repeat);
     await tester.pumpAndSettle();
-    expect(find.text('單字學習'), findsOneWidget);
+    expect(find.text('日→中單字'), findsOneWidget);
     expect(find.text('(1 of 1)'), findsOneWidget);
     expect(find.text('語3'), findsWidgets);
     expect(find.text('答案'), findsOneWidget);
@@ -611,7 +672,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('單字學習(1)'));
+    await tester.tap(find.text('日→中單字(1)'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('答案'));
     await tester.pumpAndSettle();
@@ -620,7 +681,7 @@ void main() {
     await tester.tap(find.text('重複 + 十個新單字'));
     await tester.pumpAndSettle();
 
-    expect(find.text('單字學習'), findsOneWidget);
+    expect(find.text('日→中單字'), findsOneWidget);
     expect(find.text('(2 of 11)'), findsOneWidget);
     expect(find.text('語4'), findsWidgets);
     expect(find.text('答案'), findsOneWidget);
@@ -635,7 +696,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('單字學習(1)'));
+    await tester.tap(find.text('日→中單字(1)'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('答案'));
     await tester.pumpAndSettle();
@@ -644,7 +705,7 @@ void main() {
     await tester.tap(find.text('再來十個新單字'));
     await tester.pumpAndSettle();
 
-    expect(find.text('單字學習'), findsOneWidget);
+    expect(find.text('日→中單字'), findsOneWidget);
     expect(find.text('(1 of 10)'), findsOneWidget);
     expect(find.text('語4'), findsWidgets);
     expect(find.text('答案'), findsOneWidget);
@@ -661,7 +722,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('單字學習(3)'));
+    await tester.tap(find.text('日→中單字(3)'));
     await tester.pumpAndSettle();
 
     for (var round = 0; round < 3; round++) {
@@ -704,7 +765,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('單字學習(3)'));
+    await tester.tap(find.text('日→中單字(3)'));
     await tester.pumpAndSettle();
 
     for (var round = 0; round < 3; round++) {
@@ -719,7 +780,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('學習'), findsOneWidget);
-    expect(find.text('單字學習(0)'), findsOneWidget);
+    expect(find.text('日→中單字(0)'), findsOneWidget);
     expect(wordStudy.indexes, isEmpty);
     expect(wordStudy.nextIndex, 5);
     expect(zhJaStudy.indexes, isEmpty);
@@ -739,7 +800,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: LearningPage()));
     await tester.pumpAndSettle();
-    final open = find.text('中→日學習(3)');
+    final open = find.text('中→日單字(3)');
     await tester.ensureVisible(open);
     await tester.tap(open);
     await tester.pumpAndSettle();
@@ -756,7 +817,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('學習'), findsOneWidget);
-    expect(find.text('中→日學習(0)'), findsOneWidget);
+    expect(find.text('中→日單字(0)'), findsOneWidget);
     expect(zhJaStudy.indexes, isEmpty);
     expect(zhJaStudy.nextIndex, 5);
     expect(wordStudy.nextIndex, 0);

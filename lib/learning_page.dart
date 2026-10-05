@@ -189,7 +189,7 @@ class _LearningPageState extends State<LearningPage> {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                '單字學習($count)',
+                                '日→中單字($count)',
                                 style: const TextStyle(
                                   fontSize: 52,
                                   height: 1.1,
@@ -264,7 +264,7 @@ class _LearningPageState extends State<LearningPage> {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                '中→日學習($zhJaCount)',
+                                '中→日單字($zhJaCount)',
                                 style: const TextStyle(
                                   fontSize: 52,
                                   height: 1.1,
@@ -300,7 +300,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
 
   WordStudy get studyQueue => widget.chineseToJapanese ? zhJaStudy : wordStudy;
 
-  String get _pageTitle => widget.chineseToJapanese ? '中→日學習' : '單字學習';
+  String get _pageTitle => widget.chineseToJapanese ? '中→日單字' : '日→中單字';
 
   int currentIndex = 0;
   bool showAnswer = false;
@@ -533,6 +533,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
         _textHeight(countText, countStyle, bodyWidth - 48, textScaler) +
         gap +
         _textHeight(kanji, kanjiStyle, bodyWidth - 48, textScaler) +
+        56 +
         _answerSlotHeight +
         _studyButtonSize.height;
     final paddedHeight = contentHeight + 48;
@@ -540,7 +541,44 @@ class _StudySessionPageState extends State<StudySessionPage> {
     return columnTop + 24 + contentHeight - _studyButtonSize.height;
   }
 
-  Widget _frontWord(String prompt, String countText) {
+  bool _isSaved(Vocabulary word) => widget.chineseToJapanese
+      ? word.isZhJaFavorite
+      : word.isFavorite;
+
+  Future<void> _toggleSaved(Vocabulary word) async {
+    setState(() {
+      if (widget.chineseToJapanese) {
+        word.isZhJaFavorite = !word.isZhJaFavorite;
+      } else {
+        word.isFavorite = !word.isFavorite;
+      }
+    });
+    await saveDirectionFavorites(widget.chineseToJapanese);
+  }
+
+  Widget _studyStar(Vocabulary word, {bool compact = false}) {
+    final icon = Icon(
+      _isSaved(word) ? Icons.star : Icons.star_border,
+      color: Colors.amber,
+    );
+    if (compact) {
+      return IconButton(
+        iconSize: 32,
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
+        constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+        icon: icon,
+        onPressed: () => _toggleSaved(word),
+      );
+    }
+    return IconButton(
+      iconSize: 40,
+      icon: icon,
+      onPressed: () => _toggleSaved(word),
+    );
+  }
+
+  Widget _frontWord(String prompt, String countText, Vocabulary word) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -555,6 +593,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
         ),
+        _studyStar(word),
         const SizedBox(height: _answerSlotHeight),
       ],
     );
@@ -575,6 +614,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
           japanese: word.romaji,
           style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
         ),
+        _studyStar(word, compact: true),
         speakableText(
           text: word.hiragana,
           japanese: word.romaji,
@@ -790,11 +830,11 @@ class _StudySessionPageState extends State<StudySessionPage> {
                               child: IgnorePointer(
                                 child: Opacity(
                                   opacity: 0,
-                                  child: _frontWord(prompt, countText),
+                                  child: _frontWord(prompt, countText, word),
                                 ),
                               ),
                             )
-                          : _frontWord(prompt, countText),
+                          : _frontWord(prompt, countText, word),
                       _bottomAction(largeLabelSize),
                     ],
                   ),

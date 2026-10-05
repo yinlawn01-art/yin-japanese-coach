@@ -183,17 +183,17 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('日→中單字'), findsOneWidget);
-    expect(find.text('中→日單字'), findsOneWidget);
+    expect(find.text('日→中單字(1)'), findsOneWidget);
+    expect(find.text('中→日單字(0)'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(ElevatedButton, '日→中單字'));
+    await tester.tap(find.widgetWithText(ElevatedButton, '日→中單字(1)'));
     await tester.pumpAndSettle();
     expect(find.text('学校'), findsOneWidget);
     expect(find.text('學校'), findsNothing);
 
     await tester.pageBack();
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ElevatedButton, '中→日單字'));
+    await tester.tap(find.widgetWithText(ElevatedButton, '中→日單字(0)'));
     await tester.pumpAndSettle();
     expect(find.text('No favorite words yet.'), findsOneWidget);
 
@@ -247,7 +247,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ElevatedButton, '中→日單字'));
+    await tester.tap(find.widgetWithText(ElevatedButton, '中→日單字(1)'));
     await tester.pumpAndSettle();
     expect(find.text('學校'), findsOneWidget);
     expect(find.text('学校'), findsNothing);
