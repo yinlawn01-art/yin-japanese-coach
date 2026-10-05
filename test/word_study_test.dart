@@ -303,16 +303,23 @@ void main() {
     await tester.pumpAndSettle();
 
     final title = find.text('にちまんまん');
-    final motto = find.text('不急，日文會慢慢變好');
+    final buji = find.text('不急');
+    final riwen = find.text('日文會慢慢變好');
     final learning = find.text('學習');
     final kana = find.text('五十音');
     expect(title, findsOneWidget);
-    expect(motto, findsOneWidget);
+    expect(buji, findsOneWidget);
+    expect(find.text('，'), findsOneWidget);
+    expect(riwen, findsOneWidget);
     expect(tester.widget<Text>(title).style?.fontSize, 42);
     expect(tester.widget<Text>(title).style?.letterSpacing, -2);
     expect(tester.widget<Text>(title).style?.color, const Color(0xFF155F81));
-    expect(tester.widget<Text>(motto).style?.color, const Color(0xFFD060C0));
-    expect(tester.widget<Text>(motto).style?.letterSpacing, -2);
+    expect(tester.widget<Text>(buji).style?.color, const Color(0xFFD060C0));
+    expect(tester.widget<Text>(riwen).style?.letterSpacing, -2);
+    expect(
+      tester.getTopLeft(riwen).dx - tester.getTopRight(buji).dx,
+      lessThan(18),
+    );
     expect(tester.getTopLeft(title).dy, closeTo(600 * 0.10, 2));
     expect(learning, findsOneWidget);
     expect(
@@ -356,7 +363,8 @@ void main() {
       expect(title.top, closeTo(size.height * 0.10, 4));
       expect(title.width, lessThanOrEqualTo(size.width));
       expect(find.text('にちまんまん'), findsOneWidget);
-      expect(find.text('不急，日文會慢慢變好'), findsOneWidget);
+      expect(find.text('不急'), findsOneWidget);
+      expect(find.text('日文會慢慢變好'), findsOneWidget);
       expect(
         tester.getTopLeft(find.widgetWithText(ElevatedButton, '學習')).dy -
             tester.getBottomLeft(find.textContaining('Words Loaded')).dy,
