@@ -265,6 +265,78 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
   });
 
+  testWidgets('清除 empties only the saved list beside it', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'favorites': ['学校'],
+      'zhJaFavorites': ['学校'],
+    });
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '学校',
+          hiragana: 'がっこう',
+          romaji: 'gakkou',
+          meaning: '學校',
+          wordType: '🔵 名詞',
+          isFavorite: true,
+          isZhJaFavorite: true,
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FavoriteWordsMenuPage()));
+    await tester.pumpAndSettle();
+
+    final ja = find.text('日→中單字(1)');
+    final zh = find.text('中→日單字(1)');
+    final clearJa = find.byKey(const Key('clear-ja-favorites'));
+    final clearZh = find.byKey(const Key('clear-zh-favorites'));
+    expect(ja, findsOneWidget);
+    expect(zh, findsOneWidget);
+    expect(tester.getCenter(clearJa).dy, closeTo(tester.getCenter(ja).dy, 1));
+    expect(
+      tester.getTopLeft(clearJa).dx,
+      greaterThan(tester.getTopRight(ja).dx),
+    );
+    expect(tester.getCenter(clearZh).dy, closeTo(tester.getCenter(zh).dy, 1));
+    expect(
+      tester.getTopLeft(clearZh).dx,
+      greaterThan(tester.getTopRight(zh).dx),
+    );
+
+    final jaShape = tester
+        .widget<ElevatedButton>(
+          find.widgetWithText(ElevatedButton, '日→中單字(1)'),
+        )
+        .style
+        ?.shape
+        ?.resolve(const <WidgetState>{});
+    final jaRadius =
+        (jaShape! as RoundedRectangleBorder).borderRadius.resolve(
+          TextDirection.ltr,
+        );
+    expect(jaRadius.topLeft.x, 32);
+    expect(jaRadius.topRight.x, 0);
+
+    await tester.tap(clearJa);
+    await tester.pumpAndSettle();
+    expect(find.text('日→中單字(0)'), findsOneWidget);
+    expect(find.text('中→日單字(1)'), findsOneWidget);
+    expect(words.single.isFavorite, isFalse);
+    expect(words.single.isZhJaFavorite, isTrue);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getStringList('favorites'), isEmpty);
+    expect(prefs.getStringList('zhJaFavorites'), ['学校']);
+
+    await tester.tap(clearZh);
+    await tester.pumpAndSettle();
+    expect(find.text('中→日單字(0)'), findsOneWidget);
+    expect(words.single.isZhJaFavorite, isFalse);
+    expect((await SharedPreferences.getInstance()).getStringList('zhJaFavorites'), isEmpty);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
+
   test('全部 includes every word once', () {
     final deck = allWordsShuffled();
 

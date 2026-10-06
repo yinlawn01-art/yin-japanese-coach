@@ -41,18 +41,21 @@ class _FavoriteWordsMenuPageState extends State<FavoriteWordsMenuPage> {
     if (mounted) setState(() {});
   }
 
+  Future<void> _clear(bool chineseToJapanese) async {
+    setState(() {
+      for (final word in words) {
+        if (chineseToJapanese) {
+          word.isZhJaFavorite = false;
+        } else {
+          word.isFavorite = false;
+        }
+      }
+    });
+    await saveDirectionFavorites(chineseToJapanese);
+  }
+
   @override
   Widget build(BuildContext context) {
-    const size = Size(336, 64);
-    final buttonStyle = ElevatedButton.styleFrom(
-      fixedSize: size,
-      minimumSize: size,
-      maximumSize: size,
-      padding: EdgeInsets.zero,
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      textStyle: bundledText.copyWith(fontSize: 28),
-    );
-    final labelStyle = bundledText.copyWith(fontSize: 28, height: 1.1);
     final jaCount = words.where((word) => word.isFavorite).length;
     final zhCount = words.where((word) => word.isZhJaFavorite).length;
 
@@ -64,22 +67,96 @@ class _FavoriteWordsMenuPageState extends State<FavoriteWordsMenuPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ElevatedButton(
-              style: buttonStyle,
-              onPressed: () => _open(false),
-              child: Text('日→中單字($jaCount)', style: labelStyle),
+            _favoriteSplit(
+              label: '日→中單字($jaCount)',
+              clearKey: const Key('clear-ja-favorites'),
+              onOpen: () => _open(false),
+              onClear: () => _clear(false),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              style: buttonStyle,
-              onPressed: () => _open(true),
-              child: Text('中→日單字($zhCount)', style: labelStyle),
+            _favoriteSplit(
+              label: '中→日單字($zhCount)',
+              clearKey: const Key('clear-zh-favorites'),
+              onOpen: () => _open(true),
+              onClear: () => _clear(true),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+/// Left pill keeps the saved-word list. Right cap clears that list.
+Widget _favoriteSplit({
+  required String label,
+  required Key clearKey,
+  required VoidCallback onOpen,
+  required VoidCallback onClear,
+}) {
+  const height = 64.0;
+  const gap = 10.0;
+  const rowWidth = 336.0;
+  const clearWidth = 86.0;
+  const openWidth = rowWidth - gap - clearWidth;
+  const radius = Radius.circular(height / 2);
+  const side = BorderSide(color: lookInkBlue, width: 1.5);
+  final labelStyle = bundledText.copyWith(fontSize: 22, height: 1.1);
+
+  ButtonStyle style(Size size, BorderRadius borderRadius) {
+    return ElevatedButton.styleFrom(
+      fixedSize: size,
+      minimumSize: size,
+      maximumSize: size,
+      padding: EdgeInsets.zero,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      elevation: 0,
+      backgroundColor: lookCard,
+      foregroundColor: lookInkBlue,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: borderRadius, side: side),
+      textStyle: labelStyle,
+    );
+  }
+
+  return SizedBox(
+    width: rowWidth,
+    height: height,
+    child: Row(
+      children: [
+        SizedBox(
+          width: openWidth,
+          height: height,
+          child: ElevatedButton(
+            style: style(
+              const Size(openWidth, height),
+              const BorderRadius.horizontal(left: radius),
+            ),
+            onPressed: onOpen,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(label, maxLines: 1, style: labelStyle),
+            ),
+          ),
+        ),
+        const SizedBox(width: gap),
+        SizedBox(
+          width: clearWidth,
+          height: height,
+          child: ElevatedButton(
+            key: clearKey,
+            style: style(
+              const Size(clearWidth, height),
+              const BorderRadius.horizontal(right: radius),
+            ),
+            onPressed: onClear,
+            child: Text('清除', style: labelStyle),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class FavoriteFlashcardPage extends StatefulWidget {
