@@ -293,6 +293,7 @@ void main() {
     final clearZh = find.byKey(const Key('clear-zh-favorites'));
     expect(ja, findsOneWidget);
     expect(zh, findsOneWidget);
+    expect(find.text('清除'), findsNWidgets(2));
     expect(tester.getCenter(clearJa).dy, closeTo(tester.getCenter(ja).dy, 1));
     expect(
       tester.getTopLeft(clearJa).dx,
