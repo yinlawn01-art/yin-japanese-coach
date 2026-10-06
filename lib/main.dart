@@ -18,6 +18,7 @@ import 'learning_page.dart';
 import 'example_pattern_page.dart';
 import 'example_patterns.dart';
 import 'favorite_example_page.dart';
+import 'app_look.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -87,15 +88,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Yin Japanese Coach',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
-        fontFamily: 'AppText',
-        fontFamilyFallback: const [
-          'AppJapanese',
-          'AppEmoji',
-        ],
-      ),
+      theme: appTheme(),
       home: const HomePage(),
     );
   }
@@ -204,9 +197,15 @@ Future<void> loadFavoritesHome() async {
       visualDensity: VisualDensity.standard,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       textStyle: bundledText.copyWith(fontSize: buttonFontSize, height: 1.1),
+      elevation: 0,
       backgroundColor: const Color(0x99FFFFFF),
       foregroundColor: const Color(0xFF1A4A8A),
       surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+        side: const BorderSide(color: Color(0xE6FFFFFF), width: 1.4),
+      ),
     );
 
     Widget homeButton(String label, Widget page) {
@@ -473,7 +472,9 @@ class FlashcardMenuPage extends StatelessWidget {
           '$title(${deck.length})',
           style: bundledText.copyWith(
             fontSize: 22,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            color: lookInk,
+            height: 1.2,
           ),
         ),
         const SizedBox(height: 8),
@@ -780,7 +781,7 @@ Future<void> saveFavorites() async {
   Widget _favoriteStar(Vocabulary word, {bool compact = false}) {
     final icon = Icon(
       _isDirectionFavorite(word) ? Icons.star : Icons.star_border,
-      color: Colors.amber,
+      color: lookGold,
     );
     if (compact) {
       return IconButton(
@@ -806,16 +807,13 @@ Future<void> saveFavorites() async {
         Text(
           _countText,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20),
+          style: lookCountPlain,
         ),
         const SizedBox(height: 40),
         Text(
           _prompt(word),
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
+          style: lookPrompt,
         ),
         _favoriteStar(word),
         const SizedBox(height: _answerSlotHeight),
@@ -833,22 +831,19 @@ Future<void> saveFavorites() async {
         Text(
           _countText,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20, height: 1.1),
+          style: lookCountStyle,
         ),
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
           japanese: word.romaji,
-          style: const TextStyle(
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
+          style: lookPrompt,
         ),
         _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
           japanese: word.romaji,
-          style: const TextStyle(fontSize: 24, height: 1.1),
+          style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
         speakableText(
@@ -857,7 +852,7 @@ Future<void> saveFavorites() async {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            color: Colors.orange,
+            color: lookRomaji,
           ),
         ),
         const SizedBox(height: 4),
@@ -867,7 +862,8 @@ Future<void> saveFavorites() async {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            color: lookInk,
           ),
         ),
         const SizedBox(height: 4),
@@ -877,7 +873,7 @@ Future<void> saveFavorites() async {
           style: const TextStyle(
             fontSize: 28,
             height: 1.1,
-            color: Colors.blue,
+            color: lookMeaning,
           ),
         ),
       ],
@@ -892,19 +888,19 @@ Future<void> saveFavorites() async {
         Text(
           _countText,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20, height: 1.1),
+          style: lookCountStyle,
         ),
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
           japanese: word.romaji,
-          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+          style: lookPrompt,
         ),
         _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
           japanese: word.romaji,
-          style: const TextStyle(fontSize: 24, height: 1.1),
+          style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
         speakableText(
@@ -913,7 +909,7 @@ Future<void> saveFavorites() async {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            color: Colors.orange,
+            color: lookRomaji,
           ),
         ),
         const SizedBox(height: 4),
@@ -923,7 +919,8 @@ Future<void> saveFavorites() async {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            color: lookInk,
           ),
         ),
         const SizedBox(height: 4),
@@ -933,7 +930,7 @@ Future<void> saveFavorites() async {
           style: const TextStyle(
             fontSize: 28,
             height: 1.1,
-            color: Colors.blue,
+            color: lookMeaning,
           ),
         ),
       ],
@@ -957,15 +954,16 @@ Future<void> saveFavorites() async {
                       japanese: sentence.romaji,
                       style: const TextStyle(
                         fontSize: 32,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                         height: 1.4,
+                        color: lookInk,
                       ),
                     ),
                     const SizedBox(height: 16),
                     speakableText(
                       text: sentence.hiragana,
                       japanese: sentence.romaji,
-                      style: const TextStyle(fontSize: 24),
+                      style: const TextStyle(fontSize: 24, color: lookReading),
                     ),
                     const SizedBox(height: 10),
                     speakableText(
@@ -973,7 +971,7 @@ Future<void> saveFavorites() async {
                       japanese: sentence.romaji,
                       style: const TextStyle(
                         fontSize: 24,
-                        color: Colors.orange,
+                        color: lookRomaji,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -982,7 +980,7 @@ Future<void> saveFavorites() async {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 28,
-                        color: Colors.blue,
+                        color: lookMeaning,
                       ),
                     ),
                   ],
@@ -1203,7 +1201,7 @@ void dispose() {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 42,
-                color: Colors.blue,
+                color: lookMeaning,
               ),
             ),
 
@@ -1276,7 +1274,7 @@ class FavoritesPage extends StatelessWidget {
           return ListTile(
             leading: const Icon(
               Icons.star,
-              color: Colors.amber,
+              color: lookGold,
             ),
 
             title: Text(word.kanji),
@@ -1390,7 +1388,7 @@ class _FavoriteListeningPageState
 
               style: const TextStyle(
                 fontSize: 42,
-                color: Colors.blue,
+                color: lookMeaning,
                 fontWeight:
                     FontWeight.bold,
               ),

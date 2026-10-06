@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'app_look.dart';
 import 'example_patterns.dart';
 import 'kana_page.dart';
 
@@ -204,7 +205,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
     if (sentences.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('收藏例句')),
-        body: const Center(child: Text('還沒有收藏例句。')),
+        body: const Center(child: QuietNote('還沒有收藏例句。')),
       );
     }
     return Scaffold(
@@ -236,7 +237,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+                          color: lookMeaning,
                         ),
                       )
                     : _speakable(
@@ -245,6 +246,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         const TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
+                          color: lookInk,
                         ),
                       ),
               ),
@@ -282,6 +284,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         height: 1.3,
+                        color: lookInk,
                       ),
                     ),
                     kanaStar(
@@ -301,7 +304,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         const TextStyle(
                           fontSize: 24,
                           height: 1.1,
-                          color: Colors.green,
+                          color: lookReading,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -311,7 +314,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         const TextStyle(
                           fontSize: 24,
                           height: 1.1,
-                          color: Colors.orange,
+                          color: lookRomaji,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -321,7 +324,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         style: const TextStyle(
                           fontSize: 28,
                           height: 1.1,
-                          color: Colors.blue,
+                          color: lookMeaning,
                         ),
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+import 'app_look.dart';
 import 'bundled_text.dart';
 import 'kana_data.dart';
 import 'romaji_speech.dart';
@@ -191,7 +192,7 @@ Widget kanaStar({
         ? const BoxConstraints.tightFor(width: 40, height: 40)
         : null,
     tooltip: tooltip,
-    icon: Icon(favorite ? Icons.star : Icons.star_border, color: Colors.amber),
+    icon: Icon(favorite ? Icons.star : Icons.star_border, color: lookGold),
     onPressed: onPressed,
   );
 }
@@ -393,13 +394,13 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
         Text(
           countText,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20),
+          style: lookCountPlain,
         ),
         const SizedBox(height: 40),
         Text(
           current.kana,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+          style: lookPrompt,
         ),
         kanaStar(favorite: current.isFavorite, onPressed: _toggleFavorite),
         const SizedBox(height: _answerSlotHeight),
@@ -414,7 +415,7 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
         Text(
           countText,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20, height: 1.1),
+          style: lookCountStyle,
         ),
         const SizedBox(height: 8),
         kanaSpeakable(
@@ -424,6 +425,7 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
             fontSize: 48,
             fontWeight: FontWeight.bold,
             height: 1.0,
+            color: lookInk,
           ),
         ),
         kanaStar(
@@ -437,7 +439,7 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            color: Colors.orange,
+            color: lookRomaji,
           ),
         ),
         const SizedBox(height: 4),
@@ -448,6 +450,7 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
             fontSize: 28,
             height: 1.1,
             fontWeight: FontWeight.bold,
+            color: lookInk,
           ),
         ),
         const SizedBox(height: 4),
@@ -457,14 +460,14 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            color: Colors.orange,
+            color: lookRomaji,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           current.exampleChinese,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 28, height: 1.1, color: Colors.blue),
+          style: lookMeaningStyle,
         ),
       ],
     );
@@ -655,7 +658,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
     if (favorites.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('收藏五十音')),
-        body: const Center(child: Text('還沒有收藏五十音。')),
+        body: const Center(child: QuietNote('還沒有收藏五十音。')),
       );
     }
 
@@ -689,7 +692,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
                 style: TextStyle(
                   fontSize: japanese ? 48 : 40,
                   fontWeight: FontWeight.bold,
-                  color: japanese ? Colors.black : Colors.blue,
+                  color: japanese ? lookInk : lookMeaning,
                 ),
               ),
             ),
@@ -784,7 +787,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
         Text(
           current.kana,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+          style: lookPrompt,
         ),
         kanaStar(
           favorite: true,
@@ -815,6 +818,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
             fontSize: 48,
             fontWeight: FontWeight.bold,
             height: 1.0,
+            color: lookInk,
           ),
         ),
         kanaSpeakable(
@@ -826,7 +830,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            color: Colors.orange,
+            color: lookRomaji,
           ),
         ),
         const SizedBox(height: 4),
@@ -840,6 +844,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
             fontSize: 28,
             height: 1.1,
             fontWeight: FontWeight.bold,
+            color: lookInk,
           ),
         ),
         const SizedBox(height: 4),
@@ -852,14 +857,14 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            color: Colors.orange,
+            color: lookRomaji,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           current.exampleChinese,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 28, height: 1.1, color: Colors.blue),
+          style: lookMeaningStyle,
         ),
       ],
     );

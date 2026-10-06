@@ -18,6 +18,7 @@ import 'example_sentence.dart';
 
 import 'romaji_speech.dart';
 
+import 'app_look.dart';
 import 'bundled_text.dart';
 
 class FavoriteWordsMenuPage extends StatefulWidget {
@@ -280,13 +281,14 @@ Widget exampleBody(ExampleSentence sentence) {
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       height: 1.4,
+                      color: lookInk,
                     ),
                   ),
                   const SizedBox(height: 16),
                   speakableText(
                     text: sentence.hiragana,
                     japanese: sentence.romaji,
-                    style: const TextStyle(fontSize: 24),
+                    style: const TextStyle(fontSize: 24, color: lookReading),
                   ),
                   const SizedBox(height: 10),
                   speakableText(
@@ -294,7 +296,7 @@ Widget exampleBody(ExampleSentence sentence) {
                     japanese: sentence.romaji,
                     style: const TextStyle(
                       fontSize: 24,
-                      color: Colors.orange,
+                      color: lookRomaji,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -303,7 +305,7 @@ Widget exampleBody(ExampleSentence sentence) {
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 28,
-                      color: Colors.blue,
+                      color: lookMeaning,
                     ),
                   ),
                 ],
@@ -787,9 +789,7 @@ Widget _playingFavoritesView() {
               style: TextStyle(
                 fontSize: showPlayingJapanese ? 48 : 40,
                 fontWeight: FontWeight.bold,
-                color: showPlayingJapanese
-                    ? Colors.black
-                    : Colors.blue,
+                color: showPlayingJapanese ? lookInk : lookMeaning,
               ),
             ),
           ),
@@ -815,17 +815,11 @@ children: [
       ? speakableText(
           text: currentWord.kanji,
           japanese: currentWord.romaji,
-          style: const TextStyle(
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
+          style: lookPrompt,
         )
       : Text(
           _prompt(currentWord),
-          style: const TextStyle(
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
+          style: lookPrompt,
         ),
 
   IconButton(
@@ -833,7 +827,7 @@ children: [
     tooltip: 'Remove from favorites',
     icon: const Icon(
       Icons.star,
-      color: Colors.amber,
+      color: lookGold,
     ),
     onPressed: removeCurrentFavorite,
   ),
@@ -849,7 +843,7 @@ children: [
                 japanese: currentWord.romaji,
                 style: const TextStyle(
                   fontSize: 28,
-                  color: Colors.green,
+                  color: lookReading,
                 ),
               ),
               const SizedBox(height: 10),
@@ -858,7 +852,7 @@ children: [
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 24,
-                  color: Colors.orange,
+                  color: lookRomaji,
                 ),
               ),
               const SizedBox(height: 8),
@@ -868,7 +862,7 @@ children: [
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.purple,
+                  color: lookInk,
                 ),
               ),
               const SizedBox(height: 10),
@@ -877,7 +871,7 @@ children: [
                 japanese: currentWord.romaji,
                 style: const TextStyle(
                   fontSize: 28,
-                  color: Colors.blue,
+                  color: lookMeaning,
                 ),
               ),
             ],
@@ -895,11 +889,12 @@ Widget _answeredFavorite() {
       speakableText(
         text: currentWord.kanji,
         japanese: currentWord.romaji,
-        style: const TextStyle(
-          fontSize: 48,
-          fontWeight: FontWeight.bold,
-          height: 1.0,
-        ),
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            height: 1.0,
+            color: lookInk,
+          ),
       ),
       IconButton(
         iconSize: 32,
@@ -909,7 +904,7 @@ Widget _answeredFavorite() {
         tooltip: 'Remove from favorites',
         icon: Icon(
           dropAfterContinue ? Icons.star_border : Icons.star,
-          color: Colors.amber,
+          color: lookGold,
         ),
         onPressed: _toggleRemoveLater,
       ),
@@ -919,7 +914,7 @@ Widget _answeredFavorite() {
         style: const TextStyle(
           fontSize: 28,
           height: 1.1,
-          color: Colors.green,
+          color: lookReading,
         ),
       ),
       const SizedBox(height: 4),
@@ -929,7 +924,7 @@ Widget _answeredFavorite() {
         style: const TextStyle(
           fontSize: 24,
           height: 1.1,
-          color: Colors.orange,
+          color: lookRomaji,
         ),
       ),
       const SizedBox(height: 4),
@@ -940,7 +935,7 @@ Widget _answeredFavorite() {
           fontSize: 22,
           height: 1.1,
           fontWeight: FontWeight.bold,
-          color: Colors.purple,
+          color: lookInk,
         ),
       ),
       const SizedBox(height: 4),
@@ -950,7 +945,7 @@ Widget _answeredFavorite() {
         style: const TextStyle(
           fontSize: 28,
           height: 1.1,
-          color: Colors.blue,
+          color: lookMeaning,
         ),
       ),
     ],

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'app_look.dart';
 import 'example_patterns.dart';
 import 'kana_page.dart';
 
@@ -213,7 +214,11 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
       children: [
         _spokenLine(
           sentence.japanese,
-          const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          const TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: lookInk,
+          ),
         ),
         kanaStar(
           favorite: favorite,
@@ -241,12 +246,16 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
         ),
         _spokenLine(
           sentence.japanese,
-          const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          const TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: lookInk,
+          ),
         ),
         const SizedBox(height: 8),
         _spokenLine(
           sentence.hiragana,
-          const TextStyle(fontSize: 24, height: 1.1),
+          const TextStyle(fontSize: 24, height: 1.1, color: lookReading),
         ),
         const SizedBox(height: 4),
         _spokenLine(
@@ -254,14 +263,14 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
           const TextStyle(
             fontSize: 24,
             height: 1.1,
-            color: Colors.orange,
+            color: lookRomaji,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           sentence.chinese,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 28, height: 1.1, color: Colors.blue),
+          style: lookMeaningStyle,
         ),
         const SizedBox(height: 24),
         kanaActionButton('繼續', _next, kanaLabelSize(context)),

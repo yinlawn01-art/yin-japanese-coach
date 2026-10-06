@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 import 'bundled_text.dart';
+import 'app_look.dart';
 import 'example_sentence.dart';
 import 'main.dart';
 import 'romaji_speech.dart';
@@ -101,9 +102,7 @@ class _LearningPageState extends State<LearningPage> {
   Widget build(BuildContext context) {
     final count = wordStudy.indexes.length;
     final zhJaCount = zhJaStudy.indexes.length;
-    final squareShape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-    );
+    const squareShape = lookStudyTileShape;
 
     final resetButton = SizedBox.fromSize(
       size: addWordsButtonSize,
@@ -183,6 +182,10 @@ class _LearningPageState extends State<LearningPage> {
                               maximumSize: studyQueueButtonSize,
                               padding: const EdgeInsets.all(20),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              backgroundColor: lookTile,
+                              disabledBackgroundColor: lookDisabled,
+                              foregroundColor: lookInkBlue,
+                              disabledForegroundColor: lookDisabledInk,
                               shape: squareShape,
                             ),
                             onPressed: count == 0 ? null : _openStudy,
@@ -258,6 +261,10 @@ class _LearningPageState extends State<LearningPage> {
                               maximumSize: studyQueueButtonSize,
                               padding: const EdgeInsets.all(20),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              backgroundColor: lookTile,
+                              disabledBackgroundColor: lookDisabled,
+                              foregroundColor: lookInkBlue,
+                              disabledForegroundColor: lookDisabledInk,
                               shape: squareShape,
                             ),
                             onPressed: zhJaCount == 0 ? null : _openZhJa,
@@ -559,7 +566,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
   Widget _studyStar(Vocabulary word, {bool compact = false}) {
     final icon = Icon(
       _isSaved(word) ? Icons.star : Icons.star_border,
-      color: Colors.amber,
+      color: lookGold,
     );
     if (compact) {
       return IconButton(
@@ -585,13 +592,13 @@ class _StudySessionPageState extends State<StudySessionPage> {
         Text(
           countText,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20),
+          style: lookCountPlain,
         ),
         const SizedBox(height: 40),
         Text(
           prompt,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+          style: lookPrompt,
         ),
         _studyStar(word),
         const SizedBox(height: _answerSlotHeight),
@@ -606,19 +613,19 @@ class _StudySessionPageState extends State<StudySessionPage> {
         Text(
           countText,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20, height: 1.1),
+          style: lookCountStyle,
         ),
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
           japanese: word.romaji,
-          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+          style: lookPrompt,
         ),
         _studyStar(word, compact: true),
         speakableText(
           text: word.hiragana,
           japanese: word.romaji,
-          style: const TextStyle(fontSize: 24, height: 1.1),
+          style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
         speakableText(
@@ -627,7 +634,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            color: Colors.orange,
+            color: lookRomaji,
           ),
         ),
         const SizedBox(height: 4),
@@ -637,14 +644,15 @@ class _StudySessionPageState extends State<StudySessionPage> {
           style: const TextStyle(
             fontSize: 24,
             height: 1.1,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            color: lookInk,
           ),
         ),
         const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
           japanese: word.romaji,
-          style: const TextStyle(fontSize: 28, height: 1.1, color: Colors.blue),
+          style: lookMeaningStyle,
         ),
       ],
     );
@@ -669,13 +677,14 @@ class _StudySessionPageState extends State<StudySessionPage> {
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         height: 1.4,
+                        color: lookInk,
                       ),
                     ),
                     const SizedBox(height: 16),
                     speakableText(
                       text: sentence.hiragana,
                       japanese: sentence.romaji,
-                      style: const TextStyle(fontSize: 24),
+                      style: const TextStyle(fontSize: 24, color: lookReading),
                     ),
                     const SizedBox(height: 10),
                     speakableText(
@@ -683,14 +692,14 @@ class _StudySessionPageState extends State<StudySessionPage> {
                       japanese: sentence.romaji,
                       style: const TextStyle(
                         fontSize: 24,
-                        color: Colors.orange,
+                        color: lookRomaji,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       sentence.chinese,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 28, color: Colors.blue),
+                      style: const TextStyle(fontSize: 28, color: lookMeaning),
                     ),
                   ],
                 ),
@@ -882,7 +891,11 @@ class _FinishedDialog extends StatelessWidget {
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, height: 1.4),
+                style: bundledText.copyWith(
+                  fontSize: 20,
+                  height: 1.45,
+                  color: lookInk,
+                ),
               ),
               const SizedBox(height: 24),
               Row(
@@ -899,6 +912,14 @@ class _FinishedDialog extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: lookInkBlue,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
+                  ),
                   onPressed: () => Navigator.of(context).pop('record'),
                   child: const FittedBox(
                     fit: BoxFit.scaleDown,
@@ -926,8 +947,12 @@ class _FinishedDialog extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(8),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+            backgroundColor: lookCard,
+            foregroundColor: lookInkBlue,
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+              side: BorderSide(color: lookLine),
             ),
           ),
           onPressed: () => Navigator.of(context).pop(value),
