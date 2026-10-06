@@ -544,13 +544,6 @@ class _StudySessionPageState extends State<StudySessionPage> {
         _textHeight(countText, countStyle, bodyWidth - 48, textScaler) +
         gap +
         _textHeight(kanji, kanjiStyle, bodyWidth - 48, textScaler) +
-        (widget.chineseToJapanese
-            ? 0
-            : romanSpellingHeight(
-                words[studyQueue.indexes[currentIndex]].romaji,
-                bodyWidth - 48,
-                textScaler,
-              )) +
         56 +
         _answerSlotHeight +
         _studyButtonSize.height;
@@ -611,25 +604,8 @@ class _StudySessionPageState extends State<StudySessionPage> {
           textAlign: TextAlign.center,
           style: lookPrompt,
         ),
-        if (!widget.chineseToJapanese) ...[
-          const SizedBox(height: 4),
-          speakableText(
-            text: word.romaji,
-            japanese: word.romaji,
-            style: lookRomajiStyle,
-          ),
-        ],
         _studyStar(word),
-        SizedBox(
-          height: _answerSlotHeight -
-              (widget.chineseToJapanese
-                  ? 0
-                  : romanSpellingHeight(
-                      word.romaji,
-                      MediaQuery.sizeOf(context).width - 48,
-                      MediaQuery.textScalerOf(context),
-                    )),
-        ),
+        const SizedBox(height: _answerSlotHeight),
       ],
     );
   }

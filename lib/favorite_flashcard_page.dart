@@ -663,7 +663,7 @@ return Scaffold(
               bodyHeight: constraints.maxHeight,
               bodyWidth: constraints.maxWidth,
               kanji: _prompt(currentWord),
-              romaji: widget.chineseToJapanese ? null : currentWord.romaji,
+              romaji: null,
               countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
               kanjiStyle: baseStyle.merge(
                 const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
@@ -826,14 +826,6 @@ children: [
           _prompt(currentWord),
           style: lookPrompt,
         ),
-  if (showAnswer || !widget.chineseToJapanese) ...[
-    const SizedBox(height: 4),
-    Text(
-      currentWord.romaji,
-      textAlign: TextAlign.center,
-      style: lookRomajiStyle,
-    ),
-  ],
 
   IconButton(
     iconSize: 40,
