@@ -8,7 +8,7 @@ const Color lookCard = Color(0xFFFFFCF8);
 const Color lookInk = Color(0xFF16325C);
 const Color lookInkBlue = Color(0xFF1A4A8A);
 const Color lookReading = Color(0xFF3E5270);
-const Color lookRomaji = Color(0xFFC56A32);
+const Color lookRomaji = Colors.red;
 const Color lookMeaning = Color(0xFF1A4A8A);
 const Color lookCount = Color(0xFF5E6D82);
 const Color lookGold = Color(0xFFD99A1C);
@@ -42,10 +42,20 @@ const TextStyle lookReadingStyle = TextStyle(
 );
 
 const TextStyle lookRomajiStyle = TextStyle(
-  fontSize: 24,
+  fontSize: 48,
   height: 1.1,
   color: lookRomaji,
 );
+
+double romanSpellingHeight(String text, double maxWidth, TextScaler textScaler) {
+  final painter = TextPainter(
+    text: TextSpan(text: text, style: lookRomajiStyle),
+    textDirection: TextDirection.ltr,
+    textScaler: textScaler,
+    textAlign: TextAlign.center,
+  )..layout(maxWidth: maxWidth);
+  return painter.height + 4;
+}
 
 const TextStyle lookMeaningStyle = TextStyle(
   fontSize: 28,

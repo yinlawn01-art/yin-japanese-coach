@@ -63,7 +63,7 @@ void main() {
 
     await tester.tap(_directionButton('名詞', '日→中單字'));
     await tester.pumpAndSettle();
-    expect(find.text('学校'), findsOneWidget);
+    expect(find.text('学校'), findsNWidgets(2));
     expect(find.text('会う'), findsNothing);
   });
 
@@ -88,6 +88,9 @@ void main() {
     await tester.tap(_directionButton('名詞', '日→中單字'));
     await tester.pumpAndSettle();
     expect(find.text('学校'), findsOneWidget);
+    expect(find.text('gakkou'), findsOneWidget);
+    expect(tester.widget<Text>(find.text('gakkou')).style?.fontSize, 48);
+    expect(tester.widget<Text>(find.text('gakkou')).style?.color, Colors.red);
     expect(find.text('學校'), findsNothing);
     expect(find.text('Word 1 / 1'), findsOneWidget);
     expect(find.byIcon(Icons.star_border), findsOneWidget);
@@ -96,7 +99,7 @@ void main() {
     await tester.pump();
     expect(find.text('学校'), findsWidgets);
     expect(find.text('がっこう'), findsOneWidget);
-    expect(find.text('gakkou'), findsOneWidget);
+    expect(find.text('gakkou'), findsNWidgets(2));
     expect(find.text('詞性：🔵 名詞'), findsOneWidget);
     expect(find.text('學校'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
@@ -128,6 +131,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('學校'), findsOneWidget);
     expect(find.text('学校'), findsNothing);
+    expect(find.text('gakkou'), findsNothing);
     expect(find.text('(1 of 1)'), findsOneWidget);
     expect(find.byIcon(Icons.star_border), findsOneWidget);
 

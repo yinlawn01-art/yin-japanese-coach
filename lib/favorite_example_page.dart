@@ -227,8 +227,8 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              height: 160,
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 160),
               child: Center(
                 child: showChinese || current == null
                     ? Text(
@@ -240,14 +240,25 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                           color: lookMeaning,
                         ),
                       )
-                    : _speakable(
-                        current.japanese,
-                        current.romaji,
-                        const TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: lookInk,
-                        ),
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _speakable(
+                            current.japanese,
+                            current.romaji,
+                            const TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color: lookInk,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            current.romaji,
+                            textAlign: TextAlign.center,
+                            style: lookRomajiStyle,
+                          ),
+                        ],
                       ),
               ),
             ),
@@ -287,6 +298,8 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         color: lookInk,
                       ),
                     ),
+                    const SizedBox(height: 4),
+                    _speakable(current.romaji, current.romaji, lookRomajiStyle),
                     kanaStar(
                       favorite: showAnswer ? !dropAfterContinue : true,
                       onPressed: showAnswer
@@ -305,16 +318,6 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                           fontSize: 24,
                           height: 1.1,
                           color: lookReading,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      _speakable(
-                        current.romaji,
-                        current.romaji,
-                        const TextStyle(
-                          fontSize: 24,
-                          height: 1.1,
-                          color: lookRomaji,
                         ),
                       ),
                       const SizedBox(height: 4),

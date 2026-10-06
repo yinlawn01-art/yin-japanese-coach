@@ -202,6 +202,7 @@ double _studyShowAnswerTop({
   required double bodyHeight,
   required double bodyWidth,
   required String kanji,
+  String? romaji,
   required TextStyle countStyle,
   required TextStyle kanjiStyle,
   required TextScaler textScaler,
@@ -227,6 +228,9 @@ double _studyShowAnswerTop({
   final contentHeight = line('Word 1 / 1', countStyle) +
       gap +
       line(kanji, kanjiStyle) +
+      (romaji == null
+          ? 0
+          : romanSpellingHeight(romaji, bodyWidth - 48, textScaler)) +
       iconHeight +
       answerSlot +
       _studyShowAnswerSize.height;
@@ -284,20 +288,17 @@ Widget exampleBody(ExampleSentence sentence) {
                       color: lookInk,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 4),
+                  speakableText(
+                    text: sentence.romaji,
+                    japanese: sentence.romaji,
+                    style: lookRomajiStyle,
+                  ),
+                  const SizedBox(height: 10),
                   speakableText(
                     text: sentence.hiragana,
                     japanese: sentence.romaji,
                     style: const TextStyle(fontSize: 24, color: lookReading),
-                  ),
-                  const SizedBox(height: 10),
-                  speakableText(
-                    text: sentence.romaji,
-                    japanese: sentence.romaji,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      color: lookRomaji,
-                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -662,6 +663,7 @@ return Scaffold(
               bodyHeight: constraints.maxHeight,
               bodyWidth: constraints.maxWidth,
               kanji: _prompt(currentWord),
+              romaji: widget.chineseToJapanese ? null : currentWord.romaji,
               countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
               kanjiStyle: baseStyle.merge(
                 const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
@@ -780,20 +782,23 @@ Widget _playingFavoritesView() {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          height: 120,
-          child: Center(
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: showPlayingJapanese ? 48 : 40,
-                fontWeight: FontWeight.bold,
-                color: showPlayingJapanese ? lookInk : lookMeaning,
-              ),
-            ),
+        Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: showPlayingJapanese ? 48 : 40,
+            fontWeight: FontWeight.bold,
+            color: showPlayingJapanese ? lookInk : lookMeaning,
           ),
         ),
+        if (showPlayingJapanese && word != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            word.romaji,
+            textAlign: TextAlign.center,
+            style: lookRomajiStyle,
+          ),
+        ],
         const SizedBox(height: 24),
         _matchingButton(
           'Stop',
@@ -821,6 +826,14 @@ children: [
           _prompt(currentWord),
           style: lookPrompt,
         ),
+  if (showAnswer || !widget.chineseToJapanese) ...[
+    const SizedBox(height: 4),
+    Text(
+      currentWord.romaji,
+      textAlign: TextAlign.center,
+      style: lookRomajiStyle,
+    ),
+  ],
 
   IconButton(
     iconSize: 40,
@@ -844,15 +857,6 @@ children: [
                 style: const TextStyle(
                   fontSize: 28,
                   color: lookReading,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                currentWord.romaji,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 24,
-                  color: lookRomaji,
                 ),
               ),
               const SizedBox(height: 8),
@@ -896,6 +900,12 @@ Widget _answeredFavorite() {
             color: lookInk,
           ),
       ),
+      const SizedBox(height: 4),
+      Text(
+        currentWord.romaji,
+        textAlign: TextAlign.center,
+        style: lookRomajiStyle,
+      ),
       IconButton(
         iconSize: 32,
         padding: EdgeInsets.zero,
@@ -915,16 +925,6 @@ Widget _answeredFavorite() {
           fontSize: 28,
           height: 1.1,
           color: lookReading,
-        ),
-      ),
-      const SizedBox(height: 4),
-      Text(
-        currentWord.romaji,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 24,
-          height: 1.1,
-          color: lookRomaji,
         ),
       ),
       const SizedBox(height: 4),

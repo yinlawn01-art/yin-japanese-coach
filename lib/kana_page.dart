@@ -103,6 +103,7 @@ double kanaActionButtonTop({
   required double bodyWidth,
   required String countText,
   required String kana,
+  required String romaji,
   required TextStyle countStyle,
   required TextStyle kanaStyle,
   required TextScaler textScaler,
@@ -128,6 +129,7 @@ double kanaActionButtonTop({
       line(countText, countStyle) +
       gap +
       line(kana, kanaStyle) +
+      romanSpellingHeight(romaji, bodyWidth - 48, textScaler) +
       iconHeight +
       _answerSlotHeight +
       kanaButtonSize.height;
@@ -334,6 +336,7 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
             bodyWidth: constraints.maxWidth,
             countText: countText,
             kana: current.kana,
+            romaji: current.romaji,
             countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
             kanaStyle: baseStyle.merge(
               const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
@@ -402,8 +405,21 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
           textAlign: TextAlign.center,
           style: lookPrompt,
         ),
+        const SizedBox(height: 4),
+        kanaSpeakable(
+          text: current.romaji,
+          onTap: _speakKana,
+          style: lookRomajiStyle,
+        ),
         kanaStar(favorite: current.isFavorite, onPressed: _toggleFavorite),
-        const SizedBox(height: _answerSlotHeight),
+        SizedBox(
+          height: _answerSlotHeight -
+              romanSpellingHeight(
+                current.romaji,
+                MediaQuery.sizeOf(context).width - 48,
+                MediaQuery.textScalerOf(context),
+              ),
+        ),
       ],
     );
   }
@@ -428,19 +444,16 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
             color: lookInk,
           ),
         ),
+        const SizedBox(height: 4),
+        kanaSpeakable(
+          text: current.romaji,
+          onTap: _speakKana,
+          style: lookRomajiStyle,
+        ),
         kanaStar(
           favorite: current.isFavorite,
           onPressed: _toggleFavorite,
           compact: true,
-        ),
-        kanaSpeakable(
-          text: current.romaji,
-          onTap: _speakKana,
-          style: const TextStyle(
-            fontSize: 24,
-            height: 1.1,
-            color: lookRomaji,
-          ),
         ),
         const SizedBox(height: 4),
         kanaSpeakable(
@@ -457,11 +470,7 @@ class _KanaStudyPageState extends State<KanaStudyPage> {
         kanaSpeakable(
           text: current.exampleRomaji,
           onTap: _speakExample,
-          style: const TextStyle(
-            fontSize: 24,
-            height: 1.1,
-            color: lookRomaji,
-          ),
+          style: lookRomajiStyle,
         ),
         const SizedBox(height: 4),
         Text(
@@ -683,20 +692,25 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            height: 120,
-            child: Center(
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: japanese ? 48 : 40,
-                  fontWeight: FontWeight.bold,
-                  color: japanese ? lookInk : lookMeaning,
-                ),
-              ),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: japanese ? 48 : 40,
+              fontWeight: FontWeight.bold,
+              color: japanese ? lookInk : lookMeaning,
             ),
           ),
+          if (current != null && playPhase != _PlayPhase.chinese) ...[
+            const SizedBox(height: 4),
+            Text(
+              playPhase == _PlayPhase.kana
+                  ? current.romaji
+                  : current.exampleRomaji,
+              textAlign: TextAlign.center,
+              style: lookRomajiStyle,
+            ),
+          ],
           const SizedBox(height: 24),
           kanaActionButton('Stop', _stopPlaying, kanaLabelSize(context)),
         ],
@@ -720,6 +734,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
           bodyWidth: constraints.maxWidth,
           countText: countText,
           kana: current.kana,
+          romaji: current.romaji,
           countStyle: baseStyle.merge(const TextStyle(fontSize: 20)),
           kanaStyle: baseStyle.merge(
             const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
@@ -789,12 +804,28 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
           textAlign: TextAlign.center,
           style: lookPrompt,
         ),
+        const SizedBox(height: 4),
+        kanaSpeakable(
+          text: current.romaji,
+          onTap: () {
+            final token = speaker.begin();
+            speaker.speakRomaji(current.romaji, token);
+          },
+          style: lookRomajiStyle,
+        ),
         kanaStar(
           favorite: true,
           onPressed: _removeFavorite,
           tooltip: 'Remove from favorites',
         ),
-        const SizedBox(height: _answerSlotHeight),
+        SizedBox(
+          height: _answerSlotHeight -
+              romanSpellingHeight(
+                current.romaji,
+                MediaQuery.sizeOf(context).width - 48,
+                MediaQuery.textScalerOf(context),
+              ),
+        ),
       ],
     );
   }
@@ -821,17 +852,14 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
             color: lookInk,
           ),
         ),
+        const SizedBox(height: 4),
         kanaSpeakable(
           text: current.romaji,
           onTap: () {
             final token = speaker.begin();
             speaker.speakRomaji(current.romaji, token);
           },
-          style: const TextStyle(
-            fontSize: 24,
-            height: 1.1,
-            color: lookRomaji,
-          ),
+          style: lookRomajiStyle,
         ),
         const SizedBox(height: 4),
         kanaSpeakable(
@@ -854,11 +882,7 @@ class _FavoriteKanaPageState extends State<FavoriteKanaPage> {
             final token = speaker.begin();
             speaker.speakRomaji(current.exampleRomaji, token);
           },
-          style: const TextStyle(
-            fontSize: 24,
-            height: 1.1,
-            color: lookRomaji,
-          ),
+          style: lookRomajiStyle,
         ),
         const SizedBox(height: 4),
         Text(

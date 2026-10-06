@@ -749,6 +749,13 @@ Future<void> saveFavorites() async {
     final contentHeight = _textHeight(countText, countStyle, bodyWidth - 48, textScaler) +
         gap +
         _textHeight(kanji, kanjiStyle, bodyWidth - 48, textScaler) +
+        (widget.chineseToJapanese
+            ? 0
+            : romanSpellingHeight(
+                widget.deck[currentIndex].romaji,
+                bodyWidth - 48,
+                textScaler,
+              )) +
         iconHeight +
         _answerSlotHeight +
         _studyButtonSize.height;
@@ -815,8 +822,25 @@ Future<void> saveFavorites() async {
           textAlign: TextAlign.center,
           style: lookPrompt,
         ),
+        if (!widget.chineseToJapanese) ...[
+          const SizedBox(height: 4),
+          speakableText(
+            text: word.romaji,
+            japanese: word.romaji,
+            style: lookRomajiStyle,
+          ),
+        ],
         _favoriteStar(word),
-        const SizedBox(height: _answerSlotHeight),
+        SizedBox(
+          height: _answerSlotHeight -
+              (widget.chineseToJapanese
+                  ? 0
+                  : romanSpellingHeight(
+                      word.romaji,
+                      MediaQuery.sizeOf(context).width - 48,
+                      MediaQuery.textScalerOf(context),
+                    )),
+        ),
       ],
     );
   }
@@ -839,21 +863,17 @@ Future<void> saveFavorites() async {
           japanese: word.romaji,
           style: lookPrompt,
         ),
+        const SizedBox(height: 4),
+        speakableText(
+          text: word.romaji,
+          japanese: word.romaji,
+          style: lookRomajiStyle,
+        ),
         _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
           japanese: word.romaji,
           style: lookReadingStyle,
-        ),
-        const SizedBox(height: 4),
-        speakableText(
-          text: word.romaji,
-          japanese: word.romaji,
-          style: const TextStyle(
-            fontSize: 24,
-            height: 1.1,
-            color: lookRomaji,
-          ),
         ),
         const SizedBox(height: 4),
         Text(
@@ -896,21 +916,17 @@ Future<void> saveFavorites() async {
           japanese: word.romaji,
           style: lookPrompt,
         ),
+        const SizedBox(height: 4),
+        speakableText(
+          text: word.romaji,
+          japanese: word.romaji,
+          style: lookRomajiStyle,
+        ),
         _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
           japanese: word.romaji,
           style: lookReadingStyle,
-        ),
-        const SizedBox(height: 4),
-        speakableText(
-          text: word.romaji,
-          japanese: word.romaji,
-          style: const TextStyle(
-            fontSize: 24,
-            height: 1.1,
-            color: lookRomaji,
-          ),
         ),
         const SizedBox(height: 4),
         Text(
@@ -959,20 +975,17 @@ Future<void> saveFavorites() async {
                         color: lookInk,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 4),
+                    speakableText(
+                      text: sentence.romaji,
+                      japanese: sentence.romaji,
+                      style: lookRomajiStyle,
+                    ),
+                    const SizedBox(height: 10),
                     speakableText(
                       text: sentence.hiragana,
                       japanese: sentence.romaji,
                       style: const TextStyle(fontSize: 24, color: lookReading),
-                    ),
-                    const SizedBox(height: 10),
-                    speakableText(
-                      text: sentence.romaji,
-                      japanese: sentence.romaji,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        color: lookRomaji,
-                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(

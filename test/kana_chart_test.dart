@@ -130,6 +130,9 @@ void main() {
     await tester.tap(find.text('平假名'));
     await tester.pumpAndSettle();
     expect(find.text('あ'), findsOneWidget);
+    expect(find.text('a'), findsOneWidget);
+    expect(tester.widget<Text>(find.text('a')).style?.fontSize, 48);
+    expect(tester.widget<Text>(find.text('a')).style?.color, Colors.red);
     expect(find.text('繼續'), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.star_border));
@@ -138,7 +141,7 @@ void main() {
 
     await tester.tap(find.text('繼續'));
     await tester.pump();
-    expect(find.text('a'), findsOneWidget);
+    expect(find.text('a'), findsNWidgets(2));
     expect(find.text('あめ'), findsOneWidget);
     expect(find.text('ame'), findsOneWidget);
     expect(find.text('雨'), findsOneWidget);
@@ -149,6 +152,7 @@ void main() {
     await tester.tap(find.text('片假名'));
     await tester.pumpAndSettle();
     expect(find.text('ア'), findsOneWidget);
+    expect(find.text('a'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
     await tester.tap(find.text('繼續'));
     await tester.pump();

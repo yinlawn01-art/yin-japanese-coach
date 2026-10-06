@@ -153,6 +153,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('(1 of 10)'), findsOneWidget);
     expect(find.text('語0'), findsWidgets);
+    expect(find.text('go0'), findsOneWidget);
+    expect(tester.widget<Text>(find.text('go0')).style?.fontSize, 48);
+    expect(tester.widget<Text>(find.text('go0')).style?.color, Colors.red);
     expect(find.text('答案'), findsOneWidget);
     expect(find.text('意思0'), findsNothing);
     expect(find.byIcon(Icons.star_border), findsOneWidget);
@@ -167,7 +170,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('意思0'), findsOneWidget);
     expect(find.text('ご0'), findsOneWidget);
-    expect(find.text('go0'), findsOneWidget);
+    expect(find.text('go0'), findsNWidgets(2));
     expect(find.text('詞性：🔵 名詞'), findsOneWidget);
     expect(find.text('例句'), findsOneWidget);
     expect(find.byIcon(Icons.star_border), findsWidgets);
@@ -507,6 +510,7 @@ void main() {
     expect(find.text('(1 of 10)'), findsOneWidget);
     expect(find.text('意思0'), findsOneWidget);
     expect(find.text('語0'), findsNothing);
+    expect(find.text('go0'), findsNothing);
     expect(find.text('答案'), findsOneWidget);
     expect(find.byIcon(Icons.star_border), findsOneWidget);
 

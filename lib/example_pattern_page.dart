@@ -220,6 +220,8 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
             color: lookInk,
           ),
         ),
+        const SizedBox(height: 4),
+        _spokenLine(sentence.romaji, lookRomajiStyle),
         kanaStar(
           favorite: favorite,
           onPressed: _toggleFavorite,
@@ -252,19 +254,12 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
             color: lookInk,
           ),
         ),
+        const SizedBox(height: 4),
+        _spokenLine(sentence.romaji, lookRomajiStyle),
         const SizedBox(height: 8),
         _spokenLine(
           sentence.hiragana,
           const TextStyle(fontSize: 24, height: 1.1, color: lookReading),
-        ),
-        const SizedBox(height: 4),
-        _spokenLine(
-          sentence.romaji,
-          const TextStyle(
-            fontSize: 24,
-            height: 1.1,
-            color: lookRomaji,
-          ),
         ),
         const SizedBox(height: 4),
         Text(
