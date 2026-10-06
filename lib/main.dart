@@ -263,87 +263,12 @@ Future<void> loadFavoritesHome() async {
                   .clamp(0.0, constraints.maxHeight);
 
               final phone = constraints.maxWidth <= 480;
-              // Brush line matched to the sample: small kana gaps, a thin bar,
-              // and a short pause after the comma before 日文.
-              TextStyle titleStyle(Color color, {double letterSpacing = 0}) {
-                const thicken = <Offset>[
-                  Offset(-0.6, 0),
-                  Offset(0.6, 0),
-                  Offset(0, -0.6),
-                  Offset(0, 0.6),
-                ];
-                return TextStyle(
-                  fontFamily: 'LXGW WenKai',
-                  fontFamilyFallback: const [
-                    'AppJapanese',
-                    'AppText',
-                    'AppEmoji',
-                  ],
-                  fontSize: 42,
-                  height: 1.05,
-                  letterSpacing: letterSpacing,
-                  color: color,
-                  shadows: [
-                    for (final offset in thicken)
-                      Shadow(color: color, offset: offset, blurRadius: 0.2),
-                  ],
-                );
-              }
-
-              const titleBlue = Color(0xFF155F81);
-              const titlePink = Color(0xFFD060C0);
-              final title = FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  key: const Key('home-title'),
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'にちまんまん',
-                      maxLines: 1,
-                      softWrap: false,
-                      style: titleStyle(titleBlue, letterSpacing: -8),
-                    ),
-                    const SizedBox(width: 9),
-                    const SizedBox(
-                      width: 7,
-                      height: 34,
-                      child: ColoredBox(color: titleBlue),
-                    ),
-                    const SizedBox(width: 7),
-                    Text(
-                      '不急',
-                      maxLines: 1,
-                      softWrap: false,
-                      style: titleStyle(titlePink, letterSpacing: -2),
-                    ),
-                    const SizedBox(width: 9),
-                    SizedBox(
-                      width: 21,
-                      height: 46,
-                      child: OverflowBox(
-                        alignment: Alignment.centerLeft,
-                        minWidth: 0,
-                        maxWidth: 48,
-                        minHeight: 0,
-                        maxHeight: 46,
-                        child: Text(
-                          '，',
-                          maxLines: 1,
-                          softWrap: false,
-                          style: titleStyle(titlePink),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '日文會慢慢變好',
-                      maxLines: 1,
-                      softWrap: false,
-                      style: titleStyle(titlePink, letterSpacing: -1),
-                    ),
-                  ],
-                ),
+              final title = Image.asset(
+                'assets/home_title.png',
+                key: const Key('home-title'),
+                fit: BoxFit.fitWidth,
+                filterQuality: FilterQuality.high,
+                semanticLabel: 'にちまんまん | 不急，日文會慢慢變好',
               );
               final column = Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -25,6 +25,7 @@ var REQUIRED = [
   'assets/fonts/AppEmoji-Regular.ttf',
   'assets/fonts/fallback/Roboto-Regular.ttf',
   'assets/assets/homepage_shinkai.jpg',
+  'assets/assets/home_title.png',
   'assets/assets/n5_adjectives.json',
   'assets/assets/n5_nouns.json',
   'assets/assets/n5_verbs.json',
