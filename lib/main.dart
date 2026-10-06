@@ -268,7 +268,7 @@ Future<void> loadFavoritesHome() async {
                 key: const Key('home-title'),
                 fit: BoxFit.fitWidth,
                 filterQuality: FilterQuality.high,
-                semanticLabel: 'にちまんまん | 不急，日文會慢慢變好',
+                semanticLabel: 'にちまんまん 不急，日文會慢慢變好',
               );
               final column = Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
