@@ -14,6 +14,7 @@ const Color lookCount = Color(0xFF5E6D82);
 const Color lookGold = Color(0xFFD99A1C);
 const Color lookLine = Color(0x2416325C);
 const Color lookTile = Color(0xFFE7F1F8);
+const Color lookTileQuiet = Color(0xFFF4F8FB);
 const Color lookDisabled = Color(0xFFE6E1D8);
 const Color lookDisabledInk = Color(0xFF8C857C);
 
