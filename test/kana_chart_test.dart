@@ -52,10 +52,10 @@ String _expandChoon(String hiragana) {
 }
 
 void main() {
-  test('homepage version matches the pubspec major.minor', () {
+  test('homepage version matches the pubspec version', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
     final match = RegExp(
-      r'^version:\s*(\d+\.\d+)\.',
+      r'^version:\s*([0-9.]+)\+',
       multiLine: true,
     ).firstMatch(pubspec);
     expect(match?.group(1), appVersion);
