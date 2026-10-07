@@ -1,2 +1,2 @@
 /// Version shown on the homepage.
-const String appVersion = '1.0.0';
+const String appVersion = '1.0';

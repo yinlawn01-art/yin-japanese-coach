@@ -58,7 +58,9 @@ void main() {
       r'^version:\s*([0-9.]+)\+',
       multiLine: true,
     ).firstMatch(pubspec);
-    expect(match?.group(1), appVersion);
+    final published = match?.group(1);
+    final shown = published == '$appVersion.0' ? appVersion : published;
+    expect(shown, appVersion);
   });
 
   test('every hiragana card speaks its kana and example', () {

@@ -1,7 +1,7 @@
 'use strict';
 
 // Saves the whole app on this site, then serves that copy with no network.
-var CACHE = 'yin-japanese-coach-offline-v7';
+var CACHE = 'yin-japanese-coach-offline-v8';
 
 var REQUIRED = [
   'index.html',
