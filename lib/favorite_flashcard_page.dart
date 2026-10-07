@@ -100,7 +100,7 @@ Widget _favoriteSplit({
   const clearWidth = 86.0;
   const openWidth = rowWidth - gap - clearWidth;
   const radius = Radius.circular(height / 2);
-  const side = BorderSide(color: lookInkBlue, width: 1.5);
+  const side = BorderSide(color: lookLine);
   final labelStyle = bundledText.copyWith(fontSize: 22, height: 1.1);
 
   ButtonStyle style(Size size, BorderRadius borderRadius) {
