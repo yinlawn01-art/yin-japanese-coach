@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show OverflowBoxFit;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'favorite_listening_page.dart';
@@ -263,12 +264,21 @@ Future<void> loadFavoritesHome() async {
                   .clamp(0.0, constraints.maxHeight);
 
               final phone = constraints.maxWidth <= 480;
-              final title = Image.asset(
-                'assets/home_title.png',
-                key: const Key('home-title'),
-                fit: BoxFit.fitWidth,
-                filterQuality: FilterQuality.high,
-                semanticLabel: 'にちまんまん | 不急，日文會慢慢變好',
+              final sideInset = phone
+                  ? MediaQuery.paddingOf(context).horizontal
+                  : 0.0;
+              final titleWidth = (constraints.maxWidth - 40 - sideInset) * 1.2;
+              final title = OverflowBox(
+                fit: OverflowBoxFit.deferToChild,
+                maxWidth: titleWidth,
+                child: Image.asset(
+                  'assets/home_title.png',
+                  key: const Key('home-title'),
+                  width: titleWidth,
+                  fit: BoxFit.fitWidth,
+                  filterQuality: FilterQuality.high,
+                  semanticLabel: 'にちまんまん | 不急，日文會慢慢變好',
+                ),
               );
               final column = Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

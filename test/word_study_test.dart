@@ -314,6 +314,7 @@ void main() {
       'assets/home_title.png',
     );
     expect(find.text('にちまんまん'), findsNothing);
+    expect(tester.getSize(title).width, closeTo((800 - 40) * 1.2, 1));
     expect(tester.getTopLeft(title).dy, closeTo(600 * 0.10, 2));
     expect(learning, findsOneWidget);
     expect(
@@ -355,7 +356,7 @@ void main() {
 
       final title = tester.getRect(find.byKey(const Key('home-title')));
       expect(title.top, closeTo(size.height * 0.10, 4));
-      expect(title.width, lessThanOrEqualTo(size.width));
+      expect(title.width, closeTo((size.width - 40) * 1.2, 1));
       expect(find.text('にちまんまん'), findsNothing);
       expect(
         tester.getTopLeft(find.widgetWithText(ElevatedButton, '學習')).dy -
