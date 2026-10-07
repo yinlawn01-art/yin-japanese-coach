@@ -110,12 +110,10 @@ Widget _favoriteSplit({
       maximumSize: size,
       padding: EdgeInsets.zero,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      elevation: 0,
       backgroundColor: lookCard,
       foregroundColor: lookInkBlue,
       surfaceTintColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: borderRadius, side: side),
+      shape: RaisedEdge(borderRadius: borderRadius, side: side),
       textStyle: labelStyle,
     );
   }

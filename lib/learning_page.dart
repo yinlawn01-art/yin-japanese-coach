@@ -182,8 +182,6 @@ class _LearningPageState extends State<LearningPage> {
                               maximumSize: studyQueueButtonSize,
                               padding: const EdgeInsets.all(20),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              elevation: 1,
-                              shadowColor: const Color(0x2216325C),
                               backgroundColor: lookTile,
                               disabledBackgroundColor: lookTileQuiet,
                               foregroundColor: lookInkBlue,
@@ -263,8 +261,6 @@ class _LearningPageState extends State<LearningPage> {
                               maximumSize: studyQueueButtonSize,
                               padding: const EdgeInsets.all(20),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              elevation: 1,
-                              shadowColor: const Color(0x2216325C),
                               backgroundColor: lookTile,
                               disabledBackgroundColor: lookTileQuiet,
                               foregroundColor: lookInkBlue,
@@ -481,7 +477,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
           padding: EdgeInsets.zero,
           backgroundColor: Colors.white,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: RoundedRectangleBorder(
+          shape: RaisedEdge(
             borderRadius: BorderRadius.circular(8),
             side: BorderSide(color: color, width: 2),
           ),
@@ -912,9 +908,9 @@ class _FinishedDialog extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: lookInkBlue,
                     foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: const RoundedRectangleBorder(
+                    shape: const RaisedEdge(
                       borderRadius: BorderRadius.all(Radius.circular(16)),
+                      side: BorderSide(color: Color(0x33FFFFFF)),
                     ),
                   ),
                   onPressed: () => Navigator.of(context).pop('record'),
@@ -946,8 +942,7 @@ class _FinishedDialog extends StatelessWidget {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             backgroundColor: lookCard,
             foregroundColor: lookInkBlue,
-            elevation: 0,
-            shape: const RoundedRectangleBorder(
+            shape: const RaisedEdge(
               borderRadius: BorderRadius.all(Radius.circular(16)),
               side: BorderSide(color: lookLine),
             ),

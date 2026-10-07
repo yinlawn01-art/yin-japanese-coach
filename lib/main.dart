@@ -198,14 +198,12 @@ Future<void> loadFavoritesHome() async {
       visualDensity: VisualDensity.standard,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       textStyle: bundledText.copyWith(fontSize: buttonFontSize, height: 1.1),
-      elevation: 0,
       backgroundColor: const Color(0x99FFFFFF),
       foregroundColor: const Color(0xFF1A4A8A),
       surfaceTintColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(28),
-        side: const BorderSide(color: Color(0xE6FFFFFF), width: 1.4),
+      shape: const RaisedEdge(
+        borderRadius: BorderRadius.all(Radius.circular(28)),
+        side: BorderSide(color: Color(0xE6FFFFFF), width: 1.4),
       ),
     );
 

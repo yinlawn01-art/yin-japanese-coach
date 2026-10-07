@@ -63,15 +63,57 @@ const TextStyle lookMeaningStyle = TextStyle(
   color: lookMeaning,
 );
 
-const RoundedRectangleBorder lookSoftShape = RoundedRectangleBorder(
+const lookSoftShape = RaisedEdge(
   borderRadius: BorderRadius.all(Radius.circular(18)),
   side: BorderSide(color: lookLine),
 );
 
-const RoundedRectangleBorder lookStudyTileShape = RoundedRectangleBorder(
+const lookStudyTileShape = RaisedEdge(
   borderRadius: BorderRadius.all(Radius.circular(22)),
   side: BorderSide(color: Color(0x332A6A9A)),
 );
+
+/// Rounded edge with a light top and a darker bottom, so a button
+/// looks a little raised even where the drop shadow is tight.
+class RaisedEdge extends RoundedRectangleBorder {
+  const RaisedEdge({
+    super.side = const BorderSide(color: lookLine),
+    super.borderRadius = const BorderRadius.all(Radius.circular(18)),
+  });
+
+  @override
+  RoundedRectangleBorder copyWith({
+    BorderSide? side,
+    BorderRadiusGeometry? borderRadius,
+  }) {
+    return RaisedEdge(
+      side: side ?? this.side,
+      borderRadius: borderRadius ?? this.borderRadius,
+    );
+  }
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
+    super.paint(canvas, rect, textDirection: textDirection);
+    final inset = side.width == 0 ? 1.0 : side.strokeInset + 0.6;
+    final inner = borderRadius.resolve(textDirection).toRRect(rect).deflate(inset);
+    final bevel = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color(0xD9FFFFFF),
+          Color(0x00FFFFFF),
+          Color(0x00000000),
+          Color(0x3318334A),
+        ],
+        stops: [0.0, 0.42, 0.68, 1.0],
+      ).createShader(rect);
+    canvas.drawRRect(inner, bevel);
+  }
+}
 
 ThemeData appTheme() {
   final base = ThemeData(
@@ -116,18 +158,24 @@ ThemeData appTheme() {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        elevation: 0,
         backgroundColor: lookCard,
         foregroundColor: lookInkBlue,
         disabledBackgroundColor: lookDisabled,
         disabledForegroundColor: lookDisabledInk,
         surfaceTintColor: Colors.transparent,
-        shadowColor: Colors.transparent,
+        shadowColor: const Color(0x7330486A),
         shape: lookSoftShape,
         textStyle: bundledText.copyWith(
           fontSize: 16,
           height: 1.1,
         ),
+      ).copyWith(
+        elevation: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return 0;
+          if (states.contains(WidgetState.pressed)) return 1;
+          if (states.contains(WidgetState.hovered)) return 5;
+          return 3;
+        }),
       ),
     ),
     textTheme: base.textTheme.apply(
