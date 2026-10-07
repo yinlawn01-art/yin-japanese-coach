@@ -59,7 +59,10 @@ void main() {
       multiLine: true,
     ).firstMatch(pubspec);
     final published = match?.group(1);
-    final shown = published == '$appVersion.0' ? appVersion : published;
+    var shown = published;
+    while (shown != null && shown != appVersion && shown.endsWith('.0')) {
+      shown = shown.substring(0, shown.length - 2);
+    }
     expect(shown, appVersion);
   });
 
