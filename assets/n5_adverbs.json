@@ -31,5 +31,22 @@
   {"kanji":"絶対","hiragana":"ぜったい","romaji":"zettai","meaning":"絕對"},
   {"kanji":"さっき","hiragana":"さっき","romaji":"sakki","meaning":"剛才"},
   {"kanji":"先に","hiragana":"さきに","romaji":"sakini","meaning":"先"},
-  {"kanji":"後で","hiragana":"あとで","romaji":"atode","meaning":"稍後"}
+  {"kanji":"後で","hiragana":"あとで","romaji":"atode","meaning":"稍後"},
+  {"kanji":"やっと","hiragana":"やっと","romaji":"yatto","meaning":"好不容易"},
+  {"kanji":"ようやく","hiragana":"ようやく","romaji":"youyaku","meaning":"總算"},
+  {"kanji":"きっと","hiragana":"きっと","romaji":"kitto","meaning":"想必"},
+  {"kanji":"かなり","hiragana":"かなり","romaji":"kanari","meaning":"相當"},
+  {"kanji":"ずいぶん","hiragana":"ずいぶん","romaji":"zuibun","meaning":"頗為"},
+  {"kanji":"たいてい","hiragana":"たいてい","romaji":"taitei","meaning":"大多"},
+  {"kanji":"たまに","hiragana":"たまに","romaji":"tamani","meaning":"偶爾"},
+  {"kanji":"そっと","hiragana":"そっと","romaji":"sotto","meaning":"輕輕地"},
+  {"kanji":"わざわざ","hiragana":"わざわざ","romaji":"wazawaza","meaning":"特地"},
+  {"kanji":"どうしても","hiragana":"どうしても","romaji":"doushitemo","meaning":"無論如何"},
+  {"kanji":"どうぞ","hiragana":"どうぞ","romaji":"douzo","meaning":"請"},
+  {"kanji":"なぜ","hiragana":"なぜ","romaji":"naze","meaning":"為什麼"},
+  {"kanji":"急に","hiragana":"きゅうに","romaji":"kyuuni","meaning":"忽然"},
+  {"kanji":"特に","hiragana":"とくに","romaji":"tokuni","meaning":"尤其"},
+  {"kanji":"再び","hiragana":"ふたたび","romaji":"futatabi","meaning":"再次"},
+  {"kanji":"一旦","hiragana":"いったん","romaji":"ittan","meaning":"暫且"},
+  {"kanji":"相変わらず","hiragana":"あいかわらず","romaji":"aikawarazu","meaning":"仍舊"}
 ]
