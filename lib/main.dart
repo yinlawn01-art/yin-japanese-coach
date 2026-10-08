@@ -63,6 +63,11 @@ await loadJsonFile(
   'assets/n5_adjectives.json',
   '🟣 形容詞',
 );
+
+await loadJsonFile(
+  'assets/n5_adverbs.json',
+  '◆ 副詞',
+);
 }
 
 
@@ -446,6 +451,7 @@ class FlashcardMenuPage extends StatelessWidget {
     final nouns = wordsOfType('名詞');
     final verbs = wordsOfType('動詞');
     final adjectives = wordsOfType('形容詞');
+    final adverbs = wordsOfType('副詞');
 
     return Scaffold(
       appBar: AppBar(
@@ -467,6 +473,8 @@ class FlashcardMenuPage extends StatelessWidget {
                       _directionPair(context, buttonStyle, '動詞', verbs),
                       const SizedBox(height: 24),
                       _directionPair(context, buttonStyle, '形容詞', adjectives),
+                      const SizedBox(height: 24),
+                      _directionPair(context, buttonStyle, '副詞', adverbs),
                       const SizedBox(height: 24),
                       _directionPair(
                         context,

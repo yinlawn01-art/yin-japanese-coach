@@ -57,9 +57,10 @@ void main() {
     expect(find.text('名詞(2)'), findsOneWidget);
     expect(find.text('動詞(2)'), findsOneWidget);
     expect(find.text('形容詞(1)'), findsOneWidget);
+    expect(find.text('副詞(0)'), findsOneWidget);
     expect(find.text('全部(5)'), findsOneWidget);
-    expect(find.text('日→中單字'), findsNWidgets(4));
-    expect(find.text('中→日單字'), findsNWidgets(4));
+    expect(find.text('日→中單字'), findsNWidgets(5));
+    expect(find.text('中→日單字'), findsNWidgets(5));
 
     await tester.tap(_directionButton('名詞', '日→中單字'));
     await tester.pumpAndSettle();

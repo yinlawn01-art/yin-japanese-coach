@@ -358,6 +358,7 @@ Future<Set<String>> _vocabularyKanji() async {
     'assets/n5_verbs.json',
     'assets/n5_nouns.json',
     'assets/n5_adjectives.json',
+    'assets/n5_adverbs.json',
   ];
   final kanji = <String>{};
   for (final path in paths) {

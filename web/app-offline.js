@@ -1,7 +1,7 @@
 'use strict';
 
 // Saves the whole app on this site, then serves that copy with no network.
-var CACHE = 'yin-japanese-coach-offline-v12';
+var CACHE = 'yin-japanese-coach-offline-v13';
 
 var REQUIRED = [
   'index.html',
@@ -27,6 +27,7 @@ var REQUIRED = [
   'assets/assets/homepage_shinkai.jpg',
   'assets/assets/home_title.png',
   'assets/assets/n5_adjectives.json',
+  'assets/assets/n5_adverbs.json',
   'assets/assets/n5_nouns.json',
   'assets/assets/n5_verbs.json',
   'assets/assets/example_patterns/01.json',
