@@ -20,6 +20,7 @@ import 'example_pattern_page.dart';
 import 'example_patterns.dart';
 import 'favorite_example_page.dart';
 import 'app_look.dart';
+import 'vocab_table_page.dart';
 
 Future<void> loadJsonFile(
   String path,
@@ -322,6 +323,8 @@ Future<void> loadFavoritesHome() async {
                   homeButton('收藏五十音 ($kanaFavoriteCount)', const FavoriteKanaPage()),
                   const SizedBox(height: 10),
                   homeButton('單字(${words.length})', const FlashcardMenuPage()),
+                  const SizedBox(height: 10),
+                  homeButton('單字表', const VocabTableMenuPage()),
                   const SizedBox(height: 10),
                   homeButton(
                     '收藏單字 ($favoriteCount)',
