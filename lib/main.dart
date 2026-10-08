@@ -324,8 +324,6 @@ Future<void> loadFavoritesHome() async {
                   const SizedBox(height: 10),
                   homeButton('單字(${words.length})', const FlashcardMenuPage()),
                   const SizedBox(height: 10),
-                  homeButton('單字表', const VocabTableMenuPage()),
-                  const SizedBox(height: 10),
                   homeButton(
                     '收藏單字 ($favoriteCount)',
                     const FavoriteWordsMenuPage(),
@@ -340,6 +338,8 @@ Future<void> loadFavoritesHome() async {
                     '收藏例句($exampleFavoriteCount)',
                     const FavoriteExamplePage(),
                   ),
+                  const SizedBox(height: 10),
+                  homeButton('單字表', const VocabTableMenuPage()),
                 ],
               );
 

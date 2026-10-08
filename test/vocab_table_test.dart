@@ -73,14 +73,15 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
     expect(
-      tester.getTopLeft(find.text('單字表')).dy,
+      tester.getTopLeft(find.text('收藏單字 (0)')).dy,
       greaterThan(tester.getTopLeft(find.text('單字(${words.length})')).dy),
     );
     expect(
-      tester.getTopLeft(find.text('收藏單字 (0)')).dy,
-      greaterThan(tester.getTopLeft(find.text('單字表')).dy),
+      tester.getTopLeft(find.text('單字表')).dy,
+      greaterThan(tester.getTopLeft(find.textContaining('收藏例句')).dy),
     );
 
+    await tester.ensureVisible(find.text('單字表'));
     await tester.tap(find.text('單字表'));
     await tester.pumpAndSettle();
     expect(find.text('名詞(2)'), findsOneWidget);
