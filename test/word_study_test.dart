@@ -127,14 +127,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final addSize = tester.getSize(
-      find.widgetWithText(ElevatedButton, '加10 個單字'),
+      find.widgetWithText(ElevatedButton, '加10 個單字(1)'),
     );
     final studySize = tester.getSize(
       find.widgetWithText(ElevatedButton, '日→中單字(0)'),
     );
     expect(addSize, const Size(288, 36));
     expect(studySize, const Size(288, 144));
-    expect(tester.widget<Text>(find.text('加10 個單字')).style?.fontSize, 16.5);
+    expect(tester.widget<Text>(find.text('加10 個單字(1)')).style?.fontSize, 16.5);
     expect(tester.widget<Text>(find.text('日→中單字(0)')).style?.fontSize, 52);
     expect(
       tester
@@ -145,7 +145,7 @@ void main() {
       isNull,
     );
 
-    await tester.tap(find.text('加10 個單字'));
+    await tester.tap(find.text('加10 個單字(1)'));
     await tester.pumpAndSettle();
     expect(find.text('日→中單字(10)'), findsOneWidget);
 
@@ -224,7 +224,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final reset = find.text('重新整理 (單字)');
-    final add = find.text('加10 個單字');
+    final add = find.text('加10 個單字(7)');
     expect(reset, findsOneWidget);
     expect(tester.getTopLeft(reset).dy, lessThan(tester.getTopLeft(add).dy));
     expect(
@@ -238,7 +238,7 @@ void main() {
     expect(wordStudy.nextIndex, 0);
     expect(wordStudy.indexes, isEmpty);
 
-    await tester.tap(add);
+    await tester.tap(find.text('加10 個單字(1)'));
     await tester.pumpAndSettle();
     expect(find.text('日→中單字(10)'), findsOneWidget);
     expect(wordStudy.indexes.first, 0);
@@ -269,7 +269,7 @@ void main() {
       find.widgetWithText(ElevatedButton, '重新整理(中→日學習)'),
     );
     final addRect = tester.getRect(
-      find.widgetWithText(ElevatedButton, '加10 個單字到中→日學習'),
+      find.widgetWithText(ElevatedButton, '加10 個單字到中→日學習(5)'),
     );
     expect(resetRect.top, closeTo(600 * 0.60, 2));
     expect(resetRect.top, greaterThan(studyRect.bottom));
@@ -485,7 +485,7 @@ void main() {
       isNull,
     );
 
-    final add = find.text('加10 個單字到中→日學習');
+    final add = find.text('加10 個單字到中→日學習(1)');
     await tester.ensureVisible(add);
     await tester.tap(add);
     await tester.pumpAndSettle();
@@ -794,7 +794,7 @@ void main() {
     expect(wordStudy.nextIndex, 5);
     expect(zhJaStudy.indexes, isEmpty);
 
-    await tester.tap(find.text('加10 個單字'));
+    await tester.tap(find.text('加10 個單字(6)'));
     await tester.pumpAndSettle();
     expect(wordStudy.indexes.first, 5);
     expect(wordStudy.indexes, [5, 6, 7, 8, 9, 10, 11, 0, 1, 2]);
@@ -831,11 +831,84 @@ void main() {
     expect(zhJaStudy.nextIndex, 5);
     expect(wordStudy.nextIndex, 0);
 
-    final add = find.text('加10 個單字到中→日學習');
+    final add = find.text('加10 個單字到中→日學習(6)');
     await tester.ensureVisible(add);
     await tester.tap(add);
     await tester.pumpAndSettle();
     expect(zhJaStudy.indexes.first, 5);
     expect(wordStudy.indexes, isEmpty);
+  });
+
+  test('跳過50 moves the next 加10 start ahead by 50', () {
+    wordStudy.indexes = [0, 1];
+    wordStudy.nextIndex = 2;
+    wordStudy.skipAhead(200);
+    expect(wordStudy.indexes, [0, 1]);
+    expect(wordStudy.nextIndex, 52);
+
+    wordStudy.skipAhead(200);
+    expect(wordStudy.nextIndex, 102);
+
+    wordStudy.nextIndex = 160;
+    wordStudy.skipAhead(200);
+    expect(wordStudy.nextIndex, 0);
+
+    wordStudy.nextIndex = 149;
+    wordStudy.skipAhead(200);
+    expect(wordStudy.nextIndex, 199);
+
+    zhJaStudy.skipAhead(200);
+    expect(zhJaStudy.nextIndex, 50);
+    expect(wordStudy.nextIndex, 199);
+  });
+
+  testWidgets('加10 shows the next word number and 跳過50 jumps that start', (
+    tester,
+  ) async {
+    words
+      ..clear()
+      ..addAll(List.generate(200, sample));
+
+    await tester.pumpWidget(const MaterialApp(home: LearningPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('加10 個單字(1)'), findsOneWidget);
+    expect(find.text('加10 個單字到中→日學習(1)'), findsOneWidget);
+    final addRect = tester.getRect(
+      find.widgetWithText(ElevatedButton, '加10 個單字(1)'),
+    );
+    final zhAddRect = tester.getRect(
+      find.widgetWithText(ElevatedButton, '加10 個單字到中→日學習(1)'),
+    );
+    final skips = find.widgetWithText(ElevatedButton, '跳過50');
+    expect(skips, findsNWidgets(2));
+    final firstSkip = tester.getRect(skips.at(0));
+    final secondSkip = tester.getRect(skips.at(1));
+    expect(firstSkip.left, greaterThan(addRect.right));
+    expect(firstSkip.center.dy, closeTo(addRect.center.dy, 4));
+    expect(firstSkip.height, 36);
+    expect(secondSkip.left, greaterThan(zhAddRect.right));
+    expect(secondSkip.center.dy, closeTo(zhAddRect.center.dy, 4));
+
+    await tester.tap(skips.at(0));
+    await tester.pumpAndSettle();
+    expect(find.text('加10 個單字(51)'), findsOneWidget);
+    expect(find.text('加10 個單字到中→日學習(1)'), findsOneWidget);
+    expect(wordStudy.nextIndex, 50);
+    expect(wordStudy.indexes, isEmpty);
+
+    await tester.tap(find.text('加10 個單字(51)'));
+    await tester.pumpAndSettle();
+    expect(wordStudy.indexes, List.generate(10, (index) => 50 + index));
+    expect(find.text('加10 個單字(61)'), findsOneWidget);
+    expect(find.text('日→中單字(10)'), findsOneWidget);
+
+    await tester.ensureVisible(skips.at(1));
+    await tester.tap(skips.at(1));
+    await tester.pumpAndSettle();
+    expect(find.text('加10 個單字到中→日學習(51)'), findsOneWidget);
+    expect(zhJaStudy.nextIndex, 50);
+    expect(zhJaStudy.indexes, isEmpty);
+    expect(wordStudy.nextIndex, 60);
   });
 }

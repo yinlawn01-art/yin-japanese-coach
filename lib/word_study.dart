@@ -65,6 +65,15 @@ class WordStudy {
     return added;
   }
 
+  /// Moves the next 加10 start ahead by [count] words.
+  /// Past the last word, the next batch starts again at word 1.
+  void skipAhead(int totalWords, {int count = 50}) {
+    if (totalWords <= 0 || count <= 0) return;
+    retainAvailable(totalWords);
+    final next = nextIndex + count;
+    nextIndex = next >= totalWords ? 0 : next;
+  }
+
   /// Sends the next 加10 個單字 back to flashcard 1.
   /// The current 單字學習 list is cleared so those early cards are not skipped.
   void restartFromBeginning() {

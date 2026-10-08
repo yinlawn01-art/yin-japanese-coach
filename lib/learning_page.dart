@@ -54,6 +54,12 @@ class _LearningPageState extends State<LearningPage> {
     await wordStudy.save();
   }
 
+  Future<void> _skipFifty() async {
+    wordStudy.skipAhead(words.length);
+    if (mounted) setState(() {});
+    await wordStudy.save();
+  }
+
   Future<void> _restartFromBeginning() async {
     wordStudy.restartFromBeginning();
     if (mounted) setState(() {});
@@ -82,6 +88,65 @@ class _LearningPageState extends State<LearningPage> {
     zhJaStudy.addBatch(words.length);
     if (mounted) setState(() {});
     await zhJaStudy.save();
+  }
+
+  Future<void> _skipFiftyZhJa() async {
+    zhJaStudy.skipAhead(words.length);
+    if (mounted) setState(() {});
+    await zhJaStudy.save();
+  }
+
+  Widget _skipFiftyButton(VoidCallback? onPressed) {
+    return SizedBox(
+      height: addWordsButtonSize.height,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(72, addWordsButtonSize.height),
+          maximumSize: Size(120, addWordsButtonSize.height),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          textStyle: bundledText.copyWith(fontSize: 16, height: 1.1),
+        ),
+        onPressed: onPressed,
+        child: const Text('跳過50'),
+      ),
+    );
+  }
+
+  Widget _addWordsControl({
+    required String label,
+    required VoidCallback? onAdd,
+    required VoidCallback? onSkip,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox.fromSize(
+          size: addWordsButtonSize,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              fixedSize: addWordsButtonSize,
+              minimumSize: addWordsButtonSize,
+              maximumSize: addWordsButtonSize,
+              padding: EdgeInsets.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              textStyle: bundledText.copyWith(fontSize: 16.5, height: 1.1),
+            ),
+            onPressed: onAdd,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                style: const TextStyle(fontSize: 16.5, height: 1.1),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        _skipFiftyButton(onSkip),
+      ],
+    );
   }
 
   Future<void> _openZhJa() async {
@@ -151,26 +216,10 @@ class _LearningPageState extends State<LearningPage> {
                     alignment: Alignment.topCenter,
                     child: Column(
                       children: [
-                        SizedBox.fromSize(
-                          size: addWordsButtonSize,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: addWordsButtonSize,
-                              minimumSize: addWordsButtonSize,
-                              maximumSize: addWordsButtonSize,
-                              padding: EdgeInsets.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              textStyle: bundledText.copyWith(
-                                fontSize: 16.5,
-                                height: 1.1,
-                              ),
-                            ),
-                            onPressed: _ready ? _addTen : null,
-                            child: const Text(
-                              '加10 個單字',
-                              style: TextStyle(fontSize: 16.5, height: 1.1),
-                            ),
-                          ),
+                        _addWordsControl(
+                          label: '加10 個單字(${wordStudy.nextIndex + 1})',
+                          onAdd: _ready ? _addTen : null,
+                          onSkip: _ready ? _skipFifty : null,
                         ),
                         const SizedBox(height: 28),
                         SizedBox.fromSize(
@@ -227,29 +276,11 @@ class _LearningPageState extends State<LearningPage> {
                           ),
                         ),
                         const SizedBox(height: 28),
-                        SizedBox.fromSize(
-                          size: addWordsButtonSize,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: addWordsButtonSize,
-                              minimumSize: addWordsButtonSize,
-                              maximumSize: addWordsButtonSize,
-                              padding: EdgeInsets.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              textStyle: bundledText.copyWith(
-                                fontSize: 16.5,
-                                height: 1.1,
-                              ),
-                            ),
-                            onPressed: _ready ? _addTenZhJa : null,
-                            child: const FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                '加10 個單字到中→日學習',
-                                style: TextStyle(fontSize: 16.5, height: 1.1),
-                              ),
-                            ),
-                          ),
+                        _addWordsControl(
+                          label:
+                              '加10 個單字到中→日學習(${zhJaStudy.nextIndex + 1})',
+                          onAdd: _ready ? _addTenZhJa : null,
+                          onSkip: _ready ? _skipFiftyZhJa : null,
                         ),
                         const SizedBox(height: 28),
                         SizedBox.fromSize(
