@@ -102,7 +102,9 @@ void main() {
     expect(tester.widget<Text>(find.byKey(const Key('ja-1'))).data, '先生');
   });
 
-  testWidgets('日文 and 中文 save the word in 日→中 and turn yellow', (tester) async {
+  testWidgets('日文 saves 日→中 and 中文 saves 中→日, each bold and yellow', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: VocabTablePage(title: '名詞', deck: wordsOfType('名詞')),
@@ -113,7 +115,33 @@ void main() {
     await tester.tap(find.byKey(const Key('ja-0')));
     await tester.pump();
     expect(words[0].isFavorite, isTrue);
+    expect(words[0].isZhJaFavorite, isFalse);
     expect(words[1].isFavorite, isFalse);
+    expect(
+      tester.widget<Text>(find.byKey(const Key('ja-0'))).style?.color,
+      vocabTableSaved,
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('ja-0'))).style?.fontWeight,
+      FontWeight.bold,
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('zh-0'))).style?.color,
+      isNot(vocabTableSaved),
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('zh-0'))).style?.fontWeight,
+      FontWeight.normal,
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('kana-0'))).style?.color,
+      isNot(vocabTableSaved),
+    );
+
+    await tester.tap(find.byKey(const Key('zh-0')));
+    await tester.pump();
+    expect(words[0].isFavorite, isTrue);
+    expect(words[0].isZhJaFavorite, isTrue);
     expect(
       tester.widget<Text>(find.byKey(const Key('ja-0'))).style?.color,
       vocabTableSaved,
@@ -123,36 +151,54 @@ void main() {
       vocabTableSaved,
     );
     expect(
-      tester.widget<Text>(find.byKey(const Key('kana-0'))).style?.color,
-      isNot(vocabTableSaved),
+      tester.widget<Text>(find.byKey(const Key('zh-0'))).style?.fontWeight,
+      FontWeight.bold,
     );
 
-    await tester.tap(find.byKey(const Key('zh-0')));
+    await tester.tap(find.byKey(const Key('ja-0')));
     await tester.pump();
     expect(words[0].isFavorite, isFalse);
+    expect(words[0].isZhJaFavorite, isTrue);
     expect(
       tester.widget<Text>(find.byKey(const Key('ja-0'))).style?.color,
       isNot(vocabTableSaved),
     );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('ja-0'))).style?.fontWeight,
+      FontWeight.normal,
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('zh-0'))).style?.color,
+      vocabTableSaved,
+    );
 
     await tester.tap(find.byKey(const Key('zh-1')));
     await tester.pump();
-    expect(words[1].isFavorite, isTrue);
-    expect(words[1].isZhJaFavorite, isFalse);
+    expect(words[1].isFavorite, isFalse);
+    expect(words[1].isZhJaFavorite, isTrue);
     expect(
       tester.widget<Text>(find.byKey(const Key('zh-1'))).style?.color,
       vocabTableSaved,
     );
     expect(
+      tester.widget<Text>(find.byKey(const Key('zh-1'))).style?.fontWeight,
+      FontWeight.bold,
+    );
+    expect(
       tester.widget<Text>(find.byKey(const Key('ja-1'))).style?.color,
-      vocabTableSaved,
+      isNot(vocabTableSaved),
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('ja-1'))).style?.fontWeight,
+      FontWeight.normal,
     );
 
     await tester.tap(find.byKey(const Key('kana-1')));
     await tester.pump();
     await tester.tap(find.byKey(const Key('romaji-1')));
     await tester.pump();
-    expect(words[1].isFavorite, isTrue);
+    expect(words[1].isFavorite, isFalse);
+    expect(words[1].isZhJaFavorite, isTrue);
     expect(tester.takeException(), isNull);
   });
 

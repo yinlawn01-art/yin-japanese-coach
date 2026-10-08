@@ -7,7 +7,7 @@ import 'main.dart';
 import 'romaji_speech.dart';
 import 'soft_speech.dart';
 
-/// Yellow used when a table word is in 日→中 收藏單字.
+/// Yellow used when a table cell is saved in 收藏單字.
 const Color vocabTableSaved = Color(0xFFE6B000);
 
 const List<String> vocabTableHeaders = ['No.', '日文', '羅馬拚音', '假名', '中文'];
@@ -101,11 +101,18 @@ class _VocabTablePageState extends State<VocabTablePage> {
     super.dispose();
   }
 
-  Future<void> _toggleSaved(Vocabulary word) async {
+  Future<void> _toggleSaved(
+    Vocabulary word, {
+    required bool chineseToJapanese,
+  }) async {
     setState(() {
-      word.isFavorite = !word.isFavorite;
+      if (chineseToJapanese) {
+        word.isZhJaFavorite = !word.isZhJaFavorite;
+      } else {
+        word.isFavorite = !word.isFavorite;
+      }
     });
-    await saveDirectionFavorites(false);
+    await saveDirectionFavorites(chineseToJapanese);
   }
 
   Future<void> _speak(Vocabulary word) async {
@@ -148,7 +155,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
     required List<String> values,
     required List<VoidCallback?> taps,
     required List<Color> colors,
-    FontWeight weight = FontWeight.normal,
+    required List<FontWeight> weights,
     List<Key?> keys = const [],
   }) {
     return Row(
@@ -161,7 +168,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
             key: i < keys.length ? keys[i] : null,
             onTap: taps[i],
             color: colors[i],
-            weight: weight,
+            weight: weights[i],
           ),
       ],
     );
@@ -190,7 +197,13 @@ class _VocabTablePageState extends State<VocabTablePage> {
                   lookInkBlue,
                   lookInkBlue,
                 ],
-                weight: FontWeight.w600,
+                weights: const [
+                  FontWeight.w600,
+                  FontWeight.w600,
+                  FontWeight.w600,
+                  FontWeight.w600,
+                  FontWeight.w600,
+                ],
               ),
             ),
           ),
@@ -209,7 +222,8 @@ class _VocabTablePageState extends State<VocabTablePage> {
                 ),
                 itemBuilder: (context, index) {
                   final word = widget.deck[index];
-                  final saved = word.isFavorite ? vocabTableSaved : lookInk;
+                  final jaSaved = word.isFavorite;
+                  final zhSaved = word.isZhJaFavorite;
                   return _row(
                     values: [
                       '${index + 1}',
@@ -220,17 +234,24 @@ class _VocabTablePageState extends State<VocabTablePage> {
                     ],
                     taps: [
                       null,
-                      () => _toggleSaved(word),
+                      () => _toggleSaved(word, chineseToJapanese: false),
                       () => _speak(word),
                       () => _speak(word),
-                      () => _toggleSaved(word),
+                      () => _toggleSaved(word, chineseToJapanese: true),
                     ],
                     colors: [
                       lookCount,
-                      saved,
+                      jaSaved ? vocabTableSaved : lookInk,
                       lookRomaji,
                       lookReading,
-                      saved,
+                      zhSaved ? vocabTableSaved : lookInk,
+                    ],
+                    weights: [
+                      FontWeight.normal,
+                      jaSaved ? FontWeight.bold : FontWeight.normal,
+                      FontWeight.normal,
+                      FontWeight.normal,
+                      zhSaved ? FontWeight.bold : FontWeight.normal,
                     ],
                     keys: [
                       Key('no-$index'),
