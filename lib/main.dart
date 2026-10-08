@@ -407,9 +407,13 @@ class FlashcardMenuPage extends StatelessWidget {
     String title,
     List<Vocabulary> deck, {
     bool shuffle = false,
+    required double titleSize,
+    required double labelSize,
+    required double titleGap,
+    required double buttonGap,
   }) {
     List<Vocabulary> openDeck() => shuffle ? allWordsShuffled() : deck;
-    final labelStyle = bundledText.copyWith(fontSize: 28, height: 1.1);
+    final labelStyle = bundledText.copyWith(fontSize: labelSize, height: 1);
 
     return Column(
       key: Key(title),
@@ -418,19 +422,19 @@ class FlashcardMenuPage extends StatelessWidget {
         Text(
           '$title(${deck.length})',
           style: bundledText.copyWith(
-            fontSize: 22,
+            fontSize: titleSize,
             fontWeight: FontWeight.w600,
             color: lookInk,
-            height: 1.2,
+            height: 1,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: titleGap),
         ElevatedButton(
           style: buttonStyle,
           onPressed: deck.isEmpty ? null : () => _open(context, openDeck()),
           child: Text('日→中單字', style: labelStyle),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: buttonGap),
         ElevatedButton(
           style: buttonStyle,
           onPressed: deck.isEmpty
@@ -448,19 +452,19 @@ class FlashcardMenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonStyle = ElevatedButton.styleFrom(
-      fixedSize: _studyButtonSize,
-      minimumSize: _studyButtonSize,
-      maximumSize: _studyButtonSize,
-      padding: EdgeInsets.zero,
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      textStyle: bundledText.copyWith(fontSize: 28),
-    );
-
     final nouns = wordsOfType('名詞');
     final verbs = wordsOfType('動詞');
     final adjectives = wordsOfType('形容詞');
     final adverbs = wordsOfType('副詞');
+    final others = wordsOfType('其他');
+    final sections = <(String, List<Vocabulary>, bool)>[
+      ('名詞', nouns, false),
+      ('動詞', verbs, false),
+      ('形容詞', adjectives, false),
+      ('副詞', adverbs, false),
+      ('其他', others, false),
+      ('全部', words, true),
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -468,33 +472,56 @@ class FlashcardMenuPage extends StatelessWidget {
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _directionPair(context, buttonStyle, '名詞', nouns),
-                      const SizedBox(height: 24),
-                      _directionPair(context, buttonStyle, '動詞', verbs),
-                      const SizedBox(height: 24),
-                      _directionPair(context, buttonStyle, '形容詞', adjectives),
-                      const SizedBox(height: 24),
-                      _directionPair(context, buttonStyle, '副詞', adverbs),
-                      const SizedBox(height: 24),
-                      _directionPair(
-                        context,
-                        buttonStyle,
-                        '全部',
-                        words,
-                        shuffle: true,
-                      ),
-                    ],
-                  ),
-                ),
+          const padH = 12.0;
+          const padV = 4.0;
+          const titleSize = 14.0;
+          const titleGap = 2.0;
+          const buttonGap = 3.0;
+          const sectionGap = 6.0;
+          final bottomInset = MediaQuery.paddingOf(context).bottom;
+          final chrome = padV * 2 +
+              bottomInset +
+              sections.length * (titleSize + titleGap + buttonGap) +
+              (sections.length - 1) * sectionGap;
+          final room = constraints.maxHeight - chrome;
+          var buttonHeight = room / (sections.length * 2);
+          if (buttonHeight > 52) buttonHeight = 52;
+          if (buttonHeight < 1) buttonHeight = 1;
+          final labelSize = buttonHeight * 0.42 > 22
+              ? 22.0
+              : buttonHeight * 0.42;
+          final maxWidth = constraints.maxWidth - padH * 2;
+          final buttonSize = Size(maxWidth > 336 ? 336 : maxWidth, buttonHeight);
+          final buttonStyle = ElevatedButton.styleFrom(
+            fixedSize: buttonSize,
+            minimumSize: buttonSize,
+            maximumSize: buttonSize,
+            padding: EdgeInsets.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            textStyle: bundledText.copyWith(fontSize: labelSize, height: 1),
+          );
+
+          return Padding(
+            padding: EdgeInsets.fromLTRB(padH, padV, padH, padV + bottomInset),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var i = 0; i < sections.length; i++) ...[
+                    if (i > 0) const SizedBox(height: sectionGap),
+                    _directionPair(
+                      context,
+                      buttonStyle,
+                      sections[i].$1,
+                      sections[i].$2,
+                      shuffle: sections[i].$3,
+                      titleSize: titleSize,
+                      labelSize: labelSize,
+                      titleGap: titleGap,
+                      buttonGap: buttonGap,
+                    ),
+                  ],
+                ],
               ),
             ),
           );

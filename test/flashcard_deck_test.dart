@@ -58,14 +58,52 @@ void main() {
     expect(find.text('動詞(2)'), findsOneWidget);
     expect(find.text('形容詞(1)'), findsOneWidget);
     expect(find.text('副詞(0)'), findsOneWidget);
+    expect(find.text('其他(0)'), findsOneWidget);
     expect(find.text('全部(5)'), findsOneWidget);
-    expect(find.text('日→中單字'), findsNWidgets(5));
-    expect(find.text('中→日單字'), findsNWidgets(5));
+    expect(
+      tester.getTopLeft(find.text('其他(0)')).dy,
+      greaterThan(tester.getTopLeft(find.text('副詞(0)')).dy),
+    );
+    expect(
+      tester.getTopLeft(find.text('全部(5)')).dy,
+      greaterThan(tester.getTopLeft(find.text('其他(0)')).dy),
+    );
+    expect(find.text('日→中單字'), findsNWidgets(6));
+    expect(find.text('中→日單字'), findsNWidgets(6));
 
     await tester.tap(_directionButton('名詞', '日→中單字'));
     await tester.pumpAndSettle();
     expect(find.text('学校'), findsOneWidget);
     expect(find.text('会う'), findsNothing);
+  });
+
+  testWidgets('單字 sections fit on one phone page', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPadding);
+    addTearDown(tester.view.resetViewPadding);
+
+    Future<void> expectFit(Size size) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      tester.view.padding = const FakeViewPadding(top: 47, bottom: 34);
+      tester.view.viewPadding = const FakeViewPadding(top: 47, bottom: 34);
+      await tester.pumpWidget(const MaterialApp(home: FlashcardMenuPage()));
+      await tester.pumpAndSettle();
+      final first = tester.getTopLeft(find.text('名詞(2)')).dy;
+      final last = tester.getBottomLeft(
+        _directionButton('全部', '中→日單字'),
+      ).dy;
+      expect(first, greaterThanOrEqualTo(47));
+      expect(last, lessThanOrEqualTo(size.height - 34));
+      expect(find.text('其他(0)'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    }
+
+    await expectFit(const Size(390, 844));
+    await expectFit(const Size(375, 667));
+    await expectFit(const Size(430, 932));
   });
 
   testWidgets('日→中單字 keeps the Japanese word and the current answer', (
