@@ -67,7 +67,7 @@ void main() {
             .where((kanji) => !vocabKanji.contains(kanji)),
       );
     }
-    expect(outside, {'勉', '強', '料', '理', '掃', '除'});
+    expect(outside, isEmpty);
   });
 
   testWidgets('例句 buttons fit an iPhone 15 Pro Max', (tester) async {
