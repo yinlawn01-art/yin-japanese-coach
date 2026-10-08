@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'web_voices.dart';
 
 /// One step on the speech-engine volume scale. The engine accepts 0.0 to 1.0.
 const double speechVolumeNotch = 0.1;
@@ -69,6 +70,8 @@ Future<Map<String, String>?> _preferredVoice(
 
 Future<List<Map<String, String>>> _loadVoices(FlutterTts tts) async {
   for (var attempt = 0; attempt < 4; attempt++) {
+    final browserVoices = webVoices();
+    if (browserVoices.isNotEmpty) return browserVoices;
     final raw = await tts.getVoices;
     if (raw is List && raw.isNotEmpty) {
       final voices = <Map<String, String>>[];
@@ -98,6 +101,8 @@ int scoreVoice(Map<String, String> voice, String language) {
   final gender = (voice['gender'] ?? '').toLowerCase();
   var score = 0;
   if (locale == language) score += 20;
+  // A voice stored on the device keeps working with no network.
+  if (voice['local'] == 'true') score += 1000;
 
   final male = gender == 'male' || _nameIsMale(name, language);
   final female = gender == 'female' || _nameIsFemale(name, language);

@@ -44,6 +44,22 @@ void main() {
     expect(codedFemale, greaterThan(codedMale));
   });
 
+  test('an on-device voice outranks a network voice', () {
+    final onDevice = scoreVoice({
+      'name': 'Kyoko',
+      'locale': 'ja-JP',
+      'local': 'true',
+    }, 'ja-jp');
+    final network = scoreVoice({
+      'name': 'Google 日本語',
+      'locale': 'ja-JP',
+      'gender': 'female',
+      'local': 'false',
+    }, 'ja-jp');
+
+    expect(onDevice, greaterThan(network));
+  });
+
   test('Chinese male voice names outrank female ones', () {
     final female = scoreVoice({'name': 'Mei-Jia', 'locale': 'zh-TW'}, 'zh-tw');
     final male = scoreVoice({
