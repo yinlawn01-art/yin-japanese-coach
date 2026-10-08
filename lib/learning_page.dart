@@ -12,8 +12,14 @@ import 'soft_speech.dart';
 import 'vocabulary_data.dart';
 import 'word_study.dart';
 
-const Size addWordsButtonSize = Size(288, 36);
-const Size studyQueueButtonSize = Size(288, 144);
+const double studySkipWidth = 84;
+const double studySkipGap = 12;
+const double studyAddWidth = 288;
+const double studyControlHeight = 36;
+const double studyRowWidth = studyAddWidth + studySkipGap + studySkipWidth;
+const Size addWordsButtonSize = Size(studyAddWidth, studyControlHeight);
+const Size studyResetButtonSize = Size(studyRowWidth, studyControlHeight);
+const Size studyQueueButtonSize = Size(studyRowWidth, 144);
 
 const Size _studyButtonSize = Size(336, 64);
 const double _answerSlotHeight = 210;
@@ -97,13 +103,15 @@ class _LearningPageState extends State<LearningPage> {
   }
 
   Widget _skipFiftyButton(VoidCallback? onPressed) {
-    return SizedBox(
-      height: addWordsButtonSize.height,
+    const size = Size(studySkipWidth, studyControlHeight);
+    return SizedBox.fromSize(
+      size: size,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(72, addWordsButtonSize.height),
-          maximumSize: Size(120, addWordsButtonSize.height),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          fixedSize: size,
+          minimumSize: size,
+          maximumSize: size,
+          padding: EdgeInsets.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           textStyle: bundledText.copyWith(fontSize: 16, height: 1.1),
         ),
@@ -143,7 +151,7 @@ class _LearningPageState extends State<LearningPage> {
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: studySkipGap),
         _skipFiftyButton(onSkip),
       ],
     );
@@ -170,12 +178,12 @@ class _LearningPageState extends State<LearningPage> {
     const squareShape = lookStudyTileShape;
 
     final resetButton = SizedBox.fromSize(
-      size: addWordsButtonSize,
+      size: studyResetButtonSize,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          fixedSize: addWordsButtonSize,
-          minimumSize: addWordsButtonSize,
-          maximumSize: addWordsButtonSize,
+          fixedSize: studyResetButtonSize,
+          minimumSize: studyResetButtonSize,
+          maximumSize: studyResetButtonSize,
           padding: EdgeInsets.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           textStyle: bundledText.copyWith(fontSize: 16.5, height: 1.1),
@@ -252,12 +260,12 @@ class _LearningPageState extends State<LearningPage> {
                         ),
                         SizedBox(height: zhSectionGap),
                         SizedBox.fromSize(
-                          size: addWordsButtonSize,
+                          size: studyResetButtonSize,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              fixedSize: addWordsButtonSize,
-                              minimumSize: addWordsButtonSize,
-                              maximumSize: addWordsButtonSize,
+                              fixedSize: studyResetButtonSize,
+                              minimumSize: studyResetButtonSize,
+                              maximumSize: studyResetButtonSize,
                               padding: EdgeInsets.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               textStyle: bundledText.copyWith(

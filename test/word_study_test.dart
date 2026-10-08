@@ -133,7 +133,7 @@ void main() {
       find.widgetWithText(ElevatedButton, '日→中單字(0)'),
     );
     expect(addSize, const Size(288, 36));
-    expect(studySize, const Size(288, 144));
+    expect(studySize, studyQueueButtonSize);
     expect(tester.widget<Text>(find.text('加10 個單字(1)')).style?.fontSize, 16.5);
     expect(tester.widget<Text>(find.text('日→中單字(0)')).style?.fontSize, 52);
     expect(
@@ -229,7 +229,7 @@ void main() {
     expect(tester.getTopLeft(reset).dy, lessThan(tester.getTopLeft(add).dy));
     expect(
       tester.getSize(find.widgetWithText(ElevatedButton, '重新整理 (單字)')),
-      addWordsButtonSize,
+      studyResetButtonSize,
     );
 
     await tester.tap(reset);
@@ -274,7 +274,7 @@ void main() {
     expect(resetRect.top, closeTo(600 * 0.60, 2));
     expect(resetRect.top, greaterThan(studyRect.bottom));
     expect(resetRect.top, lessThan(addRect.top));
-    expect(resetRect.size, addWordsButtonSize);
+    expect(resetRect.size, studyResetButtonSize);
     expect(
       tester.getSize(find.widgetWithText(ElevatedButton, '中→日單字(2)')).height,
       144,
@@ -886,9 +886,34 @@ void main() {
     final secondSkip = tester.getRect(skips.at(1));
     expect(firstSkip.left, greaterThan(addRect.right));
     expect(firstSkip.center.dy, closeTo(addRect.center.dy, 4));
+    expect(firstSkip.width, studySkipWidth);
     expect(firstSkip.height, 36);
-    expect(secondSkip.left, greaterThan(zhAddRect.right));
+    expect(secondSkip.left, closeTo(firstSkip.left, 0.5));
+    expect(secondSkip.right, closeTo(firstSkip.right, 0.5));
     expect(secondSkip.center.dy, closeTo(zhAddRect.center.dy, 4));
+
+    final resetRect = tester.getRect(
+      find.widgetWithText(ElevatedButton, '重新整理 (單字)'),
+    );
+    final queueRect = tester.getRect(
+      find.widgetWithText(ElevatedButton, '日→中單字(0)'),
+    );
+    final zhResetRect = tester.getRect(
+      find.widgetWithText(ElevatedButton, '重新整理(中→日學習)'),
+    );
+    final zhQueueRect = tester.getRect(
+      find.widgetWithText(ElevatedButton, '中→日單字(0)'),
+    );
+    expect(resetRect.left, closeTo(addRect.left, 0.5));
+    expect(resetRect.right, closeTo(firstSkip.right, 0.5));
+    expect(queueRect.left, closeTo(addRect.left, 0.5));
+    expect(queueRect.right, closeTo(firstSkip.right, 0.5));
+    expect(zhAddRect.left, closeTo(addRect.left, 0.5));
+    expect(zhAddRect.right, closeTo(addRect.right, 0.5));
+    expect(zhResetRect.left, closeTo(addRect.left, 0.5));
+    expect(zhResetRect.right, closeTo(firstSkip.right, 0.5));
+    expect(zhQueueRect.left, closeTo(addRect.left, 0.5));
+    expect(zhQueueRect.right, closeTo(firstSkip.right, 0.5));
 
     await tester.tap(skips.at(0));
     await tester.pumpAndSettle();
