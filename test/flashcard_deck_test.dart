@@ -548,4 +548,82 @@ void main() {
     await tester.tap(find.text('Stop'));
     await tester.pump(const Duration(seconds: 8));
   });
+
+  testWidgets('跳過50 jumps 50 words and wraps to the first', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    Vocabulary school() {
+      return Vocabulary(
+        kanji: '学校',
+        hiragana: 'がっこう',
+        romaji: 'gakkou',
+        meaning: '學校',
+        wordType: '🔵 名詞',
+      );
+    }
+
+    void expectSkipBeside(String count) {
+      final countRect = tester.getRect(find.text(count).hitTestable());
+      final buttonRect = tester.getRect(
+        find.widgetWithText(ElevatedButton, '跳過50').hitTestable(),
+      );
+      expect(buttonRect.left, greaterThan(countRect.right));
+      expect(buttonRect.center.dy, closeTo(countRect.center.dy, 12));
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(home: FlashcardPage(deck: List.generate(60, (_) => school()))),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Word 1 / 60'), findsOneWidget);
+    expectSkipBeside('Word 1 / 60');
+
+    await tester.tap(find.widgetWithText(ElevatedButton, '跳過50'));
+    await tester.pump();
+    expect(find.text('Word 51 / 60'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(ElevatedButton, '跳過50'));
+    await tester.pump();
+    expect(find.text('Word 1 / 60'), findsOneWidget);
+
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    expect(find.text('繼續'), findsOneWidget);
+    expectSkipBeside('Word 1 / 60');
+    await tester.tap(find.widgetWithText(ElevatedButton, '跳過50').hitTestable());
+    await tester.pump();
+    expect(find.text('Word 51 / 60'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
+    expect(find.text('繼續'), findsNothing);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        key: const ValueKey('exact-skip'),
+        home: FlashcardPage(deck: List.generate(51, (_) => school())),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ElevatedButton, '跳過50'));
+    await tester.pump();
+    expect(find.text('Word 51 / 51'), findsOneWidget);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        key: const ValueKey('zh-skip'),
+        home: FlashcardPage(
+          deck: List.generate(3, (_) => school()),
+          chineseToJapanese: true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('(1 of 3)'), findsOneWidget);
+    expectSkipBeside('(1 of 3)');
+    await tester.tap(find.widgetWithText(ElevatedButton, '跳過50'));
+    await tester.pump();
+    expect(find.text('(1 of 3)'), findsOneWidget);
+    expect(find.text('答案'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
 }

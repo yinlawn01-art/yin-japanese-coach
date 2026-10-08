@@ -528,6 +528,7 @@ Future<void> saveFavorites() async {
 
   static const Size _actionButtonSize = Size(168, 48);
   static const double _answerSlotHeight = 210;
+  static const double _skipButtonHeight = 36;
 
   Future<void> speakJapanese(String romaji) async {
     await flutterTts.stop();
@@ -550,6 +551,17 @@ Future<void> saveFavorites() async {
     setState(() {
       if (widget.deck.isEmpty) return;
       currentIndex = (currentIndex + 1) % widget.deck.length;
+      showAnswer = false;
+      showExample = false;
+    });
+  }
+
+  void skipFifty() {
+    flutterTts.stop();
+    setState(() {
+      if (widget.deck.isEmpty) return;
+      final next = currentIndex + 50;
+      currentIndex = next >= widget.deck.length ? 0 : next;
       showAnswer = false;
       showExample = false;
     });
@@ -679,7 +691,15 @@ Future<void> saveFavorites() async {
     double iconHeight = 56,
   }) {
     const gap = 40.0;
-    final contentHeight = _textHeight(countText, countStyle, bodyWidth - 48, textScaler) +
+    final countHeight = _textHeight(
+      countText,
+      countStyle,
+      bodyWidth - 48,
+      textScaler,
+    );
+    final countLineHeight =
+        countHeight > _skipButtonHeight ? countHeight : _skipButtonHeight;
+    final contentHeight = countLineHeight +
         gap +
         _textHeight(kanji, kanjiStyle, bodyWidth - 48, textScaler) +
         iconHeight +
@@ -733,15 +753,46 @@ Future<void> saveFavorites() async {
     );
   }
 
-  Widget _frontWord(Vocabulary word) {
-    return Column(
+  Widget _skipFiftyButton() {
+    return SizedBox(
+      height: _skipButtonHeight,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(72, _skipButtonHeight),
+          maximumSize: const Size(120, _skipButtonHeight),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        onPressed: skipFifty,
+        child: Text(
+          '跳過50',
+          style: bundledText.copyWith(fontSize: 16, height: 1.1),
+        ),
+      ),
+    );
+  }
+
+  Widget _countLine(TextStyle style) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           _countText,
           textAlign: TextAlign.center,
-          style: lookCountPlain,
+          style: style,
         ),
+        const SizedBox(width: 12),
+        _skipFiftyButton(),
+      ],
+    );
+  }
+
+  Widget _frontWord(Vocabulary word) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _countLine(lookCountPlain),
         const SizedBox(height: 40),
         Text(
           _prompt(word),
@@ -761,11 +812,7 @@ Future<void> saveFavorites() async {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          _countText,
-          textAlign: TextAlign.center,
-          style: lookCountStyle,
-        ),
+        _countLine(lookCountStyle),
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
@@ -814,11 +861,7 @@ Future<void> saveFavorites() async {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          _countText,
-          textAlign: TextAlign.center,
-          style: lookCountStyle,
-        ),
+        _countLine(lookCountStyle),
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
