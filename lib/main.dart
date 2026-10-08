@@ -69,6 +69,11 @@ await loadJsonFile(
   'assets/n5_adverbs.json',
   '◆ 副詞',
 );
+
+await loadJsonFile(
+  'assets/n5_other.json',
+  '其他',
+);
 }
 
 
@@ -124,12 +129,13 @@ Vocabulary({
     Map<String, dynamic> json,
     String wordType,
   ) {
+    final kind = json['kind'];
     return Vocabulary(
       kanji: json['kanji'],
       hiragana: json['hiragana'],
       romaji: json['romaji'],
       meaning: json['meaning'],
-      wordType: wordType,
+      wordType: kind == null ? wordType : '$wordType・$kind',
     );
   }
 }

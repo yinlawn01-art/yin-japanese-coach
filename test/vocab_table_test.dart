@@ -88,6 +88,11 @@ void main() {
     expect(find.text('動詞(1)'), findsOneWidget);
     expect(find.text('形容詞(1)'), findsOneWidget);
     expect(find.text('副詞(1)'), findsOneWidget);
+    expect(find.text('其他(0)'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('其他(0)')).dy,
+      greaterThan(tester.getTopLeft(find.text('副詞(1)')).dy),
+    );
 
     await tester.tap(find.text('名詞(2)'));
     await tester.pumpAndSettle();
