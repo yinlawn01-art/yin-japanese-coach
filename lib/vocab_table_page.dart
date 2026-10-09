@@ -24,6 +24,7 @@ class VocabTableMenuPage extends StatelessWidget {
       ('動詞', wordsOfType('動詞')),
       ('形容詞', wordsOfType('形容詞')),
       ('副詞', wordsOfType('副詞')),
+      ('其他', wordsOfType('其他')),
     ];
     final buttonStyle = ElevatedButton.styleFrom(
       fixedSize: const Size(336, 64),

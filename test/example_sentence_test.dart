@@ -7,7 +7,7 @@ import 'package:yin_japanese_coach/main.dart';
 
 void main() {
   final words = [
-    for (final name in ['n5_verbs.json', 'n5_nouns.json', 'n5_adjectives.json', 'n5_adverbs.json'])
+    for (final name in ['n5_verbs.json', 'n5_nouns.json', 'n5_adjectives.json', 'n5_adverbs.json', 'n5_other.json'])
       ...json.decode(File('assets/$name').readAsStringSync()) as List<dynamic>,
   ].map((item) => Vocabulary.fromJson(item as Map<String, dynamic>, '')).toList();
 
