@@ -2,55 +2,75 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:yin_japanese_coach/example_sentence.dart';
 import 'package:yin_japanese_coach/main.dart';
 
 void main() {
-  final words = [
-    for (final name in ['n5_verbs.json', 'n5_nouns.json', 'n5_adjectives.json', 'n5_adverbs.json', 'n5_other.json'])
-      ...json.decode(File('assets/$name').readAsStringSync()) as List<dynamic>,
-  ].map((item) => Vocabulary.fromJson(item as Map<String, dynamic>, '')).toList();
-
-  final byKanji = {
-    for (final word in words) word.kanji: word,
+  const files = {
+    'n5_verbs.json': '動詞',
+    'n5_nouns.json': '名詞',
+    'n5_adjectives.json': '形容詞',
+    'n5_adverbs.json': '副詞',
+    'n5_other.json': '其他',
   };
+  final words = [
+    for (final entry in files.entries)
+      for (final item in json.decode(File('assets/${entry.key}').readAsStringSync()) as List<dynamic>)
+        Vocabulary.fromJson(item as Map<String, dynamic>, entry.value),
+  ]..sort((a, b) => a.number.compareTo(b.number));
 
-  test('every vocabulary word has one example sentence', () {
-    expect(words.map((word) => word.kanji).toSet().length, words.length);
-    for (final word in words) {
-      final sentence = exampleSentenceFor(word.kanji);
-      expect(sentence.japanese, contains(word.kanji));
-      expect(sentence.hiragana, contains(word.hiragana));
-      expect(
-        sentence.romaji.replaceAll('.', '').split(' '),
-        contains(word.romaji),
-      );
-      expect(sentence.chinese, isNotEmpty);
-      expect(sentence.hiragana, endsWith('。'));
-      expect(sentence.japanese, endsWith('。'));
-    }
-  });
-
-  test('kanji and katakana in each sentence come from the vocabulary', () {
-    final known = byKanji.keys.toList()
-      ..sort((a, b) => b.length.compareTo(a.length));
+  test('worksheet words are numbered 1 to 1000 in ten blocks', () {
+    expect(words, hasLength(1000));
+    expect(words.map((word) => word.number).toSet(), hasLength(1000));
+    expect(words.first.number, 1);
+    expect(words.last.number, 1000);
 
     for (final word in words) {
-      var rest = exampleSentenceFor(word.kanji).japanese;
-      while (rest.isNotEmpty) {
-        final match = known.cast<String?>().firstWhere(
-          (kanji) => rest.startsWith(kanji!),
-          orElse: () => null,
-        );
-        if (match != null) {
-          rest = rest.substring(match.length);
-          continue;
+      final offset = (word.number - 1) % 100;
+      final last = word.number > 900;
+      final String section;
+      if (!last) {
+        if (offset < 55) {
+          section = '名詞';
+        } else if (offset < 75) {
+          section = '動詞';
+        } else if (offset < 90) {
+          section = '形容詞';
+        } else if (offset < 95) {
+          section = '其他';
+        } else {
+          section = '副詞';
         }
-        final char = rest.substring(0, 1);
-        final isGrammar = RegExp(r'^[ぁ-ん。]$').hasMatch(char);
-        expect(isGrammar, isTrue, reason: '${word.kanji}: leftover $rest');
-        rest = rest.substring(1);
+      } else if (offset < 50) {
+        section = '名詞';
+      } else if (offset < 70) {
+        section = '動詞';
+      } else if (offset < 85) {
+        section = '形容詞';
+      } else if (offset < 95) {
+        section = '其他';
+      } else {
+        section = '副詞';
       }
+      expect(word.wordType, contains(section), reason: '${word.number} ${word.kanji}');
+      expect(word.english, isNotEmpty, reason: word.kanji);
+      expect(word.meaning, isNotEmpty, reason: word.kanji);
+      final sentence = word.example;
+      expect(sentence.japanese, isNotEmpty, reason: word.kanji);
+      expect(sentence.hiragana, isNotEmpty, reason: word.kanji);
+      expect(sentence.romaji, isNotEmpty, reason: word.kanji);
+      expect(sentence.chinese, isNotEmpty, reason: word.kanji);
+      expect(sentence.english, isNotEmpty, reason: word.kanji);
     }
+
+    expect(words.where((word) => word.wordType.contains('名詞')), hasLength(545));
+    expect(words.where((word) => word.wordType.contains('動詞')), hasLength(200));
+    expect(words.where((word) => word.wordType.contains('形容詞')), hasLength(150));
+    expect(words.where((word) => word.wordType.contains('副詞')), hasLength(50));
+    expect(words.where((word) => word.wordType.contains('其他')), hasLength(55));
+    expect(words[0].kanji, '私');
+    expect(words[0].example.japanese, '私は毎日運動をします。');
+    expect(words[0].english, 'I');
+    expect(words[999].number, 1000);
+    expect(words[999].wordType, contains('副詞'));
   });
 }

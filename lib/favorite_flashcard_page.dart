@@ -226,7 +226,7 @@ Future<void> _saveFavorites() async {
       .where(
         (w) => widget.chineseToJapanese ? w.isZhJaFavorite : w.isFavorite,
       )
-      .map((w) => w.kanji)
+      .map((w) => w.favoriteKey)
       .toList();
 
   await prefs.setStringList(
@@ -248,22 +248,22 @@ void _toggleRemoveLater() {
 }
 
 Future<void> showCurrentAnswer() async {
-  final romaji = currentWord.romaji;
+  final reading = currentWord.hiragana;
 
   setState(() {
     showAnswer = true;
     dropAfterContinue = false;
   });
 
-  await speakJapanese(romaji);
+  await speakJapanese(reading);
 }
 
 Future<void> openExample() async {
-  final sentence = exampleSentenceFor(currentWord.kanji);
+  final sentence = currentWord.example;
   setState(() {
     showExample = true;
   });
-  await speakJapanese(sentence.romaji);
+  await speakJapanese(sentence.hiragana);
 }
 
 void closeExample() {
@@ -355,7 +355,7 @@ Widget exampleBody(ExampleSentence sentence) {
                 children: [
                   speakableText(
                     text: sentence.japanese,
-                    japanese: sentence.romaji,
+                    japanese: sentence.hiragana,
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -366,13 +366,13 @@ Widget exampleBody(ExampleSentence sentence) {
                   const SizedBox(height: 4),
                   speakableText(
                     text: sentence.romaji,
-                    japanese: sentence.romaji,
+                    japanese: sentence.hiragana,
                     style: lookRomajiStyle,
                   ),
                   const SizedBox(height: 10),
                   speakableText(
                     text: sentence.hiragana,
-                    japanese: sentence.romaji,
+                    japanese: sentence.hiragana,
                     style: const TextStyle(fontSize: 24, color: lookReading),
                   ),
                   const SizedBox(height: 10),
@@ -384,6 +384,18 @@ Widget exampleBody(ExampleSentence sentence) {
                       color: lookMeaning,
                     ),
                   ),
+                  if (sentence.english.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      sentence.english,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        height: 1.2,
+                        color: lookMeaning,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -745,7 +757,7 @@ return Scaffold(
               ),
               textScaler: MediaQuery.textScalerOf(context),
             );
-            final sentence = exampleSentenceFor(currentWord.kanji);
+            final sentence = currentWord.example;
 
             final answerBottom = (constraints.maxHeight - showAnswerTop + 8)
                 .clamp(0.0, constraints.maxHeight);
@@ -894,7 +906,7 @@ children: [
   showAnswer
       ? speakableText(
           text: currentWord.kanji,
-          japanese: currentWord.romaji,
+          japanese: currentWord.hiragana,
           style: lookPrompt,
         )
       : Text(
@@ -915,12 +927,13 @@ children: [
   SizedBox(
     height: _answerSlotHeight,
     child: showAnswer
-        ? Column(
+        ? SingleChildScrollView(
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               speakableText(
                 text: currentWord.hiragana,
-                japanese: currentWord.romaji,
+                japanese: currentWord.hiragana,
                 style: const TextStyle(
                   fontSize: 28,
                   color: lookReading,
@@ -939,13 +952,36 @@ children: [
               const SizedBox(height: 10),
               speakableText(
                 text: currentWord.meaning,
-                japanese: currentWord.romaji,
+                japanese: currentWord.hiragana,
                 style: const TextStyle(
                   fontSize: 28,
                   color: lookMeaning,
                 ),
               ),
+              if (currentWord.english.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text(
+                  currentWord.english,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    height: 1.1,
+                    color: lookMeaning,
+                  ),
+                ),
+              ],
+              if (currentWord.number > 0)
+                Text(
+                  '編號 ${currentWord.number}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    height: 1.1,
+                    color: lookCount,
+                  ),
+                ),
             ],
+            ),
           )
         : const SizedBox.shrink(),
   ),
@@ -959,7 +995,7 @@ Widget _answeredFavorite() {
     children: [
       speakableText(
         text: currentWord.kanji,
-        japanese: currentWord.romaji,
+        japanese: currentWord.hiragana,
           style: const TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,
@@ -987,7 +1023,7 @@ Widget _answeredFavorite() {
       ),
       speakableText(
         text: currentWord.hiragana,
-        japanese: currentWord.romaji,
+        japanese: currentWord.hiragana,
         style: const TextStyle(
           fontSize: 28,
           height: 1.1,
@@ -1008,13 +1044,38 @@ Widget _answeredFavorite() {
       const SizedBox(height: 4),
       speakableText(
         text: currentWord.meaning,
-        japanese: currentWord.romaji,
+        japanese: currentWord.hiragana,
         style: const TextStyle(
           fontSize: 28,
           height: 1.1,
           color: lookMeaning,
         ),
       ),
+      if (currentWord.english.isNotEmpty) ...[
+        const SizedBox(height: 4),
+        Text(
+          currentWord.english,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 22,
+            height: 1.2,
+            color: lookMeaning,
+          ),
+        ),
+      ],
+      if (currentWord.number > 0)
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            '編號 ${currentWord.number}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 18,
+              height: 1.1,
+              color: lookCount,
+            ),
+          ),
+        ),
     ],
   );
 }

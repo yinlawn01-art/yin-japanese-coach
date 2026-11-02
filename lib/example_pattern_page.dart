@@ -146,7 +146,7 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
 
   void _speak() {
     final token = speaker.begin();
-    unawaited(speaker.speakRomaji(sentence.romaji, token));
+    unawaited(speaker.speakRomaji(sentence.hiragana, token));
   }
 
   Widget _spokenLine(String text, TextStyle style) {
@@ -154,17 +154,17 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
   }
 
   Future<void> _showAnswer() async {
-    final romaji = sentence.romaji;
+    final reading = sentence.hiragana;
     setState(() {
       showAnswer = true;
       dropAfterContinue = false;
     });
     final token = speaker.begin();
-    await speaker.speakRomaji(romaji, token);
+    await speaker.speakRomaji(reading, token);
     if (!mounted || token != speaker.generation) return;
     await speaker.pause(const Duration(milliseconds: 500), token);
     if (!mounted || token != speaker.generation) return;
-    await speaker.speakRomaji(romaji, token);
+    await speaker.speakRomaji(reading, token);
   }
 
   void _next() {
@@ -267,6 +267,18 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
           textAlign: TextAlign.center,
           style: lookMeaningStyle,
         ),
+        if (sentence.english.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            sentence.english,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 22,
+              height: 1.2,
+              color: lookMeaning,
+            ),
+          ),
+        ],
         const SizedBox(height: 24),
         kanaActionButton('繼續', _next, kanaLabelSize(context)),
       ],

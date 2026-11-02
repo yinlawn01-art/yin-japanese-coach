@@ -76,13 +76,13 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
   }
 
   Future<void> _showAnswer() async {
-    final romaji = sentence.romaji;
+    final reading = sentence.hiragana;
     setState(() {
       showAnswer = true;
       dropAfterContinue = false;
     });
     final token = speaker.begin();
-    await speaker.speakRomaji(romaji, token);
+    await speaker.speakRomaji(reading, token);
   }
 
   void _next() {
@@ -141,11 +141,11 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
         showChinese = false;
       });
 
-      await speaker.speakRomaji(current.romaji, token);
+      await speaker.speakRomaji(current.hiragana, token);
       if (!_isPlaying(token)) break;
       await speaker.pause(const Duration(milliseconds: 1500), token);
       if (!_isPlaying(token)) break;
-      await speaker.speakRomaji(current.romaji, token);
+      await speaker.speakRomaji(current.hiragana, token);
       if (!_isPlaying(token)) break;
       await speaker.pause(const Duration(seconds: 2), token);
       if (!_isPlaying(token)) break;
@@ -245,7 +245,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                         children: [
                           _speakable(
                             current.japanese,
-                            current.romaji,
+                            current.hiragana,
                             const TextStyle(
                               fontSize: 36,
                               fontWeight: FontWeight.bold,
@@ -290,7 +290,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                   children: [
                     _speakable(
                       current.japanese,
-                      current.romaji,
+                      current.hiragana,
                       const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -299,7 +299,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    _speakable(current.romaji, current.romaji, lookRomajiStyle),
+                    _speakable(current.romaji, current.hiragana, lookRomajiStyle),
                     kanaStar(
                       favorite: showAnswer ? !dropAfterContinue : true,
                       onPressed: showAnswer
@@ -313,7 +313,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                       const SizedBox(height: 8),
                       _speakable(
                         current.hiragana,
-                        current.romaji,
+                        current.hiragana,
                         const TextStyle(
                           fontSize: 24,
                           height: 1.1,
@@ -330,6 +330,18 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                           color: lookMeaning,
                         ),
                       ),
+                      if (current.english.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          current.english,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            height: 1.2,
+                            color: lookMeaning,
+                          ),
+                        ),
+                      ],
                     ],
                     const SizedBox(height: 24),
                     kanaActionButton(

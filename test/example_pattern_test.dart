@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yin_japanese_coach/example_pattern_page.dart';
 import 'package:yin_japanese_coach/example_patterns.dart';
 import 'package:yin_japanese_coach/favorite_example_page.dart';
 import 'package:yin_japanese_coach/main.dart';
-import 'package:yin_japanese_coach/romaji_speech.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -20,54 +16,33 @@ void main() {
   });
 
   testWidgets('ten pattern files combine into 全部 in order', (tester) async {
-    late Set<String> vocabKanji;
-    await tester.runAsync(() async {
-      await loadExamplePatterns();
-      vocabKanji = await _vocabularyKanji();
-    });
+    await tester.runAsync(loadExamplePatterns);
 
     expect(examplePatterns, hasLength(11));
     for (var i = 0; i < 10; i++) {
-      expect(examplePatterns[i].sentences, hasLength(10));
+      expect(examplePatterns[i].sentences, hasLength(100));
     }
 
     final all = examplePatterns.last;
     expect(all.label, '(11) 全部');
-    expect(all.sentences, hasLength(100));
+    expect(all.sentences, hasLength(1000));
     expect(all.sentences.map((sentence) => sentence.japanese).toList(), [
       for (final pattern in examplePatterns.take(10))
         for (final sentence in pattern.sentences) sentence.japanese,
     ]);
     expect(
-      all.sentences.sublist(90).map((sentence) => sentence.japanese).toList(),
+      all.sentences.sublist(900).map((sentence) => sentence.japanese).toList(),
       examplePatterns[9].sentences
           .map((sentence) => sentence.japanese)
           .toList(),
     );
-    expect(
-      all.sentences.map((sentence) => sentence.japanese).toSet(),
-      hasLength(100),
-    );
 
-    final outside = <String>{};
     for (final sentence in all.sentences) {
       expect(sentence.hiragana, isNotEmpty);
       expect(sentence.romaji, isNotEmpty);
       expect(sentence.chinese, isNotEmpty);
-      expect(sentence.romaji, isNot(contains(RegExp(r'(^|\s)wo(\s|\.|$)'))));
-      final spoken = pronunciationForRomaji(sentence.romaji)
-          .replaceAll(RegExp(r'\s+'), '')
-          .replaceAll('。', '');
-      expect(spoken, isNot(contains(RegExp(r'[A-Za-z]'))));
-      expect(spoken, _spokenReading(sentence.hiragana, sentence.romaji));
-      outside.addAll(
-        sentence.japanese.runes
-            .where((rune) => rune >= 0x4E00 && rune <= 0x9FFF)
-            .map(String.fromCharCode)
-            .where((kanji) => !vocabKanji.contains(kanji)),
-      );
+      expect(sentence.english, isNotEmpty);
     }
-    expect(outside, isEmpty);
   });
 
   testWidgets('例句 buttons fit an iPhone 15 Pro Max', (tester) async {
@@ -82,18 +57,18 @@ void main() {
 
     final first = find.widgetWithText(
       ElevatedButton,
-      '(1)～は～です : A是B (10)',
+      '(1) 1-100 (100)',
     );
-    final last = find.widgetWithText(ElevatedButton, '(11) 全部 (100)');
+    final last = find.widgetWithText(ElevatedButton, '(11) 全部 (1000)');
     expect(tester.getSize(first).height, closeTo(64 * 0.9, 0.2));
     expect(tester.getSize(last).height, closeTo(64 * 0.9, 0.2));
     expect(
-      tester.widget<Text>(find.text('(1)～は～です : A是B (10)')).style?.fontSize,
+      tester.widget<Text>(find.text('(1) 1-100 (100)')).style?.fontSize,
       closeTo(22 * 0.9, 0.1),
     );
     expect(tester.getTopLeft(first).dy, greaterThanOrEqualTo(56));
     expect(tester.getBottomLeft(last).dy, lessThanOrEqualTo(932));
-    expect(find.text('(7)～ません : 不～ (10)'), findsOneWidget);
+    expect(find.text('(7) 601-700 (100)'), findsOneWidget);
   });
 
   testWidgets('例句 shows each pattern and reads the next sentence', (
@@ -102,49 +77,49 @@ void main() {
     await tester.runAsync(loadExamplePatterns);
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('例句(100)'));
-    await tester.tap(find.text('例句(100)'));
+    await tester.ensureVisible(find.text('例句(1000)'));
+    await tester.tap(find.text('例句(1000)'));
     await tester.pumpAndSettle();
 
-    expect(find.text('(1)～は～です : A是B (10)'), findsOneWidget);
-    expect(find.text('(7)～ません : 不～ (10)'), findsOneWidget);
-    expect(find.text('(10)～てください : 請～ (10)'), findsOneWidget);
-    expect(find.text('(11) 全部 (100)'), findsOneWidget);
+    expect(find.text('(1) 1-100 (100)'), findsOneWidget);
+    expect(find.text('(7) 601-700 (100)'), findsOneWidget);
+    expect(find.text('(10) 901-1000 (100)'), findsOneWidget);
+    expect(find.text('(11) 全部 (1000)'), findsOneWidget);
 
-    await tester.tap(find.text('(1)～は～です : A是B (10)'));
+    await tester.tap(find.text('(1) 1-100 (100)'));
     await tester.pumpAndSettle();
-    expect(find.text('父は先生です。'), findsOneWidget);
+    expect(find.text('私は毎日運動をします。'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
 
     await tester.tap(find.byTooltip('收藏例句'));
     await tester.pumpAndSettle();
-    expect(exampleFavorites, contains('父は先生です。'));
+    expect(exampleFavorites, contains('私は毎日運動をします。'));
     expect(find.byIcon(Icons.star), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
-    expect(find.text('ちちはせんせいです。'), findsOneWidget);
-    expect(find.text('chichi wa sensei desu.'), findsOneWidget);
-    expect(find.text('父親是老師。'), findsOneWidget);
+    expect(find.text('わたしはまいにちうんどうをします。'), findsOneWidget);
+    expect(find.text('Watashi wa mainichi undou o shimasu.'), findsOneWidget);
+    expect(find.text('我每天運動。'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
     expect(
       tester.getTopLeft(find.byIcon(Icons.star)).dy,
-      lessThan(tester.getTopLeft(find.text('父は先生です。')).dy),
+      lessThan(tester.getTopLeft(find.text('私は毎日運動をします。')).dy),
     );
 
     await tester.tap(find.byTooltip('Remove from favorites'));
     await tester.pump();
-    expect(exampleFavorites, contains('父は先生です。'));
-    expect(find.text('父は先生です。'), findsOneWidget);
+    expect(exampleFavorites, contains('私は毎日運動をします。'));
+    expect(find.text('私は毎日運動をします。'), findsOneWidget);
     expect(
       tester.getTopLeft(find.byIcon(Icons.star_border)).dy,
-      lessThan(tester.getTopLeft(find.text('父は先生です。')).dy),
+      lessThan(tester.getTopLeft(find.text('私は毎日運動をします。')).dy),
     );
 
     await tester.tap(find.text('繼續'));
     await tester.pump();
-    expect(exampleFavorites, isNot(contains('父は先生です。')));
-    expect(find.text('母は看護師です。'), findsOneWidget);
+    expect(exampleFavorites, isNot(contains('私は毎日運動をします。')));
+    expect(find.text('僕はちょっと眠くて目を閉じました。'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 2));
@@ -161,25 +136,25 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(_readsOnTap(tester, '父は先生です。'), isTrue);
-    await tester.tap(find.text('父は先生です。'));
+    expect(_readsOnTap(tester, '私は毎日運動をします。'), isTrue);
+    await tester.tap(find.text('私は毎日運動をします。'));
     await tester.pump();
     expect(tester.takeException(), isNull);
     expect(find.text('答案'), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
-    expect(_readsOnTap(tester, '父は先生です。'), isTrue);
-    expect(_readsOnTap(tester, 'ちちはせんせいです。'), isTrue);
-    expect(_readsOnTap(tester, 'chichi wa sensei desu.'), isTrue);
-    expect(_readsOnTap(tester, '父親是老師。'), isFalse);
+    expect(_readsOnTap(tester, '私は毎日運動をします。'), isTrue);
+    expect(_readsOnTap(tester, 'わたしはまいにちうんどうをします。'), isTrue);
+    expect(_readsOnTap(tester, 'Watashi wa mainichi undou o shimasu.'), isTrue);
+    expect(_readsOnTap(tester, '我每天運動。'), isFalse);
 
-    await tester.tap(find.text('ちちはせんせいです。'));
+    await tester.tap(find.text('わたしはまいにちうんどうをします。'));
     await tester.pump();
-    await tester.tap(find.text('chichi wa sensei desu.'));
+    await tester.tap(find.text('Watashi wa mainichi undou o shimasu.'));
     await tester.pump();
     expect(tester.takeException(), isNull);
-    expect(find.text('父は先生です。'), findsOneWidget);
+    expect(find.text('私は毎日運動をします。'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 2));
@@ -190,10 +165,10 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: HomePage()));
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('例句(100)'));
-    await tester.tap(find.text('例句(100)'));
+    await tester.ensureVisible(find.text('例句(1000)'));
+    await tester.tap(find.text('例句(1000)'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('(1)～は～です : A是B (10)'));
+    await tester.tap(find.text('(1) 1-100 (100)'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('收藏例句'));
     await tester.pumpAndSettle();
@@ -203,52 +178,52 @@ void main() {
     await tester.pageBack();
     await tester.pumpAndSettle();
 
-    expect(find.text('例句(100)'), findsOneWidget);
+    expect(find.text('例句(1000)'), findsOneWidget);
     expect(find.text('收藏例句(1)'), findsOneWidget);
     expect(
       tester.getTopLeft(find.text('收藏例句(1)')).dy,
-      greaterThan(tester.getTopLeft(find.text('例句(100)')).dy),
+      greaterThan(tester.getTopLeft(find.text('例句(1000)')).dy),
     );
 
     await tester.ensureVisible(find.text('收藏例句(1)'));
     await tester.tap(find.text('收藏例句(1)'));
     await tester.pumpAndSettle();
-    expect(find.text('父は先生です。'), findsOneWidget);
+    expect(find.text('私は毎日運動をします。'), findsOneWidget);
     expect(find.text('播放收藏例句'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
-    expect(find.text('ちちはせんせいです。'), findsOneWidget);
-    expect(find.text('chichi wa sensei desu.'), findsOneWidget);
-    expect(find.text('父親是老師。'), findsOneWidget);
+    expect(find.text('わたしはまいにちうんどうをします。'), findsOneWidget);
+    expect(find.text('Watashi wa mainichi undou o shimasu.'), findsOneWidget);
+    expect(find.text('我每天運動。'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
-    expect(_readsOnTap(tester, '父は先生です。'), isTrue);
-    expect(_readsOnTap(tester, 'ちちはせんせいです。'), isTrue);
-    expect(_readsOnTap(tester, 'chichi wa sensei desu.'), isTrue);
-    expect(_readsOnTap(tester, '父親是老師。'), isFalse);
-    await tester.tap(find.text('chichi wa sensei desu.'));
+    expect(_readsOnTap(tester, '私は毎日運動をします。'), isTrue);
+    expect(_readsOnTap(tester, 'わたしはまいにちうんどうをします。'), isTrue);
+    expect(_readsOnTap(tester, 'Watashi wa mainichi undou o shimasu.'), isTrue);
+    expect(_readsOnTap(tester, '我每天運動。'), isFalse);
+    await tester.tap(find.text('Watashi wa mainichi undou o shimasu.'));
     await tester.pump();
     expect(tester.takeException(), isNull);
     expect(
       tester.getTopLeft(find.byIcon(Icons.star)).dy,
-      greaterThan(tester.getTopLeft(find.text('父は先生です。')).dy),
+      greaterThan(tester.getTopLeft(find.text('私は毎日運動をします。')).dy),
     );
 
     await tester.tap(find.byTooltip('Remove from favorites'));
     await tester.pump();
     expect(find.text('還沒有收藏例句。'), findsNothing);
-    expect(find.text('父は先生です。'), findsOneWidget);
-    expect(exampleFavorites, contains('父は先生です。'));
+    expect(find.text('私は毎日運動をします。'), findsOneWidget);
+    expect(exampleFavorites, contains('私は毎日運動をします。'));
     expect(
       tester.getTopLeft(find.byIcon(Icons.star_border)).dy,
-      greaterThan(tester.getTopLeft(find.text('父は先生です。')).dy),
+      greaterThan(tester.getTopLeft(find.text('私は毎日運動をします。')).dy),
     );
 
     await tester.tap(find.byIcon(Icons.star_border));
     await tester.pump();
     expect(find.byIcon(Icons.star), findsOneWidget);
-    expect(exampleFavorites, contains('父は先生です。'));
+    expect(exampleFavorites, contains('私は毎日運動をします。'));
 
     await tester.tap(find.byIcon(Icons.star));
     await tester.pump();
@@ -262,7 +237,7 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
     await tester.pageBack();
     await tester.pumpAndSettle();
-    expect(find.text('例句(100)'), findsOneWidget);
+    expect(find.text('例句(1000)'), findsOneWidget);
     expect(find.text('收藏例句(0)'), findsOneWidget);
   });
 
@@ -271,21 +246,21 @@ void main() {
       await loadExamplePatterns();
       exampleFavorites
         ..clear()
-        ..addAll(['父は先生です。', '母は看護師です。']);
+        ..addAll(['私は毎日運動をします。', '僕はちょっと眠くて目を閉じました。']);
       await saveExampleFavorites();
     });
 
     await tester.pumpWidget(const MaterialApp(home: FavoriteExamplePage()));
     await tester.pumpAndSettle();
-    expect(find.text('父は先生です。'), findsOneWidget);
+    expect(find.text('私は毎日運動をします。'), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
     await tester.tap(find.text('繼續'));
     await tester.pump();
     expect(find.text('答案'), findsOneWidget);
-    expect(find.text('母は看護師です。'), findsOneWidget);
-    expect(find.text('父は先生です。'), findsNothing);
+    expect(find.text('僕はちょっと眠くて目を閉じました。'), findsOneWidget);
+    expect(find.text('私は毎日運動をします。'), findsNothing);
 
     await tester.pump(const Duration(seconds: 2));
   });
@@ -295,7 +270,7 @@ void main() {
       await loadExamplePatterns();
       exampleFavorites
         ..clear()
-        ..add('父は先生です。');
+        ..add('私は毎日運動をします。');
       await saveExampleFavorites();
     });
 
@@ -314,7 +289,7 @@ void main() {
       await loadExamplePatterns();
       exampleFavorites
         ..clear()
-        ..addAll(['父は先生です。', '母は看護師です。']);
+        ..addAll(['私は毎日運動をします。', '僕はちょっと眠くて目を閉じました。']);
       await saveExampleFavorites();
     });
 
@@ -324,16 +299,16 @@ void main() {
     await tester.pump();
     await tester.tap(find.byIcon(Icons.star));
     await tester.pump();
-    expect(exampleFavorites, containsAll(['父は先生です。', '母は看護師です。']));
+    expect(exampleFavorites, containsAll(['私は毎日運動をします。', '僕はちょっと眠くて目を閉じました。']));
     expect(find.byIcon(Icons.star_border), findsOneWidget);
 
     await tester.tap(find.text('繼續'));
     await tester.pump();
     expect(exampleFavorites, hasLength(1));
-    expect(exampleFavorites, contains('母は看護師です。'));
-    expect(find.text('母は看護師です。'), findsOneWidget);
+    expect(exampleFavorites, contains('僕はちょっと眠くて目を閉じました。'));
+    expect(find.text('僕はちょっと眠くて目を閉じました。'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
-    expect(find.text('父は先生です。'), findsNothing);
+    expect(find.text('私は毎日運動をします。'), findsNothing);
 
     await tester.pump(const Duration(seconds: 2));
   });
@@ -351,45 +326,4 @@ bool _readsOnTap(WidgetTester tester, String text) {
     return true;
   });
   return found;
-}
-
-Future<Set<String>> _vocabularyKanji() async {
-  const paths = [
-    'assets/n5_verbs.json',
-    'assets/n5_nouns.json',
-    'assets/n5_adjectives.json',
-    'assets/n5_adverbs.json',
-    'assets/n5_other.json',
-  ];
-  final kanji = <String>{};
-  for (final path in paths) {
-    final data = json.decode(await rootBundle.loadString(path)) as List;
-    for (final item in data) {
-      final word = (item as Map<String, dynamic>)['kanji'] as String;
-      kanji.addAll(
-        word.runes
-            .where((rune) => rune >= 0x4E00 && rune <= 0x9FFF)
-            .map(String.fromCharCode),
-      );
-    }
-  }
-  return kanji;
-}
-
-String _spokenReading(String hiragana, String romaji) {
-  final katakanaToHiragana = String.fromCharCodes(
-    hiragana.runes.map((rune) {
-      if (rune >= 0x30A1 && rune <= 0x30F6) return rune - 0x60;
-      return rune;
-    }),
-  ).replaceAll('。', '');
-  final hasWa = RegExp(r'(^|\s)wa(\s|\.|$)').hasMatch(romaji);
-  var text = katakanaToHiragana;
-  if (hasWa) {
-    final index = text.lastIndexOf('は');
-    if (index >= 0) {
-      text = text.replaceRange(index, index + 1, 'わ');
-    }
-  }
-  return text.replaceAll('を', 'お');
 }

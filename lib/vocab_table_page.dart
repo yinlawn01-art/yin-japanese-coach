@@ -4,15 +4,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'app_look.dart';
 import 'bundled_text.dart';
 import 'main.dart';
-import 'romaji_speech.dart';
 import 'soft_speech.dart';
 
 /// Yellow used when a table cell is saved in 收藏單字.
 const Color vocabTableSaved = Color(0xFFE6B000);
 
-const List<String> vocabTableHeaders = ['No.', '日文', '羅馬拚音', '假名', '中文'];
+const List<String> vocabTableHeaders = ['No.', '日文', '羅馬拚音', '假名', '中文', '英文'];
 
-const List<int> _columnFlex = [2, 4, 5, 4, 4];
+const List<int> _columnFlex = [3, 4, 4, 4, 4, 5];
 
 class VocabTableMenuPage extends StatelessWidget {
   const VocabTableMenuPage({super.key});
@@ -119,7 +118,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
   Future<void> _speak(Vocabulary word) async {
     await _tts.stop();
     await applyNaturalVoice(_tts, 'ja-JP');
-    await _tts.speak(pronunciationForRomaji(word.romaji));
+    await _tts.speak(word.hiragana);
   }
 
   Widget _cell(
@@ -141,7 +140,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
             key: key,
             textAlign: TextAlign.center,
             style: bundledText.copyWith(
-              fontSize: 16,
+              fontSize: 14,
               height: 1.25,
               color: color,
               fontWeight: weight,
@@ -190,8 +189,9 @@ class _VocabTablePageState extends State<VocabTablePage> {
               ),
               child: _row(
                 values: vocabTableHeaders,
-                taps: const [null, null, null, null, null],
+                taps: const [null, null, null, null, null, null],
                 colors: const [
+                  lookInkBlue,
                   lookInkBlue,
                   lookInkBlue,
                   lookInkBlue,
@@ -199,6 +199,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
                   lookInkBlue,
                 ],
                 weights: const [
+                  FontWeight.w600,
                   FontWeight.w600,
                   FontWeight.w600,
                   FontWeight.w600,
@@ -227,11 +228,12 @@ class _VocabTablePageState extends State<VocabTablePage> {
                   final zhSaved = word.isZhJaFavorite;
                   return _row(
                     values: [
-                      '${index + 1}',
+                      '${word.number > 0 ? word.number : index + 1}',
                       word.kanji,
                       word.romaji,
                       word.hiragana,
                       word.meaning,
+                      word.english,
                     ],
                     taps: [
                       null,
@@ -239,6 +241,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
                       () => _speak(word),
                       () => _speak(word),
                       () => _toggleSaved(word, chineseToJapanese: true),
+                      null,
                     ],
                     colors: [
                       lookCount,
@@ -246,6 +249,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
                       lookRomaji,
                       lookReading,
                       zhSaved ? vocabTableSaved : lookInk,
+                      lookMeaning,
                     ],
                     weights: [
                       FontWeight.normal,
@@ -253,6 +257,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
                       FontWeight.normal,
                       FontWeight.normal,
                       zhSaved ? FontWeight.bold : FontWeight.normal,
+                      FontWeight.normal,
                     ],
                     keys: [
                       Key('no-$index'),
@@ -260,6 +265,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
                       Key('romaji-$index'),
                       Key('kana-$index'),
                       Key('zh-$index'),
+                      Key('en-$index'),
                     ],
                   );
                 },

@@ -11,6 +11,7 @@ class PatternSentence {
     required this.hiragana,
     required this.romaji,
     required this.chinese,
+    this.english = '',
   });
 
   factory PatternSentence.fromJson(Map<String, dynamic> json) {
@@ -19,6 +20,7 @@ class PatternSentence {
       hiragana: json['hiragana'] as String,
       romaji: json['romaji'] as String,
       chinese: json['chinese'] as String,
+      english: json['english'] as String? ?? '',
     );
   }
 
@@ -26,6 +28,7 @@ class PatternSentence {
   final String hiragana;
   final String romaji;
   final String chinese;
+  final String english;
 }
 
 class ExamplePattern {
@@ -45,16 +48,16 @@ class _PatternFile {
 }
 
 const List<_PatternFile> _patternFiles = [
-  _PatternFile('assets/example_patterns/01.json', '(1)～は～です : A是B'),
-  _PatternFile('assets/example_patterns/02.json', '(2)～ですか : ～嗎？'),
-  _PatternFile('assets/example_patterns/03.json', '(3)～があります : 有（東西）'),
-  _PatternFile('assets/example_patterns/04.json', '(4)～がいます : 有（人、動物）'),
-  _PatternFile('assets/example_patterns/05.json', '(5)～に行きます : 去～'),
-  _PatternFile('assets/example_patterns/06.json', '(6)～をします : 做～'),
-  _PatternFile('assets/example_patterns/07.json', '(7)～ません : 不～'),
-  _PatternFile('assets/example_patterns/08.json', '(8)～ました : ～了（過去式）'),
-  _PatternFile('assets/example_patterns/09.json', '(9)～たいです : 想～'),
-  _PatternFile('assets/example_patterns/10.json', '(10)～てください : 請～'),
+  _PatternFile('assets/example_patterns/01.json', '(1) 1-100'),
+  _PatternFile('assets/example_patterns/02.json', '(2) 101-200'),
+  _PatternFile('assets/example_patterns/03.json', '(3) 201-300'),
+  _PatternFile('assets/example_patterns/04.json', '(4) 301-400'),
+  _PatternFile('assets/example_patterns/05.json', '(5) 401-500'),
+  _PatternFile('assets/example_patterns/06.json', '(6) 501-600'),
+  _PatternFile('assets/example_patterns/07.json', '(7) 601-700'),
+  _PatternFile('assets/example_patterns/08.json', '(8) 701-800'),
+  _PatternFile('assets/example_patterns/09.json', '(9) 801-900'),
+  _PatternFile('assets/example_patterns/10.json', '(10) 901-1000'),
 ];
 
 const String allExamplesLabel = '(11) 全部';

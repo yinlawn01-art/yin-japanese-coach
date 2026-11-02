@@ -74,6 +74,8 @@ await loadJsonFile(
   'assets/n5_other.json',
   '其他',
 );
+
+  words.sort((a, b) => a.number.compareTo(b.number));
 }
 
 
@@ -106,36 +108,69 @@ class MyApp extends StatelessWidget {
   }
 }
 class Vocabulary {
+  final int number;
   final String kanji;
   final String hiragana;
   final String romaji;
   final String meaning;
+  final String english;
   final String wordType;
+  final String exampleJapanese;
+  final String exampleHiragana;
+  final String exampleRomaji;
+  final String exampleChinese;
+  final String exampleEnglish;
 
   bool isFavorite;
   bool isZhJaFavorite;
 
 Vocabulary({
+  this.number = 0,
   required this.kanji,
   required this.hiragana,
   required this.romaji,
   required this.meaning,
+  this.english = '',
   required this.wordType,
+  this.exampleJapanese = '',
+  this.exampleHiragana = '',
+  this.exampleRomaji = '',
+  this.exampleChinese = '',
+  this.exampleEnglish = '',
   this.isFavorite = false,
   this.isZhJaFavorite = false,
 });
+
+  /// Saved favorites use the unique number. Tests that omit a number keep kanji.
+  String get favoriteKey => number > 0 ? '$number' : kanji;
+
+  ExampleSentence get example => ExampleSentence(
+    japanese: exampleJapanese,
+    hiragana: exampleHiragana,
+    romaji: exampleRomaji,
+    chinese: exampleChinese,
+    english: exampleEnglish,
+  );
 
   factory Vocabulary.fromJson(
     Map<String, dynamic> json,
     String wordType,
   ) {
     final kind = json['kind'];
+    final rawNumber = json['number'];
     return Vocabulary(
+      number: rawNumber is int ? rawNumber : int.tryParse('$rawNumber') ?? 0,
       kanji: json['kanji'],
       hiragana: json['hiragana'],
       romaji: json['romaji'],
       meaning: json['meaning'],
+      english: json['english'] as String? ?? '',
       wordType: kind == null ? wordType : '$wordType・$kind',
+      exampleJapanese: json['exampleJapanese'] as String? ?? '',
+      exampleHiragana: json['exampleHiragana'] as String? ?? '',
+      exampleRomaji: json['exampleRomaji'] as String? ?? '',
+      exampleChinese: json['exampleChinese'] as String? ?? '',
+      exampleEnglish: json['exampleEnglish'] as String? ?? '',
     );
   }
 }
@@ -145,7 +180,7 @@ Future<void> saveDirectionFavorites(bool chineseToJapanese) async {
   final prefs = await SharedPreferences.getInstance();
   final saved = words
       .where((word) => chineseToJapanese ? word.isZhJaFavorite : word.isFavorite)
-      .map((word) => word.kanji)
+      .map((word) => word.favoriteKey)
       .toList();
   await prefs.setStringList(
     chineseToJapanese ? 'zhJaFavorites' : 'favorites',
@@ -187,9 +222,9 @@ Future<void> loadFavoritesHome() async {
 
   for (var word in words) {
     word.isFavorite =
-        favorites.contains(word.kanji);
+        favorites.contains(word.favoriteKey);
     word.isZhJaFavorite =
-        zhJaFavorites.contains(word.kanji);
+        zhJaFavorites.contains(word.favoriteKey);
   }
 
   await loadKanaFavorites();
@@ -581,13 +616,13 @@ Future<void> saveFavorites() async {
   }
 
   Future<void> showCurrentAnswer() async {
-    final romaji = widget.deck[currentIndex].romaji;
+    final reading = widget.deck[currentIndex].hiragana;
 
     setState(() {
       showAnswer = true;
     });
 
-    await speakJapanese(romaji);
+    await speakJapanese(reading);
   }
 
   void nextWord() {
@@ -612,11 +647,11 @@ Future<void> saveFavorites() async {
   }
 
   Future<void> openExample() async {
-    final sentence = exampleSentenceFor(widget.deck[currentIndex].kanji);
+    final sentence = widget.deck[currentIndex].example;
     setState(() {
       showExample = true;
     });
-    await speakJapanese(sentence.romaji);
+    await speakJapanese(sentence.hiragana);
   }
 
   void closeExample() {
@@ -860,19 +895,19 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: lookPrompt,
         ),
         const SizedBox(height: 4),
         speakableText(
           text: word.romaji,
-          japanese: word.romaji,
-          style: lookRomajiStyle,
+          japanese: word.hiragana,
+          style: lookRomajiStyle.copyWith(fontSize: 32, height: 1.05),
         ),
         _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
@@ -889,13 +924,29 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: const TextStyle(
             fontSize: 28,
             height: 1.1,
             color: lookMeaning,
           ),
         ),
+        if (word.english.isNotEmpty || word.number > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              [
+                if (word.english.isNotEmpty) word.english,
+                if (word.number > 0) '編號 ${word.number}',
+              ].join('   '),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                height: 1.1,
+                color: lookMeaning,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -909,19 +960,19 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: lookPrompt,
         ),
         const SizedBox(height: 4),
         speakableText(
           text: word.romaji,
-          japanese: word.romaji,
-          style: lookRomajiStyle,
+          japanese: word.hiragana,
+          style: lookRomajiStyle.copyWith(fontSize: 32, height: 1.05),
         ),
         _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
@@ -938,13 +989,29 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: const TextStyle(
             fontSize: 28,
             height: 1.1,
             color: lookMeaning,
           ),
         ),
+        if (word.english.isNotEmpty || word.number > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              [
+                if (word.english.isNotEmpty) word.english,
+                if (word.number > 0) '編號 ${word.number}',
+              ].join('   '),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                height: 1.1,
+                color: lookMeaning,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -963,7 +1030,7 @@ Future<void> saveFavorites() async {
                   children: [
                     speakableText(
                       text: sentence.japanese,
-                      japanese: sentence.romaji,
+                      japanese: sentence.hiragana,
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
@@ -974,13 +1041,13 @@ Future<void> saveFavorites() async {
                     const SizedBox(height: 4),
                     speakableText(
                       text: sentence.romaji,
-                      japanese: sentence.romaji,
+                      japanese: sentence.hiragana,
                       style: lookRomajiStyle,
                     ),
                     const SizedBox(height: 10),
                     speakableText(
                       text: sentence.hiragana,
-                      japanese: sentence.romaji,
+                      japanese: sentence.hiragana,
                       style: const TextStyle(fontSize: 24, color: lookReading),
                     ),
                     const SizedBox(height: 10),
@@ -992,6 +1059,18 @@ Future<void> saveFavorites() async {
                         color: lookMeaning,
                       ),
                     ),
+                    if (sentence.english.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        sentence.english,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          height: 1.2,
+                          color: lookMeaning,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -1005,7 +1084,7 @@ Future<void> saveFavorites() async {
   @override
   Widget build(BuildContext context) {
     final word = widget.deck[currentIndex];
-    final sentence = exampleSentenceFor(word.kanji);
+    final sentence = word.example;
 
     final largeLabelSize =
         (Theme.of(context).textTheme.labelLarge?.fontSize ?? 14) * 2;
@@ -1151,7 +1230,7 @@ void dispose() {
       });
 
       await applyNaturalVoice(flutterTts, 'ja-JP');
-      await flutterTts.speak(pronunciationForRomaji(word.romaji));
+      await flutterTts.speak(word.hiragana);
 
       await Future.delayed(
         const Duration(seconds: 3),

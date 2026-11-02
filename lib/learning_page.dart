@@ -373,7 +373,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
     setState(() {
       showAnswer = true;
     });
-    await speakJapanese(words[catalogIndex].romaji);
+    await speakJapanese(words[catalogIndex].hiragana);
   }
 
   Future<void> _stopSpeech() async {
@@ -413,13 +413,11 @@ class _StudySessionPageState extends State<StudySessionPage> {
   }
 
   Future<void> openExample() async {
-    final sentence = exampleSentenceFor(
-      words[studyQueue.indexes[currentIndex]].kanji,
-    );
+    final sentence = words[studyQueue.indexes[currentIndex]].example;
     setState(() {
       showExample = true;
     });
-    await speakJapanese(sentence.romaji);
+    await speakJapanese(sentence.hiragana);
   }
 
   void closeExample() {
@@ -657,19 +655,19 @@ class _StudySessionPageState extends State<StudySessionPage> {
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: lookPrompt,
         ),
         const SizedBox(height: 4),
         speakableText(
           text: word.romaji,
-          japanese: word.romaji,
-          style: lookRomajiStyle,
+          japanese: word.hiragana,
+          style: lookRomajiStyle.copyWith(fontSize: 32, height: 1.05),
         ),
         _studyStar(word, compact: true),
         speakableText(
           text: word.hiragana,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
@@ -686,9 +684,25 @@ class _StudySessionPageState extends State<StudySessionPage> {
         const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
-          japanese: word.romaji,
+          japanese: word.hiragana,
           style: lookMeaningStyle,
         ),
+        if (word.english.isNotEmpty || word.number > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              [
+                if (word.english.isNotEmpty) word.english,
+                if (word.number > 0) '編號 ${word.number}',
+              ].join('   '),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                height: 1.1,
+                color: lookMeaning,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -707,7 +721,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                   children: [
                     speakableText(
                       text: sentence.japanese,
-                      japanese: sentence.romaji,
+                      japanese: sentence.hiragana,
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -718,13 +732,13 @@ class _StudySessionPageState extends State<StudySessionPage> {
                     const SizedBox(height: 4),
                     speakableText(
                       text: sentence.romaji,
-                      japanese: sentence.romaji,
+                      japanese: sentence.hiragana,
                       style: lookRomajiStyle,
                     ),
                     const SizedBox(height: 10),
                     speakableText(
                       text: sentence.hiragana,
-                      japanese: sentence.romaji,
+                      japanese: sentence.hiragana,
                       style: const TextStyle(fontSize: 24, color: lookReading),
                     ),
                     const SizedBox(height: 10),
@@ -733,6 +747,18 @@ class _StudySessionPageState extends State<StudySessionPage> {
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 28, color: lookMeaning),
                     ),
+                    if (sentence.english.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        sentence.english,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          height: 1.2,
+                          color: lookMeaning,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -809,7 +835,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
     final word = words[catalogIndex];
     final countText = '(${currentIndex + 1} of ${studyQueue.indexes.length})';
     final prompt = widget.chineseToJapanese ? word.meaning : word.kanji;
-    final sentence = showExample ? exampleSentenceFor(word.kanji) : null;
+    final sentence = showExample ? word.example : null;
     final largeLabelSize =
         (Theme.of(context).textTheme.labelLarge?.fontSize ?? 14) * 2;
 
