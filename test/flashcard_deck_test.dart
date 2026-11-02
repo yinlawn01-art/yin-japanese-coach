@@ -137,7 +137,7 @@ void main() {
     expect(find.text('学校'), findsWidgets);
     expect(find.text('がっこう'), findsOneWidget);
     expect(find.text('gakkou'), findsOneWidget);
-    expect(tester.widget<Text>(find.text('gakkou')).style?.fontSize, 48);
+    expect(tester.widget<Text>(find.text('gakkou')).style?.fontSize, 32);
     expect(tester.widget<Text>(find.text('gakkou')).style?.color, Colors.red);
     expect(find.text('詞性：🔵 名詞'), findsOneWidget);
     expect(find.text('學校'), findsOneWidget);
@@ -663,6 +663,42 @@ void main() {
     expect(find.text('(1 of 3)'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
 
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('單字 example shows the sentence pattern and rank', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '私',
+          hiragana: 'わたし',
+          romaji: 'watashi',
+          meaning: '我',
+          wordType: '🔵 名詞',
+          exampleJapanese: '私は酒を飲みません。',
+          exampleHiragana: 'わたしはさけをのみません。',
+          exampleRomaji: 'Watashi wa sake o nomimasen.',
+          exampleChinese: '我不喝酒。',
+          exampleEnglish: "I don't drink alcohol.",
+          examplePattern: '～ません（動詞否定）',
+          exampleRank: 4,
+        ),
+      );
+
+    await tester.pumpWidget(const MaterialApp(home: FlashcardMenuPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(_directionButton('名詞', '日→中單字'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    await tester.tap(find.text('例句'));
+    await tester.pump();
+    expect(find.text('私は酒を飲みません。'), findsOneWidget);
+    expect(find.text('例句句型：～ません（動詞否定）'), findsOneWidget);
+    expect(find.text('例句常用度排名：4'), findsOneWidget);
+    expect(find.textContaining('優先序'), findsNothing);
     await tester.pump(const Duration(seconds: 2));
   });
 }
