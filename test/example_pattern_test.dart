@@ -88,37 +88,37 @@ void main() {
 
     await tester.tap(find.text('(1) 1-100 (100)'));
     await tester.pumpAndSettle();
-    expect(find.text('私は毎日運動をします。'), findsOneWidget);
+    expect(find.text('私は酒を飲みません。'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
 
     await tester.tap(find.byTooltip('收藏例句'));
     await tester.pumpAndSettle();
-    expect(exampleFavorites, contains('私は毎日運動をします。'));
+    expect(exampleFavorites, contains('私は酒を飲みません。'));
     expect(find.byIcon(Icons.star), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
-    expect(find.text('わたしはまいにちうんどうをします。'), findsOneWidget);
-    expect(find.text('Watashi wa mainichi undou o shimasu.'), findsOneWidget);
-    expect(find.text('我每天運動。'), findsOneWidget);
+    expect(find.text('わたしはさけをのみません。'), findsOneWidget);
+    expect(find.text('Watashi wa sake o nomimasen.'), findsOneWidget);
+    expect(find.text('我不喝酒。'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
     expect(
       tester.getTopLeft(find.byIcon(Icons.star)).dy,
-      lessThan(tester.getTopLeft(find.text('私は毎日運動をします。')).dy),
+      lessThan(tester.getTopLeft(find.text('私は酒を飲みません。')).dy),
     );
 
     await tester.tap(find.byTooltip('Remove from favorites'));
     await tester.pump();
-    expect(exampleFavorites, contains('私は毎日運動をします。'));
-    expect(find.text('私は毎日運動をします。'), findsOneWidget);
+    expect(exampleFavorites, contains('私は酒を飲みません。'));
+    expect(find.text('私は酒を飲みません。'), findsOneWidget);
     expect(
       tester.getTopLeft(find.byIcon(Icons.star_border)).dy,
-      lessThan(tester.getTopLeft(find.text('私は毎日運動をします。')).dy),
+      lessThan(tester.getTopLeft(find.text('私は酒を飲みません。')).dy),
     );
 
     await tester.tap(find.text('繼續'));
     await tester.pump();
-    expect(exampleFavorites, isNot(contains('私は毎日運動をします。')));
+    expect(exampleFavorites, isNot(contains('私は酒を飲みません。')));
     expect(find.text('僕はちょっと眠くて目を閉じました。'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
 
@@ -136,25 +136,25 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(_readsOnTap(tester, '私は毎日運動をします。'), isTrue);
-    await tester.tap(find.text('私は毎日運動をします。'));
+    expect(_readsOnTap(tester, '私は酒を飲みません。'), isTrue);
+    await tester.tap(find.text('私は酒を飲みません。'));
     await tester.pump();
     expect(tester.takeException(), isNull);
     expect(find.text('答案'), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
-    expect(_readsOnTap(tester, '私は毎日運動をします。'), isTrue);
-    expect(_readsOnTap(tester, 'わたしはまいにちうんどうをします。'), isTrue);
-    expect(_readsOnTap(tester, 'Watashi wa mainichi undou o shimasu.'), isTrue);
-    expect(_readsOnTap(tester, '我每天運動。'), isFalse);
+    expect(_readsOnTap(tester, '私は酒を飲みません。'), isTrue);
+    expect(_readsOnTap(tester, 'わたしはさけをのみません。'), isTrue);
+    expect(_readsOnTap(tester, 'Watashi wa sake o nomimasen.'), isTrue);
+    expect(_readsOnTap(tester, '我不喝酒。'), isFalse);
 
-    await tester.tap(find.text('わたしはまいにちうんどうをします。'));
+    await tester.tap(find.text('わたしはさけをのみません。'));
     await tester.pump();
-    await tester.tap(find.text('Watashi wa mainichi undou o shimasu.'));
+    await tester.tap(find.text('Watashi wa sake o nomimasen.'));
     await tester.pump();
     expect(tester.takeException(), isNull);
-    expect(find.text('私は毎日運動をします。'), findsOneWidget);
+    expect(find.text('私は酒を飲みません。'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 2));
@@ -188,42 +188,42 @@ void main() {
     await tester.ensureVisible(find.text('收藏例句(1)'));
     await tester.tap(find.text('收藏例句(1)'));
     await tester.pumpAndSettle();
-    expect(find.text('私は毎日運動をします。'), findsOneWidget);
+    expect(find.text('私は酒を飲みません。'), findsOneWidget);
     expect(find.text('播放收藏例句'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
-    expect(find.text('わたしはまいにちうんどうをします。'), findsOneWidget);
-    expect(find.text('Watashi wa mainichi undou o shimasu.'), findsOneWidget);
-    expect(find.text('我每天運動。'), findsOneWidget);
+    expect(find.text('わたしはさけをのみません。'), findsOneWidget);
+    expect(find.text('Watashi wa sake o nomimasen.'), findsOneWidget);
+    expect(find.text('我不喝酒。'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
-    expect(_readsOnTap(tester, '私は毎日運動をします。'), isTrue);
-    expect(_readsOnTap(tester, 'わたしはまいにちうんどうをします。'), isTrue);
-    expect(_readsOnTap(tester, 'Watashi wa mainichi undou o shimasu.'), isTrue);
-    expect(_readsOnTap(tester, '我每天運動。'), isFalse);
-    await tester.tap(find.text('Watashi wa mainichi undou o shimasu.'));
+    expect(_readsOnTap(tester, '私は酒を飲みません。'), isTrue);
+    expect(_readsOnTap(tester, 'わたしはさけをのみません。'), isTrue);
+    expect(_readsOnTap(tester, 'Watashi wa sake o nomimasen.'), isTrue);
+    expect(_readsOnTap(tester, '我不喝酒。'), isFalse);
+    await tester.tap(find.text('Watashi wa sake o nomimasen.'));
     await tester.pump();
     expect(tester.takeException(), isNull);
     expect(
       tester.getTopLeft(find.byIcon(Icons.star)).dy,
-      greaterThan(tester.getTopLeft(find.text('私は毎日運動をします。')).dy),
+      greaterThan(tester.getTopLeft(find.text('私は酒を飲みません。')).dy),
     );
 
     await tester.tap(find.byTooltip('Remove from favorites'));
     await tester.pump();
     expect(find.text('還沒有收藏例句。'), findsNothing);
-    expect(find.text('私は毎日運動をします。'), findsOneWidget);
-    expect(exampleFavorites, contains('私は毎日運動をします。'));
+    expect(find.text('私は酒を飲みません。'), findsOneWidget);
+    expect(exampleFavorites, contains('私は酒を飲みません。'));
     expect(
       tester.getTopLeft(find.byIcon(Icons.star_border)).dy,
-      greaterThan(tester.getTopLeft(find.text('私は毎日運動をします。')).dy),
+      greaterThan(tester.getTopLeft(find.text('私は酒を飲みません。')).dy),
     );
 
     await tester.tap(find.byIcon(Icons.star_border));
     await tester.pump();
     expect(find.byIcon(Icons.star), findsOneWidget);
-    expect(exampleFavorites, contains('私は毎日運動をします。'));
+    expect(exampleFavorites, contains('私は酒を飲みません。'));
 
     await tester.tap(find.byIcon(Icons.star));
     await tester.pump();
@@ -246,13 +246,13 @@ void main() {
       await loadExamplePatterns();
       exampleFavorites
         ..clear()
-        ..addAll(['私は毎日運動をします。', '僕はちょっと眠くて目を閉じました。']);
+        ..addAll(['私は酒を飲みません。', '僕はちょっと眠くて目を閉じました。']);
       await saveExampleFavorites();
     });
 
     await tester.pumpWidget(const MaterialApp(home: FavoriteExamplePage()));
     await tester.pumpAndSettle();
-    expect(find.text('私は毎日運動をします。'), findsOneWidget);
+    expect(find.text('私は酒を飲みません。'), findsOneWidget);
 
     await tester.tap(find.text('答案'));
     await tester.pump();
@@ -260,7 +260,7 @@ void main() {
     await tester.pump();
     expect(find.text('答案'), findsOneWidget);
     expect(find.text('僕はちょっと眠くて目を閉じました。'), findsOneWidget);
-    expect(find.text('私は毎日運動をします。'), findsNothing);
+    expect(find.text('私は酒を飲みません。'), findsNothing);
 
     await tester.pump(const Duration(seconds: 2));
   });
@@ -270,7 +270,7 @@ void main() {
       await loadExamplePatterns();
       exampleFavorites
         ..clear()
-        ..add('私は毎日運動をします。');
+        ..add('私は酒を飲みません。');
       await saveExampleFavorites();
     });
 
@@ -289,7 +289,7 @@ void main() {
       await loadExamplePatterns();
       exampleFavorites
         ..clear()
-        ..addAll(['私は毎日運動をします。', '僕はちょっと眠くて目を閉じました。']);
+        ..addAll(['私は酒を飲みません。', '僕はちょっと眠くて目を閉じました。']);
       await saveExampleFavorites();
     });
 
@@ -299,7 +299,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.byIcon(Icons.star));
     await tester.pump();
-    expect(exampleFavorites, containsAll(['私は毎日運動をします。', '僕はちょっと眠くて目を閉じました。']));
+    expect(exampleFavorites, containsAll(['私は酒を飲みません。', '僕はちょっと眠くて目を閉じました。']));
     expect(find.byIcon(Icons.star_border), findsOneWidget);
 
     await tester.tap(find.text('繼續'));
@@ -308,7 +308,7 @@ void main() {
     expect(exampleFavorites, contains('僕はちょっと眠くて目を閉じました。'));
     expect(find.text('僕はちょっと眠くて目を閉じました。'), findsOneWidget);
     expect(find.text('答案'), findsOneWidget);
-    expect(find.text('私は毎日運動をします。'), findsNothing);
+    expect(find.text('私は酒を飲みません。'), findsNothing);
 
     await tester.pump(const Duration(seconds: 2));
   });

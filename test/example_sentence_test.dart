@@ -60,6 +60,8 @@ void main() {
       expect(sentence.romaji, isNotEmpty, reason: word.kanji);
       expect(sentence.chinese, isNotEmpty, reason: word.kanji);
       expect(sentence.english, isNotEmpty, reason: word.kanji);
+      expect(sentence.pattern, isNotEmpty, reason: word.kanji);
+      expect(sentence.rank, inInclusiveRange(1, 27), reason: word.kanji);
     }
 
     expect(words.where((word) => word.wordType.contains('名詞')), hasLength(545));
@@ -68,7 +70,9 @@ void main() {
     expect(words.where((word) => word.wordType.contains('副詞')), hasLength(50));
     expect(words.where((word) => word.wordType.contains('其他')), hasLength(55));
     expect(words[0].kanji, '私');
-    expect(words[0].example.japanese, '私は毎日運動をします。');
+    expect(words[0].example.japanese, '私は酒を飲みません。');
+    expect(words[0].example.pattern, '～ません（動詞否定）');
+    expect(words[0].example.rank, 4);
     expect(words[0].english, 'I');
     expect(words[999].number, 1000);
     expect(words[999].wordType, contains('副詞'));

@@ -120,6 +120,8 @@ class Vocabulary {
   final String exampleRomaji;
   final String exampleChinese;
   final String exampleEnglish;
+  final String examplePattern;
+  final int exampleRank;
 
   bool isFavorite;
   bool isZhJaFavorite;
@@ -137,6 +139,8 @@ Vocabulary({
   this.exampleRomaji = '',
   this.exampleChinese = '',
   this.exampleEnglish = '',
+  this.examplePattern = '',
+  this.exampleRank = 0,
   this.isFavorite = false,
   this.isZhJaFavorite = false,
 });
@@ -150,6 +154,8 @@ Vocabulary({
     romaji: exampleRomaji,
     chinese: exampleChinese,
     english: exampleEnglish,
+    pattern: examplePattern,
+    rank: exampleRank,
   );
 
   factory Vocabulary.fromJson(
@@ -171,6 +177,10 @@ Vocabulary({
       exampleRomaji: json['exampleRomaji'] as String? ?? '',
       exampleChinese: json['exampleChinese'] as String? ?? '',
       exampleEnglish: json['exampleEnglish'] as String? ?? '',
+      examplePattern: json['examplePattern'] as String? ?? '',
+      exampleRank: json['exampleRank'] is int
+          ? json['exampleRank'] as int
+          : int.tryParse('${json['exampleRank']}') ?? 0,
     );
   }
 }
@@ -1068,6 +1078,30 @@ Future<void> saveFavorites() async {
                           fontSize: 22,
                           height: 1.2,
                           color: lookMeaning,
+                        ),
+                      ),
+                    ],
+                    if (sentence.pattern.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Text(
+                        '例句句型：${sentence.pattern}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          height: 1.3,
+                          color: lookInk,
+                        ),
+                      ),
+                    ],
+                    if (sentence.rank > 0) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        '例句常用度排名：${sentence.rank}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          height: 1.3,
+                          color: lookCount,
                         ),
                       ),
                     ],
