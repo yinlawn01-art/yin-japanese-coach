@@ -662,7 +662,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
         speakableText(
           text: word.romaji,
           japanese: word.hiragana,
-          style: lookRomajiStyle.copyWith(fontSize: 32, height: 1.05),
+          style: lookRomajiStyle,
         ),
         _studyStar(word, compact: true),
         speakableText(
@@ -687,19 +687,25 @@ class _StudySessionPageState extends State<StudySessionPage> {
           japanese: word.hiragana,
           style: lookMeaningStyle,
         ),
-        if (word.english.isNotEmpty || word.number > 0)
+        if (word.english.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(top: 2),
+            padding: const EdgeInsets.only(top: 4),
             child: Text(
-              [
-                if (word.english.isNotEmpty) word.english,
-                if (word.number > 0) '編號 ${word.number}',
-              ].join('   '),
+              word.english,
+              textAlign: TextAlign.center,
+              style: lookMeaningStyle,
+            ),
+          ),
+        if (word.number > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              '編號 ${word.number}',
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 22,
                 height: 1.1,
-                color: lookMeaning,
+                color: lookCount,
               ),
             ),
           ),
@@ -752,11 +758,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                       Text(
                         sentence.english,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          height: 1.2,
-                          color: lookMeaning,
-                        ),
+                        style: const TextStyle(fontSize: 28, color: lookMeaning),
                       ),
                     ],
                   ],
@@ -847,6 +849,11 @@ class _StudySessionPageState extends State<StudySessionPage> {
           final exampleTop =
               (screenHeight * 0.30 - (screenHeight - constraints.maxHeight))
                   .clamp(0.0, constraints.maxHeight);
+          // 例句 sits three Chinese-sized lines higher, and the answer follows it.
+          final exampleButtonTop = (exampleTop - 28 * 1.1 * 3).clamp(
+            0.0,
+            constraints.maxHeight,
+          );
           final baseStyle = DefaultTextStyle.of(context).style;
           final buttonTop = _actionButtonTop(
             bodyHeight: constraints.maxHeight,
@@ -876,7 +883,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                 ),
               if (showAnswer && !showExample)
                 Positioned(
-                  top: exampleTop + 64 + 12,
+                  top: exampleButtonTop + 64 + 12,
                   left: 0,
                   right: 0,
                   bottom: contentBottom,
@@ -909,7 +916,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
               ),
               if (showAnswer && !showExample)
                 Positioned(
-                  top: exampleTop,
+                  top: exampleButtonTop,
                   left: 0,
                   right: 0,
                   child: Center(
