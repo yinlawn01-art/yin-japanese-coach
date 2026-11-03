@@ -41,6 +41,19 @@ void main() {
     expect(pronunciationForRomaji('fooku'), 'ふぉおく');
   });
 
+  test('母 is pronounced wawa', () {
+    final mother = words.firstWhere((word) => word.kanji == '母');
+    expect(mother.romaji, 'wawa');
+    expect(pronunciationForRomaji(mother.romaji), 'わわ');
+    final sentence = words.firstWhere((word) => word.kanji == 'こちら').example;
+    expect(sentence.romaji, 'Kochira wa watashi no wawa desu.');
+    expect(
+      pronunciationForRomaji(sentence.romaji),
+      'こちら わ わたし の わわ です。',
+    );
+    expect(sentence.hiragana, 'こちらはわたしのははです。');
+  });
+
   test('sentence particles follow the roman spelling', () {
     expect(
       pronunciationForRomaji('gakusei wa sensei ni au.'),

@@ -72,7 +72,7 @@
 {"japanese":"元気で長く生きたいです。","hiragana":"げんきでながくいきたいです。","romaji":"Genki de nagaku ikitai desu.","chinese":"我想健康長壽地活著。","english":"I want to live a long and healthy life.","pattern":"～たいです（想要做某事）","rank":7},
 {"japanese":"楽しい時間は早く過ぎます。","hiragana":"たのしいじかんははやくすぎます。","romaji":"Tanoshii jikan wa hayaku sugimasu.","chinese":"快樂的時光過得很快。","english":"Happy times pass quickly.","pattern":"～ます（禮貌動詞句型）","rank":1},
 {"japanese":"私は料理があまり出来ません。","hiragana":"わたしはりょうりがあまりできません。","romaji":"Watashi wa ryouri ga amari dekimasen.","chinese":"我不太會做菜。","english":"I'm not very good at cooking.","pattern":"～ません（動詞否定）","rank":4},
-{"japanese":"私は母によく似ています。","hiragana":"わたしはははによくにています。","romaji":"Watashi wa haha ni yoku nite imasu.","chinese":"我和媽媽很像。","english":"I look a lot like my mother.","pattern":"～ています（進行、狀態）","rank":5},
+{"japanese":"私は母によく似ています。","hiragana":"わたしはははによくにています。","romaji":"Watashi wa wawa ni yoku nite imasu.","chinese":"我和媽媽很像。","english":"I look a lot like my mother.","pattern":"～ています（進行、狀態）","rank":5},
 {"japanese":"ここに居てもいいですか？","hiragana":"ここにいてもいいですか？","romaji":"Koko ni ite mo ii desu ka?","chinese":"我可以待在這裡嗎?","english":"May I stay here?","pattern":"～てもいいです（可以做某事）","rank":14},
 {"japanese":"寂しい夜に妹に電話しました。","hiragana":"さびしいよるにいもうとにでんわしました。","romaji":"Sabishii yoru ni imouto ni denwashimashita.","chinese":"在寂寞的夜晚打電話給妹妹。","english":"On a lonely night I phoned my younger sister.","pattern":"～ました（過去式）","rank":3},
 {"japanese":"夜の森は怖いと思います。","hiragana":"よるのもりはこわいとおもいます。","romaji":"Yoru no mori wa kowai to omoimasu.","chinese":"我覺得夜晚的森林很可怕。","english":"I think the forest at night is scary.","pattern":"～と思います（我認為…）","rank":10},

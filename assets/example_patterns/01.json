@@ -17,7 +17,7 @@
 {"japanese":"そこに立って少し待ちましょう。","hiragana":"そこにたってすこしまちましょう。","romaji":"Soko ni tatte sukoshi machimashou.","chinese":"站在那裡稍等一下吧。","english":"Let's stand there and wait a little.","pattern":"～ましょう／～ませんか（邀請、提議）","rank":12},
 {"japanese":"あそこに白い牛が居ます。","hiragana":"あそこにしろいうしがいます。","romaji":"Asoko ni shiroi ushi ga imasu.","chinese":"那邊有一頭白色的牛。","english":"There is a white cow over there.","pattern":"～ます（禮貌動詞句型）","rank":1},
 {"japanese":"どこに行きたい？","hiragana":"どこにいきたい？","romaji":"Doko ni ikitai?","chinese":"你想去哪裡?","english":"Where do you want to go?","pattern":"～たいです（想要做某事）","rank":26},
-{"japanese":"こちらは私の母です。","hiragana":"こちらはわたしのははです。","romaji":"Kochira wa watashi no haha desu.","chinese":"這位是我的母親。","english":"This is my mother.","pattern":"～です／～だ（表示「是」）","rank":2},
+{"japanese":"こちらは私の母です。","hiragana":"こちらはわたしのははです。","romaji":"Kochira wa watashi no wawa desu.","chinese":"這位是我的母親。","english":"This is my mother.","pattern":"～です／～だ（表示「是」）","rank":2},
 {"japanese":"そちらはもう暖かいですか？","hiragana":"そちらはもうあたたかいですか？","romaji":"Sochira wa mou atatakai desu ka?","chinese":"你那邊已經暖和了嗎?","english":"Is it warm over there yet?","pattern":"～です／～だ（表示「是」）","rank":2},
 {"japanese":"トイレはあちらです。","hiragana":"トイレはあちらです。","romaji":"Toire wa achira desu.","chinese":"廁所在那邊。","english":"The restroom is over there.","pattern":"～です／～だ（表示「是」）","rank":2},
 {"japanese":"どちらが早かったか？","hiragana":"どちらがはやかったか？","romaji":"Dochira ga hayakatta ka?","chinese":"哪一邊比較早?","english":"Which was earlier?","pattern":"その他（普通體、慣用表現）","rank":27},

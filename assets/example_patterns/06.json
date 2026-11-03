@@ -96,7 +96,7 @@
 {"japanese":"これがいわゆる日本の文化です。","hiragana":"これがいわゆるにほんのぶんかです。","romaji":"Kore ga iwayuru nihon no bunka desu.","chinese":"這就是所謂的日本文化。","english":"This is what's called Japanese culture.","pattern":"～です／～だ（表示「是」）","rank":2},
 {"japanese":"また来週、会いましょう。","hiragana":"またらいしゅう、あいましょう。","romaji":"Mata raishuu, aimashou.","chinese":"下週再見面吧。","english":"Let's meet again next week.","pattern":"～ましょう／～ませんか（邀請、提議）","rank":12},
 {"japanese":"もうすぐ秋が来ます。","hiragana":"もうすぐあきがきます。","romaji":"Mousugu aki ga kimasu.","chinese":"秋天快要到了。","english":"Autumn is coming soon.","pattern":"～ます（禮貌動詞句型）","rank":1},
-{"japanese":"さっき母に電話しました。","hiragana":"さっきははにでんわしました。","romaji":"Sakki haha ni denwa shimashita.","chinese":"我剛才打電話給媽媽了。","english":"I called my mother a little while ago.","pattern":"～ました（過去式）","rank":3},
+{"japanese":"さっき母に電話しました。","hiragana":"さっきははにでんわしました。","romaji":"Sakki wawa ni denwa shimashita.","chinese":"我剛才打電話給媽媽了。","english":"I called my mother a little while ago.","pattern":"～ました（過去式）","rank":3},
 {"japanese":"そろそろ帰りたいです。","hiragana":"そろそろかえりたいです。","romaji":"Sorosoro kaeritai desu.","chinese":"我差不多想回家了。","english":"I want to go home soon.","pattern":"～たいです（想要做某事）","rank":7},
 {"japanese":"突然火が消えました。","hiragana":"とつぜんひがきえました。","romaji":"Totsuzen hi ga kiemashita.","chinese":"火突然熄滅了。","english":"The fire suddenly went out.","pattern":"～ました（過去式）","rank":3}
 ]

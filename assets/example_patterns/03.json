@@ -59,7 +59,7 @@
 {"japanese":"来年、京都を訪れたいです。","hiragana":"らいねん、きょうとをおとずれたいです。","romaji":"Rainen, kyouto o otozuretai desu.","chinese":"明年我想造訪京都。","english":"I want to visit Kyoto next year.","pattern":"～たいです（想要做某事）","rank":7},
 {"japanese":"犬を連れて入ってもいいですか？","hiragana":"いぬをつれてはいってもいいですか？","romaji":"Inu o tsurete haitte mo ii desu ka?","chinese":"可以帶狗進去嗎?","english":"May I go in with my dog?","pattern":"～てもいいです（可以做某事）","rank":14},
 {"japanese":"荷物を車に乗せてください。","hiragana":"にもつをくるまにのせてください。","romaji":"Nimotsu o kuruma ni nosete kudasai.","chinese":"請把行李放到車上。","english":"Please load the luggage into the car.","pattern":"～てください（請做某事）","rank":8},
-{"japanese":"この話を母に伝えてください。","hiragana":"このはなしをははにつたえてください。","romaji":"Kono hanashi o haha ni tsutaete kudasai.","chinese":"請把這件事轉告我母親。","english":"Please tell my mother about this.","pattern":"～てください（請做某事）","rank":8},
+{"japanese":"この話を母に伝えてください。","hiragana":"このはなしをははにつたえてください。","romaji":"Kono hanashi o wawa ni tsutaete kudasai.","chinese":"請把這件事轉告我母親。","english":"Please tell my mother about this.","pattern":"～てください（請做某事）","rank":8},
 {"japanese":"犬に御飯を与えました。","hiragana":"いぬにごはんをあたえました。","romaji":"Inu ni gohan o ataemashita.","chinese":"我餵了狗吃飯。","english":"I fed the dog.","pattern":"～ました（過去式）","rank":3},
 {"japanese":"夏は暑い日が増えます。","hiragana":"なつはあついひがふえます。","romaji":"Natsu wa atsui hi ga fuemasu.","chinese":"夏天炎熱的日子會變多。","english":"Hot days increase in summer.","pattern":"～ます（禮貌動詞句型）","rank":1},
 {"japanese":"予定を変えてもいいですか？","hiragana":"よていをかえてもいいですか？","romaji":"Yotei o kaete mo ii desu ka?","chinese":"我可以改行程嗎?","english":"May I change the plan?","pattern":"～てもいいです（可以做某事）","rank":14},
