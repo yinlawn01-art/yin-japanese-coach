@@ -968,9 +968,25 @@ void main() {
     await tester.pump();
 
     expect(find.text('私は酒を飲みません。'), findsOneWidget);
+    expect(
+      tester.widget<Text>(find.text('私は酒を飲みません。')).style?.fontSize,
+      32,
+    );
+    expect(
+      tester.widget<Text>(find.text('Watashi wa sake o nomimasen.')).style?.fontSize,
+      32,
+    );
     expect(find.text('例句句型：～ません（動詞否定）'), findsOneWidget);
     expect(find.text('例句常用度排名：4'), findsOneWidget);
     expect(find.text('Go back'), findsOneWidget);
+    expect(
+      tester
+          .widget<Transform>(find.byKey(const Key('example-go-back-shift')))
+          .transform
+          .getTranslation()
+          .y,
+      closeTo(28 * 1.1 * 2, 0.01),
+    );
 
     await tester.pump(const Duration(seconds: 2));
   });

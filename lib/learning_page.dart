@@ -739,7 +739,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                     speakableText(
                       text: sentence.romaji,
                       japanese: sentence.hiragana,
-                      style: lookRomajiStyle,
+                      style: lookRomajiStyle.copyWith(fontSize: 32),
                     ),
                     const SizedBox(height: 10),
                     speakableText(
@@ -933,7 +933,13 @@ class _StudySessionPageState extends State<StudySessionPage> {
                               ),
                             )
                           : _frontWord(prompt, countText, word),
-                      _bottomAction(largeLabelSize),
+                      showExample
+                          ? Transform.translate(
+                              key: const Key('example-go-back-shift'),
+                              offset: const Offset(0, 28 * 1.1 * 2),
+                              child: _bottomAction(largeLabelSize),
+                            )
+                          : _bottomAction(largeLabelSize),
                     ],
                   ),
                 ),
