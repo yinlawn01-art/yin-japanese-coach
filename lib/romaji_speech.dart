@@ -1,14 +1,16 @@
 /// Hiragana the Japanese voice should speak for [romaji].
 ///
 /// The roman spelling is the pronunciation: particle "wa" is わ, "o" is お,
-/// and "e" is え. Spaces between words are kept so each spelled word is read
-/// on its own.
+/// and "e" is え. 母 is spoken as the spelling "haha", not はは. Spaces
+/// between words are kept so each spelled word is read on its own.
 String pronunciationForRomaji(String romaji) {
   final buffer = StringBuffer();
   final pieces = RegExp("[A-Za-z']+|[^A-Za-z']+").allMatches(romaji);
   for (final piece in pieces) {
     final text = piece.group(0)!;
-    if (RegExp("[A-Za-z]").hasMatch(text)) {
+    if (text.toLowerCase() == 'haha') {
+      buffer.write('haha');
+    } else if (RegExp("[A-Za-z]").hasMatch(text)) {
       buffer.write(_tokenToHiragana(text.toLowerCase()));
     } else {
       buffer.write(text.replaceAll('.', '。').replaceAll(',', '、'));
@@ -55,6 +57,10 @@ const Map<String, String> _syllables = {
   'chi': 'ち',
   'tsu': 'つ',
   'fu': 'ふ',
+  'fa': 'ふぁ',
+  'fi': 'ふぃ',
+  'fe': 'ふぇ',
+  'fo': 'ふぉ',
   'ka': 'か',
   'ki': 'き',
   'ku': 'く',
@@ -126,6 +132,15 @@ const Map<String, String> _syllables = {
 
 const _vowels = 'aeiou';
 
+(String, int)? _syllableAt(String token, int index) {
+  for (var size = 3; size >= 1; size--) {
+    if (index + size > token.length) continue;
+    final candidate = _syllables[token.substring(index, index + size)];
+    if (candidate != null) return (candidate, size);
+  }
+  return null;
+}
+
 String _tokenToHiragana(String token) {
   final buffer = StringBuffer();
   var index = 0;
@@ -134,31 +149,39 @@ String _tokenToHiragana(String token) {
     final doubled = index + 1 < token.length &&
         token[index + 1] == mark &&
         !_vowels.contains(mark) &&
-        mark != 'n';
+        mark != 'n' &&
+        mark != "'";
     if (doubled) {
       buffer.write('っ');
       index++;
       continue;
     }
 
-    String? syllable;
-    var length = 0;
-    for (var size = 3; size >= 1; size--) {
-      if (index + size > token.length) continue;
-      final candidate = _syllables[token.substring(index, index + size)];
-      if (candidate != null) {
-        syllable = candidate;
-        length = size;
-        break;
-      }
+    final syllable = _syllableAt(token, index);
+    if (syllable != null) {
+      buffer.write(syllable.$1);
+      index += syllable.$2;
+      continue;
     }
-    if (syllable == null) {
-      buffer.write(mark);
+
+    // kin'youbi / ten'in: the apostrophe keeps ん separate from the next vowel.
+    // A final apostrophe, as in えっ, is a small tsu.
+    if (mark == "'") {
+      if (index + 1 == token.length) buffer.write('っ');
       index++;
       continue;
     }
-    buffer.write(syllable);
-    index += length;
+
+    // shutchou: t before ch is っ, the same as a doubled consonant.
+    final consonant = !_vowels.contains(mark) && mark != 'n';
+    if (consonant && _syllableAt(token, index + 1) != null) {
+      buffer.write('っ');
+      index++;
+      continue;
+    }
+
+    buffer.write(mark);
+    index++;
   }
   return buffer.toString();
 }

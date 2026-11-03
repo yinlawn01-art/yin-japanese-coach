@@ -373,7 +373,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
     setState(() {
       showAnswer = true;
     });
-    await speakJapanese(words[catalogIndex].hiragana);
+    await speakJapanese(words[catalogIndex].romaji);
   }
 
   Future<void> _stopSpeech() async {
@@ -417,7 +417,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
     setState(() {
       showExample = true;
     });
-    await speakJapanese(sentence.hiragana);
+    await speakJapanese(sentence.romaji);
   }
 
   void closeExample() {
@@ -655,19 +655,19 @@ class _StudySessionPageState extends State<StudySessionPage> {
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookPrompt,
         ),
         const SizedBox(height: 4),
         speakableText(
           text: word.romaji,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookRomajiStyle,
         ),
         _studyStar(word, compact: true),
         speakableText(
           text: word.hiragana,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
@@ -684,7 +684,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
         const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookMeaningStyle,
         ),
         if (word.english.isNotEmpty)
@@ -727,7 +727,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                   children: [
                     speakableText(
                       text: sentence.japanese,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -738,13 +738,13 @@ class _StudySessionPageState extends State<StudySessionPage> {
                     const SizedBox(height: 4),
                     speakableText(
                       text: sentence.romaji,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: lookRomajiStyle.copyWith(fontSize: 32),
                     ),
                     const SizedBox(height: 10),
                     speakableText(
                       text: sentence.hiragana,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: const TextStyle(fontSize: 24, color: lookReading),
                     ),
                     const SizedBox(height: 10),

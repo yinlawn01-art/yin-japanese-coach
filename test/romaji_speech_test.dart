@@ -25,6 +25,35 @@ void main() {
     }
   });
 
+  test('Japanese speech follows the roman spelling', () {
+    expect(
+      pronunciationForRomaji('watashi'),
+      'わたし',
+    );
+    expect(
+      pronunciationForRomaji('Watashi wa sake o nomimasen.'),
+      'わたし わ さけ お のみません。',
+    );
+    expect(pronunciationForRomaji("kin'youbi"), 'きんようび');
+    expect(pronunciationForRomaji("ten'in"), 'てんいん');
+    expect(pronunciationForRomaji("e'"), 'えっ');
+    expect(pronunciationForRomaji('shutchou'), 'しゅっちょう');
+    expect(pronunciationForRomaji('fooku'), 'ふぉおく');
+  });
+
+  test('母 is pronounced haha', () {
+    final mother = words.firstWhere((word) => word.kanji == '母');
+    expect(mother.romaji, 'haha');
+    expect(pronunciationForRomaji(mother.romaji), 'haha');
+    final sentence = words.firstWhere((word) => word.kanji == 'こちら').example;
+    expect(sentence.romaji, 'Kochira wa watashi no haha desu.');
+    expect(
+      pronunciationForRomaji(sentence.romaji),
+      'こちら わ わたし の haha です。',
+    );
+    expect(sentence.hiragana, 'こちらはわたしのははです。');
+  });
+
   test('sentence particles follow the roman spelling', () {
     expect(
       pronunciationForRomaji('gakusei wa sensei ni au.'),
@@ -40,7 +69,7 @@ void main() {
     );
     expect(
       pronunciationForRomaji('haha wa gohan o tsukuru.'),
-      'はは わ ごはん お つくる。',
+      'haha わ ごはん お つくる。',
     );
   });
 }

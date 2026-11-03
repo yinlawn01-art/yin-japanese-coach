@@ -4,6 +4,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'app_look.dart';
 import 'bundled_text.dart';
 import 'main.dart';
+import 'romaji_speech.dart';
 import 'soft_speech.dart';
 
 /// Yellow used when a table cell is saved in 收藏單字.
@@ -118,7 +119,7 @@ class _VocabTablePageState extends State<VocabTablePage> {
   Future<void> _speak(Vocabulary word) async {
     await _tts.stop();
     await applyNaturalVoice(_tts, 'ja-JP');
-    await _tts.speak(word.hiragana);
+    await _tts.speak(pronunciationForRomaji(word.romaji));
   }
 
   Widget _cell(
