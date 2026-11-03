@@ -936,4 +936,42 @@ void main() {
     expect(zhJaStudy.indexes, isEmpty);
     expect(wordStudy.nextIndex, 60);
   });
+
+  testWidgets('學習 example shows the sentence pattern and rank', (tester) async {
+    words
+      ..clear()
+      ..add(
+        Vocabulary(
+          kanji: '私',
+          hiragana: 'わたし',
+          romaji: 'watashi',
+          meaning: '我',
+          english: 'I',
+          wordType: '🔵 名詞',
+          exampleJapanese: '私は酒を飲みません。',
+          exampleHiragana: 'わたしはさけをのみません。',
+          exampleRomaji: 'Watashi wa sake o nomimasen.',
+          exampleChinese: '我不喝酒。',
+          exampleEnglish: "I don't drink alcohol.",
+          examplePattern: '～ません（動詞否定）',
+          exampleRank: 4,
+        ),
+      );
+    wordStudy.indexes = [0];
+    wordStudy.beginSession();
+
+    await tester.pumpWidget(const MaterialApp(home: StudySessionPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('答案'));
+    await tester.pump();
+    await tester.tap(find.text('例句'));
+    await tester.pump();
+
+    expect(find.text('私は酒を飲みません。'), findsOneWidget);
+    expect(find.text('例句句型：～ません（動詞否定）'), findsOneWidget);
+    expect(find.text('例句常用度排名：4'), findsOneWidget);
+    expect(find.text('Go back'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+  });
 }

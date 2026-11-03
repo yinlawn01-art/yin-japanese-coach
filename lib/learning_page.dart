@@ -761,6 +761,30 @@ class _StudySessionPageState extends State<StudySessionPage> {
                         style: const TextStyle(fontSize: 28, color: lookMeaning),
                       ),
                     ],
+                    if (sentence.pattern.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Text(
+                        '例句句型：${sentence.pattern}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          height: 1.3,
+                          color: lookInk,
+                        ),
+                      ),
+                    ],
+                    if (sentence.rank > 0) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        '例句常用度排名：${sentence.rank}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          height: 1.3,
+                          color: lookCount,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
