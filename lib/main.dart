@@ -626,7 +626,7 @@ Future<void> saveFavorites() async {
   }
 
   Future<void> showCurrentAnswer() async {
-    final reading = widget.deck[currentIndex].hiragana;
+    final reading = widget.deck[currentIndex].romaji;
 
     setState(() {
       showAnswer = true;
@@ -661,7 +661,7 @@ Future<void> saveFavorites() async {
     setState(() {
       showExample = true;
     });
-    await speakJapanese(sentence.hiragana);
+    await speakJapanese(sentence.romaji);
   }
 
   void closeExample() {
@@ -905,19 +905,19 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookPrompt,
         ),
         const SizedBox(height: 4),
         speakableText(
           text: word.romaji,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookRomajiStyle.copyWith(fontSize: 32, height: 1.05),
         ),
         _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
@@ -934,7 +934,7 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: const TextStyle(
             fontSize: 28,
             height: 1.1,
@@ -970,19 +970,19 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 8),
         speakableText(
           text: word.kanji,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookPrompt,
         ),
         const SizedBox(height: 4),
         speakableText(
           text: word.romaji,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookRomajiStyle.copyWith(fontSize: 32, height: 1.05),
         ),
         _favoriteStar(word, compact: true),
         speakableText(
           text: word.hiragana,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: lookReadingStyle,
         ),
         const SizedBox(height: 4),
@@ -999,7 +999,7 @@ Future<void> saveFavorites() async {
         const SizedBox(height: 4),
         speakableText(
           text: word.meaning,
-          japanese: word.hiragana,
+          japanese: word.romaji,
           style: const TextStyle(
             fontSize: 28,
             height: 1.1,
@@ -1040,7 +1040,7 @@ Future<void> saveFavorites() async {
                   children: [
                     speakableText(
                       text: sentence.japanese,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
@@ -1051,13 +1051,13 @@ Future<void> saveFavorites() async {
                     const SizedBox(height: 4),
                     speakableText(
                       text: sentence.romaji,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: lookRomajiStyle,
                     ),
                     const SizedBox(height: 10),
                     speakableText(
                       text: sentence.hiragana,
-                      japanese: sentence.hiragana,
+                      japanese: sentence.romaji,
                       style: const TextStyle(fontSize: 24, color: lookReading),
                     ),
                     const SizedBox(height: 10),
@@ -1264,7 +1264,7 @@ void dispose() {
       });
 
       await applyNaturalVoice(flutterTts, 'ja-JP');
-      await flutterTts.speak(word.hiragana);
+      await flutterTts.speak(pronunciationForRomaji(word.romaji));
 
       await Future.delayed(
         const Duration(seconds: 3),

@@ -146,7 +146,7 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
 
   void _speak() {
     final token = speaker.begin();
-    unawaited(speaker.speakRomaji(sentence.hiragana, token));
+    unawaited(speaker.speakRomaji(sentence.romaji, token));
   }
 
   Widget _spokenLine(String text, TextStyle style) {
@@ -154,7 +154,7 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
   }
 
   Future<void> _showAnswer() async {
-    final reading = sentence.hiragana;
+    final reading = sentence.romaji;
     setState(() {
       showAnswer = true;
       dropAfterContinue = false;

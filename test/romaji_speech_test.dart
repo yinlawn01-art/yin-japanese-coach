@@ -25,6 +25,22 @@ void main() {
     }
   });
 
+  test('Japanese speech follows the roman spelling', () {
+    expect(
+      pronunciationForRomaji('watashi'),
+      'わたし',
+    );
+    expect(
+      pronunciationForRomaji('Watashi wa sake o nomimasen.'),
+      'わたし わ さけ お のみません。',
+    );
+    expect(pronunciationForRomaji("kin'youbi"), 'きんようび');
+    expect(pronunciationForRomaji("ten'in"), 'てんいん');
+    expect(pronunciationForRomaji("e'"), 'えっ');
+    expect(pronunciationForRomaji('shutchou'), 'しゅっちょう');
+    expect(pronunciationForRomaji('fooku'), 'ふぉおく');
+  });
+
   test('sentence particles follow the roman spelling', () {
     expect(
       pronunciationForRomaji('gakusei wa sensei ni au.'),

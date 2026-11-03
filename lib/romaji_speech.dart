@@ -55,6 +55,10 @@ const Map<String, String> _syllables = {
   'chi': 'ち',
   'tsu': 'つ',
   'fu': 'ふ',
+  'fa': 'ふぁ',
+  'fi': 'ふぃ',
+  'fe': 'ふぇ',
+  'fo': 'ふぉ',
   'ka': 'か',
   'ki': 'き',
   'ku': 'く',
@@ -126,6 +130,15 @@ const Map<String, String> _syllables = {
 
 const _vowels = 'aeiou';
 
+(String, int)? _syllableAt(String token, int index) {
+  for (var size = 3; size >= 1; size--) {
+    if (index + size > token.length) continue;
+    final candidate = _syllables[token.substring(index, index + size)];
+    if (candidate != null) return (candidate, size);
+  }
+  return null;
+}
+
 String _tokenToHiragana(String token) {
   final buffer = StringBuffer();
   var index = 0;
@@ -134,31 +147,39 @@ String _tokenToHiragana(String token) {
     final doubled = index + 1 < token.length &&
         token[index + 1] == mark &&
         !_vowels.contains(mark) &&
-        mark != 'n';
+        mark != 'n' &&
+        mark != "'";
     if (doubled) {
       buffer.write('っ');
       index++;
       continue;
     }
 
-    String? syllable;
-    var length = 0;
-    for (var size = 3; size >= 1; size--) {
-      if (index + size > token.length) continue;
-      final candidate = _syllables[token.substring(index, index + size)];
-      if (candidate != null) {
-        syllable = candidate;
-        length = size;
-        break;
-      }
+    final syllable = _syllableAt(token, index);
+    if (syllable != null) {
+      buffer.write(syllable.$1);
+      index += syllable.$2;
+      continue;
     }
-    if (syllable == null) {
-      buffer.write(mark);
+
+    // kin'youbi / ten'in: the apostrophe keeps ん separate from the next vowel.
+    // A final apostrophe, as in えっ, is a small tsu.
+    if (mark == "'") {
+      if (index + 1 == token.length) buffer.write('っ');
       index++;
       continue;
     }
-    buffer.write(syllable);
-    index += length;
+
+    // shutchou: t before ch is っ, the same as a doubled consonant.
+    final consonant = !_vowels.contains(mark) && mark != 'n';
+    if (consonant && _syllableAt(token, index + 1) != null) {
+      buffer.write('っ');
+      index++;
+      continue;
+    }
+
+    buffer.write(mark);
+    index++;
   }
   return buffer.toString();
 }

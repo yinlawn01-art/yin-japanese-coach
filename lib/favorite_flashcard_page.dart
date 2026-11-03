@@ -248,7 +248,7 @@ void _toggleRemoveLater() {
 }
 
 Future<void> showCurrentAnswer() async {
-  final reading = currentWord.hiragana;
+  final reading = currentWord.romaji;
 
   setState(() {
     showAnswer = true;
@@ -263,7 +263,7 @@ Future<void> openExample() async {
   setState(() {
     showExample = true;
   });
-  await speakJapanese(sentence.hiragana);
+  await speakJapanese(sentence.romaji);
 }
 
 void closeExample() {
@@ -355,7 +355,7 @@ Widget exampleBody(ExampleSentence sentence) {
                 children: [
                   speakableText(
                     text: sentence.japanese,
-                    japanese: sentence.hiragana,
+                    japanese: sentence.romaji,
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -366,13 +366,13 @@ Widget exampleBody(ExampleSentence sentence) {
                   const SizedBox(height: 4),
                   speakableText(
                     text: sentence.romaji,
-                    japanese: sentence.hiragana,
+                    japanese: sentence.romaji,
                     style: lookRomajiStyle,
                   ),
                   const SizedBox(height: 10),
                   speakableText(
                     text: sentence.hiragana,
-                    japanese: sentence.hiragana,
+                    japanese: sentence.romaji,
                     style: const TextStyle(fontSize: 24, color: lookReading),
                   ),
                   const SizedBox(height: 10),
@@ -906,7 +906,7 @@ children: [
   showAnswer
       ? speakableText(
           text: currentWord.kanji,
-          japanese: currentWord.hiragana,
+          japanese: currentWord.romaji,
           style: lookPrompt,
         )
       : Text(
@@ -933,7 +933,7 @@ children: [
             children: [
               speakableText(
                 text: currentWord.hiragana,
-                japanese: currentWord.hiragana,
+                japanese: currentWord.romaji,
                 style: const TextStyle(
                   fontSize: 28,
                   color: lookReading,
@@ -952,7 +952,7 @@ children: [
               const SizedBox(height: 10),
               speakableText(
                 text: currentWord.meaning,
-                japanese: currentWord.hiragana,
+                japanese: currentWord.romaji,
                 style: const TextStyle(
                   fontSize: 28,
                   color: lookMeaning,
@@ -995,7 +995,7 @@ Widget _answeredFavorite() {
     children: [
       speakableText(
         text: currentWord.kanji,
-        japanese: currentWord.hiragana,
+        japanese: currentWord.romaji,
           style: const TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,
@@ -1023,7 +1023,7 @@ Widget _answeredFavorite() {
       ),
       speakableText(
         text: currentWord.hiragana,
-        japanese: currentWord.hiragana,
+        japanese: currentWord.romaji,
         style: const TextStyle(
           fontSize: 28,
           height: 1.1,
@@ -1044,7 +1044,7 @@ Widget _answeredFavorite() {
       const SizedBox(height: 4),
       speakableText(
         text: currentWord.meaning,
-        japanese: currentWord.hiragana,
+        japanese: currentWord.romaji,
         style: const TextStyle(
           fontSize: 28,
           height: 1.1,
