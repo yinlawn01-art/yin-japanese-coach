@@ -342,6 +342,7 @@ class _FavoriteExamplePageState extends State<FavoriteExamplePage> {
                           ),
                         ),
                       ],
+                      ...examplePatternRankLines(current),
                     ],
                     const SizedBox(height: 24),
                     kanaActionButton(
