@@ -739,7 +739,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                     speakableText(
                       text: sentence.romaji,
                       japanese: sentence.hiragana,
-                      style: lookRomajiStyle,
+                      style: lookRomajiStyle.copyWith(fontSize: 32),
                     ),
                     const SizedBox(height: 10),
                     speakableText(
@@ -894,6 +894,14 @@ class _StudySessionPageState extends State<StudySessionPage> {
             0.0,
             constraints.maxHeight,
           );
+          // Two lines lower than the answer button. Laid out here so the
+          // tap target moves with the button; a transform would paint it
+          // outside the column and miss the tap.
+          final lowestGoBack = constraints.maxHeight - _studyButtonSize.height;
+          final goBackTop = (buttonTop + 28 * 1.1 * 2).clamp(
+            0.0,
+            lowestGoBack < 0 ? 0.0 : lowestGoBack,
+          );
 
           return Stack(
             children: [
@@ -933,11 +941,23 @@ class _StudySessionPageState extends State<StudySessionPage> {
                               ),
                             )
                           : _frontWord(prompt, countText, word),
-                      _bottomAction(largeLabelSize),
+                      showExample
+                          ? SizedBox.fromSize(size: _studyButtonSize)
+                          : _bottomAction(largeLabelSize),
                     ],
                   ),
                 ),
               ),
+              if (showExample)
+                Positioned(
+                  key: const Key('example-go-back'),
+                  top: goBackTop,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: _bottomAction(largeLabelSize),
+                  ),
+                ),
               if (showAnswer && !showExample)
                 Positioned(
                   top: exampleButtonTop,
