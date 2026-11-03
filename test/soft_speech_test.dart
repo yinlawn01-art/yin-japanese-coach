@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yin_japanese_coach/soft_speech.dart';
 
 void main() {
-  test('Japanese is 80% of a normal pace', () {
-    expect(rateForLanguage('ja-JP', web: true), closeTo(0.8, 0.0001));
-    expect(rateForLanguage('ja-JP', web: false), closeTo(0.4, 0.0001));
+  test('Japanese uses a normal speaking pace', () {
+    expect(rateForLanguage('ja-JP', web: true), 1.0);
+    expect(rateForLanguage('ja-JP', web: false), 0.5);
     expect(rateForLanguage('zh-TW', web: true), 1.0);
     expect(rateForLanguage('zh-TW', web: false), 0.5);
   });
