@@ -9,7 +9,7 @@
 {"japanese":"もっと運動したい。","hiragana":"もっとうんどうしたい。","romaji":"Motto undou shitai.","chinese":"想多運動。","english":"I want to exercise more.","pattern":"～たいです（想要做某事）","rank":25},
 {"japanese":"旅行が好きです。","hiragana":"りょこうがすきです。","romaji":"Ryokou ga suki desu.","chinese":"我喜歡旅行。","english":"I like traveling.","pattern":"～が好きです（喜歡）","rank":13},
 {"japanese":"天気がいいから、散歩に行きたい。","hiragana":"てんきがいいから、さんぽにいきたい。","romaji":"Tenki ga ii kara, sanpo ni ikitai.","chinese":"天氣很好,想去散步。","english":"The weather is nice, so I want to go for a walk.","pattern":"～たいです（想要做某事）","rank":25},
-{"japanese":"母が心配しています。","hiragana":"ははがしんぱいしています。","romaji":"Wawa ga shinpai shite imasu.","chinese":"媽媽很擔心。","english":"My mother is worried.","pattern":"～ています（進行、狀態）","rank":5},
+{"japanese":"母が心配しています。","hiragana":"ははがしんぱいしています。","romaji":"Haha ga shinpai shite imasu.","chinese":"媽媽很擔心。","english":"My mother is worried.","pattern":"～ています（進行、狀態）","rank":5},
 {"japanese":"先生に相談してもいいですか？","hiragana":"せんせいにそうだんしてもいいですか？","romaji":"Sensei ni soudan shite mo ii desu ka?","chinese":"我可以找老師商量嗎?","english":"May I talk it over with the teacher?","pattern":"～てもいいです（可以做某事）","rank":14},
 {"japanese":"先生の説明は詳しいです。","hiragana":"せんせいのせつめいはくわしいです。","romaji":"Sensei no setsumei wa kuwashiidesu.","chinese":"老師的說明很詳細。","english":"The teacher's explanation is detailed.","pattern":"～です／～だ（表示「是」）","rank":2},
 {"japanese":"友達を紹介します。","hiragana":"ともだちをしょうかいします。","romaji":"Tomodachi o shoukai shimasu.","chinese":"我來介紹我的朋友。","english":"Let me introduce my friend.","pattern":"～ます（禮貌動詞句型）","rank":1},
