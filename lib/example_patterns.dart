@@ -54,35 +54,23 @@ class ExamplePattern {
   String get buttonLabel => '$label (${sentences.length})';
 }
 
-class _PatternFile {
-  const _PatternFile(this.asset, this.label);
-
-  final String asset;
-  final String label;
-}
-
-const List<_PatternFile> _patternFiles = [
-  _PatternFile('assets/example_patterns/01.json', '(1) 1-100'),
-  _PatternFile('assets/example_patterns/02.json', '(2) 101-200'),
-  _PatternFile('assets/example_patterns/03.json', '(3) 201-300'),
-  _PatternFile('assets/example_patterns/04.json', '(4) 301-400'),
-  _PatternFile('assets/example_patterns/05.json', '(5) 401-500'),
-  _PatternFile('assets/example_patterns/06.json', '(6) 501-600'),
-  _PatternFile('assets/example_patterns/07.json', '(7) 601-700'),
-  _PatternFile('assets/example_patterns/08.json', '(8) 701-800'),
-  _PatternFile('assets/example_patterns/09.json', '(9) 801-900'),
-  _PatternFile('assets/example_patterns/10.json', '(10) 901-1000'),
+const List<String> _patternFiles = [
+  'assets/example_patterns/01.json',
+  'assets/example_patterns/02.json',
+  'assets/example_patterns/03.json',
+  'assets/example_patterns/04.json',
+  'assets/example_patterns/05.json',
+  'assets/example_patterns/06.json',
+  'assets/example_patterns/07.json',
+  'assets/example_patterns/08.json',
+  'assets/example_patterns/09.json',
+  'assets/example_patterns/10.json',
 ];
-
-const String allExamplesLabel = '(11) 全部';
 
 final List<ExamplePattern> examplePatterns = [];
 
-/// Sentences available from the 例句 page. 全部 already holds every sentence.
+/// Sentences available from the 例句 page.
 int exampleSentenceCount() {
-  for (final pattern in examplePatterns) {
-    if (pattern.label == allExamplesLabel) return pattern.sentences.length;
-  }
   var total = 0;
   for (final pattern in examplePatterns) {
     total += pattern.sentences.length;
@@ -96,7 +84,6 @@ List<PatternSentence> favoriteExampleSentences() {
   final saved = exampleFavorites;
   final sentences = <PatternSentence>[];
   for (final pattern in examplePatterns) {
-    if (pattern.label == allExamplesLabel) continue;
     for (final sentence in pattern.sentences) {
       if (saved.contains(sentence.japanese)) sentences.add(sentence);
     }
@@ -104,30 +91,76 @@ List<PatternSentence> favoriteExampleSentences() {
   return sentences;
 }
 
+class _OrderedSentence {
+  const _OrderedSentence(this.index, this.sentence);
+
+  final int index;
+  final PatternSentence sentence;
+}
+
+/// Groups every example by 句型. Categories, and the sentences inside them,
+/// run from the smallest 常用度排名 at the top to the largest at the bottom.
 Future<void> loadExamplePatterns() async {
-  if (examplePatterns.length == _patternFiles.length + 1) return;
+  if (examplePatterns.isNotEmpty) return;
+
+  final indexed = <_OrderedSentence>[];
+  for (final file in _patternFiles) {
+    final jsonString = await rootBundle.loadString(file);
+    final data = json.decode(jsonString) as List<dynamic>;
+    for (final item in data) {
+      indexed.add(
+        _OrderedSentence(
+          indexed.length,
+          PatternSentence.fromJson(item as Map<String, dynamic>),
+        ),
+      );
+    }
+  }
+
+  final grouped = <String, List<_OrderedSentence>>{};
+  for (final item in indexed) {
+    grouped.putIfAbsent(item.sentence.pattern, () => []).add(item);
+  }
+
+  int lowestRank(List<_OrderedSentence> items) {
+    var rank = items.first.sentence.rank;
+    for (final item in items) {
+      if (item.sentence.rank < rank) rank = item.sentence.rank;
+    }
+    return rank;
+  }
+
+  int earliest(List<_OrderedSentence> items) {
+    var index = items.first.index;
+    for (final item in items) {
+      if (item.index < index) index = item.index;
+    }
+    return index;
+  }
+
+  final names = grouped.keys.toList()
+    ..sort((a, b) {
+      final byRank = lowestRank(grouped[a]!).compareTo(lowestRank(grouped[b]!));
+      if (byRank != 0) return byRank;
+      return earliest(grouped[a]!).compareTo(earliest(grouped[b]!));
+    });
 
   final loaded = <ExamplePattern>[];
-  for (final file in _patternFiles) {
-    final jsonString = await rootBundle.loadString(file.asset);
-    final data = json.decode(jsonString) as List<dynamic>;
+  for (final name in names) {
+    final items = grouped[name]!
+      ..sort((a, b) {
+        final byRank = a.sentence.rank.compareTo(b.sentence.rank);
+        if (byRank != 0) return byRank;
+        return a.index.compareTo(b.index);
+      });
     loaded.add(
       ExamplePattern(
-        label: file.label,
-        sentences: [
-          for (final item in data)
-            PatternSentence.fromJson(item as Map<String, dynamic>),
-        ],
+        label: name.isEmpty ? '其他' : name,
+        sentences: [for (final item in items) item.sentence],
       ),
     );
   }
 
-  loaded.add(
-    ExamplePattern(
-      label: allExamplesLabel,
-      sentences: [for (final pattern in loaded) ...pattern.sentences],
-    ),
-  );
   examplePatterns
     ..clear()
     ..addAll(loaded);
