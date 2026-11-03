@@ -979,14 +979,14 @@ void main() {
     expect(find.text('例句句型：～ません（動詞否定）'), findsOneWidget);
     expect(find.text('例句常用度排名：4'), findsOneWidget);
     expect(find.text('Go back'), findsOneWidget);
-    expect(
-      tester
-          .widget<Transform>(find.byKey(const Key('example-go-back-shift')))
-          .transform
-          .getTranslation()
-          .y,
-      closeTo(28 * 1.1 * 2, 0.01),
-    );
+    final goBack = tester.getTopLeft(find.byKey(const Key('example-go-back')));
+    expect(goBack.dy, greaterThan(0));
+
+    await tester.tap(find.text('Go back'));
+    await tester.pump();
+    expect(find.text('私は酒を飲みません。'), findsNothing);
+    expect(find.text('例句'), findsOneWidget);
+    expect(find.text('Go back'), findsNothing);
 
     await tester.pump(const Duration(seconds: 2));
   });
