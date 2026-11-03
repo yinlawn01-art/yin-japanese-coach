@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'app_look.dart';
 
 const String exampleFavoritesKey = 'exampleFavorites';
 
@@ -12,15 +15,20 @@ class PatternSentence {
     required this.romaji,
     required this.chinese,
     this.english = '',
+    this.pattern = '',
+    this.rank = 0,
   });
 
   factory PatternSentence.fromJson(Map<String, dynamic> json) {
+    final rawRank = json['rank'];
     return PatternSentence(
       japanese: json['japanese'] as String,
       hiragana: json['hiragana'] as String,
       romaji: json['romaji'] as String,
       chinese: json['chinese'] as String,
       english: json['english'] as String? ?? '',
+      pattern: json['pattern'] as String? ?? '',
+      rank: rawRank is int ? rawRank : int.tryParse('$rawRank') ?? 0,
     );
   }
 
@@ -29,6 +37,12 @@ class PatternSentence {
   final String romaji;
   final String chinese;
   final String english;
+
+  /// 例句句型.
+  final String pattern;
+
+  /// 例句常用度排名.
+  final int rank;
 }
 
 class ExamplePattern {
@@ -129,4 +143,34 @@ Future<void> loadExampleFavorites() async {
 Future<void> saveExampleFavorites() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setStringList(exampleFavoritesKey, exampleFavorites.toList());
+}
+
+/// 句型 and 常用度排名 shown under an 例句 answer.
+List<Widget> examplePatternRankLines(PatternSentence sentence) {
+  return [
+    if (sentence.pattern.isNotEmpty) ...[
+      const SizedBox(height: 14),
+      Text(
+        '例句句型：${sentence.pattern}',
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 22,
+          height: 1.3,
+          color: lookInk,
+        ),
+      ),
+    ],
+    if (sentence.rank > 0) ...[
+      const SizedBox(height: 6),
+      Text(
+        '例句常用度排名：${sentence.rank}',
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 22,
+          height: 1.3,
+          color: lookCount,
+        ),
+      ),
+    ],
+  ];
 }

@@ -279,6 +279,7 @@ class _ExamplePatternStudyPageState extends State<ExamplePatternStudyPage> {
             ),
           ),
         ],
+        ...examplePatternRankLines(sentence),
         const SizedBox(height: 24),
         kanaActionButton('繼續', _next, kanaLabelSize(context)),
       ],

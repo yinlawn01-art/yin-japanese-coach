@@ -42,7 +42,11 @@ void main() {
       expect(sentence.romaji, isNotEmpty);
       expect(sentence.chinese, isNotEmpty);
       expect(sentence.english, isNotEmpty);
+      expect(sentence.pattern, isNotEmpty);
+      expect(sentence.rank, inInclusiveRange(1, 27));
     }
+    expect(all.sentences.first.pattern, '～ません（動詞否定）');
+    expect(all.sentences.first.rank, 4);
   });
 
   testWidgets('例句 buttons fit an iPhone 15 Pro Max', (tester) async {
@@ -101,6 +105,8 @@ void main() {
     expect(find.text('わたしはさけをのみません。'), findsOneWidget);
     expect(find.text('Watashi wa sake o nomimasen.'), findsOneWidget);
     expect(find.text('我不喝酒。'), findsOneWidget);
+    expect(find.text('例句句型：～ません（動詞否定）'), findsOneWidget);
+    expect(find.text('例句常用度排名：4'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
     expect(
       tester.getTopLeft(find.byIcon(Icons.star)).dy,
@@ -148,6 +154,8 @@ void main() {
     expect(_readsOnTap(tester, 'わたしはさけをのみません。'), isTrue);
     expect(_readsOnTap(tester, 'Watashi wa sake o nomimasen.'), isTrue);
     expect(_readsOnTap(tester, '我不喝酒。'), isFalse);
+    expect(_readsOnTap(tester, '例句句型：～ません（動詞否定）'), isFalse);
+    expect(_readsOnTap(tester, '例句常用度排名：4'), isFalse);
 
     await tester.tap(find.text('わたしはさけをのみません。'));
     await tester.pump();
@@ -197,11 +205,15 @@ void main() {
     expect(find.text('わたしはさけをのみません。'), findsOneWidget);
     expect(find.text('Watashi wa sake o nomimasen.'), findsOneWidget);
     expect(find.text('我不喝酒。'), findsOneWidget);
+    expect(find.text('例句句型：～ません（動詞否定）'), findsOneWidget);
+    expect(find.text('例句常用度排名：4'), findsOneWidget);
     expect(find.text('繼續'), findsOneWidget);
     expect(_readsOnTap(tester, '私は酒を飲みません。'), isTrue);
     expect(_readsOnTap(tester, 'わたしはさけをのみません。'), isTrue);
     expect(_readsOnTap(tester, 'Watashi wa sake o nomimasen.'), isTrue);
     expect(_readsOnTap(tester, '我不喝酒。'), isFalse);
+    expect(_readsOnTap(tester, '例句句型：～ません（動詞否定）'), isFalse);
+    expect(_readsOnTap(tester, '例句常用度排名：4'), isFalse);
     await tester.tap(find.text('Watashi wa sake o nomimasen.'));
     await tester.pump();
     expect(tester.takeException(), isNull);
