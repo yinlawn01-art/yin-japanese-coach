@@ -1,14 +1,16 @@
 /// Hiragana the Japanese voice should speak for [romaji].
 ///
 /// The roman spelling is the pronunciation: particle "wa" is わ, "o" is お,
-/// and "e" is え. Spaces between words are kept so each spelled word is read
-/// on its own.
+/// and "e" is え. 母 is spoken as the spelling "haha", not はは. Spaces
+/// between words are kept so each spelled word is read on its own.
 String pronunciationForRomaji(String romaji) {
   final buffer = StringBuffer();
   final pieces = RegExp("[A-Za-z']+|[^A-Za-z']+").allMatches(romaji);
   for (final piece in pieces) {
     final text = piece.group(0)!;
-    if (RegExp("[A-Za-z]").hasMatch(text)) {
+    if (text.toLowerCase() == 'haha') {
+      buffer.write('haha');
+    } else if (RegExp("[A-Za-z]").hasMatch(text)) {
       buffer.write(_tokenToHiragana(text.toLowerCase()));
     } else {
       buffer.write(text.replaceAll('.', '。').replaceAll(',', '、'));

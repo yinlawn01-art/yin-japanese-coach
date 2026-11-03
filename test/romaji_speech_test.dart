@@ -44,12 +44,12 @@ void main() {
   test('母 is pronounced haha', () {
     final mother = words.firstWhere((word) => word.kanji == '母');
     expect(mother.romaji, 'haha');
-    expect(pronunciationForRomaji(mother.romaji), 'はは');
+    expect(pronunciationForRomaji(mother.romaji), 'haha');
     final sentence = words.firstWhere((word) => word.kanji == 'こちら').example;
     expect(sentence.romaji, 'Kochira wa watashi no haha desu.');
     expect(
       pronunciationForRomaji(sentence.romaji),
-      'こちら わ わたし の はは です。',
+      'こちら わ わたし の haha です。',
     );
     expect(sentence.hiragana, 'こちらはわたしのははです。');
   });
@@ -69,7 +69,7 @@ void main() {
     );
     expect(
       pronunciationForRomaji('haha wa gohan o tsukuru.'),
-      'はは わ ごはん お つくる。',
+      'haha わ ごはん お つくる。',
     );
   });
 }
